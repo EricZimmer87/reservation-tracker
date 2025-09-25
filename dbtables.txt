@@ -1,0 +1,37 @@
+users
+user_id
+is_admin
+username
+email
+password_hash
+is_banned
+
+reservations
+reservation_id
+guest_id (FK)
+user_id (FK)
+room_id (FK)
+date_reserved
+check_in_date
+check_out_date
+number_of_guests
+notes
+status
+card_last_four
+
+guests
+guest_id
+first_name
+last_name
+phone_number
+address
+email
+notes
+company
+
+rooms
+room_id
+room_number
+room_type
+notes
+status

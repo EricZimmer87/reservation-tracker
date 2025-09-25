@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: reservation-tracker-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/reservation_tracker
+    username: root
+    password: root1234
+    driver-class-name: org.postgresql.Driver
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            provider: google
+            client-id: google-client-id
+            client-secret: google-client-secret
+server:
+  port: 8080
