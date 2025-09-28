@@ -3,11 +3,12 @@ USE reservation_tracker;
 
 -- USERS TABLE
 CREATE TABLE users (
-    user_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    is_admin BOOLEAN DEFAULT FALSE,
-    username VARCHAR(50) NOT NULL UNIQUE,
+    user_id BIGSERIAL PRIMARY KEY,
+    google_id VARCHAR(255) UNIQUE NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
+    display_name VARCHAR(100) NULL,
+    picture TEXT NULL,
+    is_admin BOOLEAN DEFAULT FALSE,
     is_banned BOOLEAN DEFAULT FALSE
 );
 
@@ -51,8 +52,10 @@ CREATE TABLE reservations (
     CONSTRAINT fk_room FOREIGN KEY (room_id) REFERENCES rooms(room_id) ON DELETE RESTRICT
 );
 
-
 -- INSERT SAMPLE DATA
+-- USERS
+INSERT INTO users (email, is_admin)
+VALUES ('ericzimmer87@gmail.com', TRUE);
 
 -- ROOMS
 -- rooms 101–109 (double queen)

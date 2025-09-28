@@ -1,10 +1,11 @@
 -- USERS TABLE
 CREATE TABLE users (
     user_id BIGSERIAL PRIMARY KEY,
-    is_admin BOOLEAN DEFAULT FALSE,
-    username VARCHAR(50) NOT NULL UNIQUE,
+    google_id VARCHAR(255) UNIQUE NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
+    display_name VARCHAR(100) NULL,
+    picture TEXT NULL,
+    is_admin BOOLEAN DEFAULT FALSE,
     is_banned BOOLEAN DEFAULT FALSE
 );
 
@@ -47,6 +48,10 @@ CREATE TABLE reservations (
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL,
     CONSTRAINT fk_room FOREIGN KEY (room_id) REFERENCES rooms(room_id) ON DELETE RESTRICT
 );
+
+-- USERS
+INSERT INTO users (email, is_admin)
+VALUES ('ericzimmer87@gmail.com', TRUE);
 
 -- ROOMS DATA
 INSERT INTO rooms (room_number, room_type) VALUES
