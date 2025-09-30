@@ -1,16 +1,33 @@
 services:
-  postgres:
-    image: postgres:16
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
     restart: always
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root1234
-      POSTGRES_DB: reservation_tracker
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Root1234!"
+      MSSQL_PID: "Express"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./initdb:/docker-entrypoint-initdb.d
+      - sqlserver_data:/var/opt/mssql
     ports:
-      - "5432:5432"
+      - "1433:1433"
 
 volumes:
-  postgres_data:
+  sqlserver_data:
+# For setting up a PostgreSQL database using Docker Compose
+# services:
+#   postgres:
+#     image: postgres:16
+#     restart: always
+#     environment:
+#       POSTGRES_USER: root
+#       POSTGRES_PASSWORD: root1234
+#       POSTGRES_DB: reservation_tracker
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#       - ./initdb:/docker-entrypoint-initdb.d
+#     ports:
+#       - "5432:5432"
+
+# volumes:
+#   postgres_data:

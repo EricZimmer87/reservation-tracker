@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS reservation_tracker;
+USE reservation_tracker;
+
 -- USERS TABLE
 CREATE TABLE users (
     user_id BIGSERIAL PRIMARY KEY,
@@ -11,7 +14,7 @@ CREATE TABLE users (
 
 -- GUESTS TABLE
 CREATE TABLE guests (
-    guest_id BIGSERIAL PRIMARY KEY,
+    guest_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     phone_number VARCHAR(20) NOT NULL,
@@ -23,7 +26,7 @@ CREATE TABLE guests (
 
 -- ROOMS TABLE
 CREATE TABLE rooms (
-    room_id BIGSERIAL PRIMARY KEY,
+    room_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     room_number VARCHAR(10) NOT NULL UNIQUE,
     room_type VARCHAR(50) NOT NULL,
     notes TEXT
@@ -31,7 +34,7 @@ CREATE TABLE rooms (
 
 -- RESERVATIONS TABLE
 CREATE TABLE reservations (
-    reservation_id BIGSERIAL PRIMARY KEY,
+    reservation_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     guest_id BIGINT,
     user_id BIGINT,
     room_id BIGINT NOT NULL,
@@ -49,12 +52,15 @@ CREATE TABLE reservations (
     CONSTRAINT fk_room FOREIGN KEY (room_id) REFERENCES rooms(room_id) ON DELETE RESTRICT
 );
 
+-- INSERT SAMPLE DATA
 -- USERS
 INSERT INTO users (email, is_admin)
 VALUES ('ericzimmer87@gmail.com', TRUE);
 
--- ROOMS DATA
-INSERT INTO rooms (room_number, room_type) VALUES
+-- ROOMS
+-- rooms 101–109 (double queen)
+INSERT INTO rooms (room_number, room_type)
+VALUES
 ('101', 'double_queen'),
 ('102', 'double_queen'),
 ('103', 'double_queen'),
@@ -63,17 +69,31 @@ INSERT INTO rooms (room_number, room_type) VALUES
 ('106', 'double_queen'),
 ('107', 'double_queen'),
 ('108', 'double_queen'),
-('109', 'double_queen'),
-('110', 'single_queen_handicap'),
+('109', 'double_queen');
+
+-- room 110: Single Queen Handicap
+INSERT INTO rooms (room_number, room_type)
+VALUES ('110', 'single_queen_handicap');
+
+-- rooms 111–114 (double queen)
+INSERT INTO rooms (room_number, room_type)
+VALUES
 ('111', 'double_queen'),
 ('112', 'double_queen'),
 ('113', 'double_queen'),
-('114', 'double_queen'),
+('114', 'double_queen');
+
+-- rooms 115 & 116: King Suites
+INSERT INTO rooms (room_number, room_type)
+VALUES
 ('115', 'king_suite'),
 ('116', 'king_suite');
 
--- GUESTS DATA
-INSERT INTO guests (first_name, last_name, phone_number, address, email, notes, company) VALUES
+---
+
+-- GUESTS
+INSERT INTO guests (first_name, last_name, phone_number, address, email, notes, company)
+VALUES
 ('John', 'Smith', '402-555-1234', '123 Main St, Lincoln, NE 68508', 'john.smith@example.com', 'Prefers 1st floor rooms', NULL),
 ('Jane', 'Doe', '308-555-7890', '456 Elm St, Kearney, NE 68845', 'jane.doe@example.com', 'Late check-in around 11 PM', NULL),
 ('Michael', 'Brown', '531-555-4444', '789 Maple Ave, Grand Island, NE 68801', NULL, 'Allergic to pets', 'Brown Logistics'),
