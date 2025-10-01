@@ -79,11 +79,11 @@ INSERT INTO Rooms (RoomNumber, RoomType) VALUES
 ('116', 'king_suite');
 
 -- GUESTS DATA
-INSERT INTO Guests (FirstName, LastName, PhoneNumber, Address, Email, Notes, Company) VALUES
-('John', 'Smith', '402-555-1234', '123 Main St, Lincoln, NE 68508', 'john.smith@example.com', 'Prefers 1st floor rooms', NULL),
-('Jane', 'Doe', '308-555-7890', '456 Elm St, Kearney, NE 68845', 'jane.doe@example.com', 'Late check-in around 11 PM', NULL),
-('Michael', 'Brown', '531-555-4444', '789 Maple Ave, Grand Island, NE 68801', NULL, 'Allergic to pets', 'Brown Logistics'),
-('Emily', 'Johnson', '402-555-8888', '135 Oak St, Columbus, NE 68601', 'emilyj@techmail.com', NULL, NULL),
-('Sara', 'Nguyen', '308-555-9876', '980 River Rd, Scottsbluff, NE 69361', NULL, 'Always pays cash', 'Sara Realty'),
-('David', 'Lee', '531-555-2233', '22 Pine St, Norfolk, NE 68701', 'dlee@example.com', NULL, 'Lee Construction'),
-('Karen', 'Thompson', '402-555-0000', '742 Willow Dr, Hastings, NE 68901', NULL, 'Talks a lot', NULL);
+INSERT INTO Guests (FirstName, LastName, PhoneNumber, Address, City, State, Zipcode, Email, Notes, Company) VALUES
+('John', 'Smith', '402-555-1234', '123 Main St', 'Lincoln', 'NE', '68508', 'john.smith@example.com', 'Prefers 1st floor rooms', NULL),
+('Jane', 'Doe', '308-555-7890', '456 Elm St', 'Kearney', 'NE', '68845', 'jane.doe@example.com', 'Late check-in around 11 PM', NULL),
+('Michael', 'Brown', '531-555-4444', '789 Maple Ave', 'Grand Island', 'NE', '68801', NULL, 'Allergic to pets', 'Brown Logistics'),
+('Emily', 'Johnson', '402-555-8888', '135 Oak St', 'Columbus', 'NE', '68601', 'emilyj@techmail.com', NULL, NULL),
+('Sara', 'Nguyen', '308-555-9876', '980 River Rd', 'Scottsbluff', 'NE', '69361', NULL, 'Always pays cash', 'Sara Realty'),
+('David', 'Lee', '531-555-2233', '22 Pine St', 'Norfolk', 'NE', '68701', 'dlee@example.com', NULL, 'Lee Construction'),
+('Karen', 'Thompson', '402-555-0000', '742 Willow Dr', 'Hastings', 'NE', '68901', NULL, 'Talks a lot', NULL);
