@@ -3,7 +3,13 @@
     docker cp create-db-sqlserver.sql sqlserver:/create-db-sqlserver.sql
 3. Apply .sql changes with sqlcmd:
     docker exec -it sqlserver /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U sa -P "Root1234!" -i create-db-sqlserver.sql
-4. Regenerate models if schema changed
+    macOS:
+    sqlcmd -s localhost,1433 -U sa -P 'Root1234!' -i create-db-sqlserver.sql
+4. Regenerate models if schema changed - reservation-tracker-backend-dotnet
     dotnet ef dbcontext scaffold "Server=localhost,1433;Database=ReservationTracker;User Id=sa;Password=Root1234!;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -o Models -c ReservationTrackerContext --force
 5. Run ASP.NET app
     dotnet run
+
+
+
+    docker run -it --rm --network reservation-tracker_default -v $(pwd)/create-db-sqlserver.sql:/create-db-sqlserver.sql mcr.microsoft.com/mssql-tools /opt/mssql-tools/bin/sqlcmd -S sqlserver,1433 -U sa -P 'Root1234!' -i /create-db-sqlserver.sql

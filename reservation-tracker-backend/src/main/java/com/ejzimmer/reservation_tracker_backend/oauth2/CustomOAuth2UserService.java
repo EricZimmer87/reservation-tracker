@@ -7,6 +7,8 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+// This class overrides loadUser from OAuth2UserService to implement my own logic.
+// This is so that I can check if the user that logged in has their email in the database and is allowed on the site.
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final UserRepository userRepository;

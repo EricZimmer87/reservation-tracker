@@ -15,7 +15,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            CustomOAuth2UserService customOAuth2UserService) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 👈 enable CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users").authenticated()
                         .requestMatchers("/api/users/user").authenticated()
@@ -32,6 +32,7 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // Cross-origin request scripting configuration to allow React frontend
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         var config = new org.springframework.web.cors.CorsConfiguration();
