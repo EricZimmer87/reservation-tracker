@@ -1,3 +1,11 @@
+Code-First Design:
+1. Add migrations from database:
+    dotnet ef migrations add InitialCreate
+2. Update database:
+    dotnet ef database update
+
+
+Database-First Design:
 1. docker compose up -d
 2. Copy sql script into container
     docker cp create-db-sqlserver.sql sqlserver:/create-db-sqlserver.sql
@@ -9,7 +17,3 @@
     dotnet ef dbcontext scaffold "Server=localhost,1433;Database=ReservationTracker;User Id=sa;Password=Root1234!;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -o Models -c ReservationTrackerContext --force
 5. Run ASP.NET app
     dotnet run
-
-
-
-    docker run -it --rm --network reservation-tracker_default -v $(pwd)/create-db-sqlserver.sql:/create-db-sqlserver.sql mcr.microsoft.com/mssql-tools /opt/mssql-tools/bin/sqlcmd -S sqlserver,1433 -U sa -P 'Root1234!' -i /create-db-sqlserver.sql
