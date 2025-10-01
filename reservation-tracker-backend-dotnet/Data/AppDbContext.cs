@@ -11,6 +11,6 @@ namespace reservation_tracker_backend_dotnet.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Guest> Guests { get; set; }
         public DbSet<Room> Rooms { get; set; }
-        public DbSet<Reservation>Reservations { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
     }
 }
