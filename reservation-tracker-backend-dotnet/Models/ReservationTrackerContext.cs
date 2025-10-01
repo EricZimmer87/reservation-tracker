@@ -31,7 +31,7 @@ public partial class ReservationTrackerContext : DbContext
     {
         modelBuilder.Entity<Guest>(entity =>
         {
-            entity.HasKey(e => e.GuestId).HasName("PK__Guests__0C423C1206AD16E5");
+            entity.HasKey(e => e.GuestId).HasName("PK__Guests__0C423C129AFE8A44");
 
             entity.Property(e => e.Address).IsUnicode(false);
             entity.Property(e => e.Company)
@@ -54,7 +54,7 @@ public partial class ReservationTrackerContext : DbContext
 
         modelBuilder.Entity<Reservation>(entity =>
         {
-            entity.HasKey(e => e.ReservationId).HasName("PK__Reservat__B7EE5F243632EBDD");
+            entity.HasKey(e => e.ReservationId).HasName("PK__Reservat__B7EE5F241408B6BA");
 
             entity.Property(e => e.CardLastFour)
                 .HasMaxLength(4)
@@ -83,9 +83,9 @@ public partial class ReservationTrackerContext : DbContext
 
         modelBuilder.Entity<Room>(entity =>
         {
-            entity.HasKey(e => e.RoomId).HasName("PK__Rooms__32863939526381F5");
+            entity.HasKey(e => e.RoomId).HasName("PK__Rooms__32863939D890CA8A");
 
-            entity.HasIndex(e => e.RoomNumber, "UQ__Rooms__AE10E07A4BCB384A").IsUnique();
+            entity.HasIndex(e => e.RoomNumber, "UQ__Rooms__AE10E07AAC1D240C").IsUnique();
 
             entity.Property(e => e.Notes).IsUnicode(false);
             entity.Property(e => e.RoomNumber)
@@ -98,11 +98,11 @@ public partial class ReservationTrackerContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4C6DE2FE98");
+            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4C910C6B21");
 
-            entity.HasIndex(e => e.GoogleId, "UQ__Users__A6FBF2FBD7EDED63").IsUnique();
+            entity.HasIndex(e => e.GoogleId, "UQ__Users__A6FBF2FB80F10341").IsUnique();
 
-            entity.HasIndex(e => e.Email, "UQ__Users__A9D105346E409037").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__Users__A9D105349F759D17").IsUnique();
 
             entity.Property(e => e.DisplayName)
                 .HasMaxLength(100)
