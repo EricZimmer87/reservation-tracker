@@ -16,4 +16,5 @@ Migrations/
 
 # OS junk
 *.DS_Store
-Thumbs.db
+Thumbs.dbreservation-tracker-backend-dotnet/bin/
+reservation-tracker-backend-dotnet/obj/
