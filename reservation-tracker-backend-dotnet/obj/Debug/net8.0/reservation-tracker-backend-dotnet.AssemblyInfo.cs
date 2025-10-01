@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("reservation-tracker-backend-dotnet")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+803771a00e3bf425b86064bb9eee1b93e938e29f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9de158d093cdf171dc398e6e51bbbf4736a0b38c")]
 [assembly: System.Reflection.AssemblyProductAttribute("reservation-tracker-backend-dotnet")]
 [assembly: System.Reflection.AssemblyTitleAttribute("reservation-tracker-backend-dotnet")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

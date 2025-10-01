@@ -25,13 +25,13 @@ public partial class ReservationTrackerContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-7QHIPKO\\SQLEXPRESS;Database=ReservationTracker;Trusted_Connection=True;TrustServerCertificate=True;");
+        => optionsBuilder.UseSqlServer("Server=localhost,1433;Database=ReservationTracker;User Id=sa;Password=Root1234!;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Guest>(entity =>
         {
-            entity.HasKey(e => e.GuestId).HasName("PK__Guests__0C423C1229234BA3");
+            entity.HasKey(e => e.GuestId).HasName("PK__Guests__0C423C1206AD16E5");
 
             entity.Property(e => e.Address).IsUnicode(false);
             entity.Property(e => e.Company)
@@ -54,7 +54,7 @@ public partial class ReservationTrackerContext : DbContext
 
         modelBuilder.Entity<Reservation>(entity =>
         {
-            entity.HasKey(e => e.ReservationId).HasName("PK__Reservat__B7EE5F24DF353988");
+            entity.HasKey(e => e.ReservationId).HasName("PK__Reservat__B7EE5F243632EBDD");
 
             entity.Property(e => e.CardLastFour)
                 .HasMaxLength(4)
@@ -83,9 +83,9 @@ public partial class ReservationTrackerContext : DbContext
 
         modelBuilder.Entity<Room>(entity =>
         {
-            entity.HasKey(e => e.RoomId).HasName("PK__Rooms__32863939720CBCA7");
+            entity.HasKey(e => e.RoomId).HasName("PK__Rooms__32863939526381F5");
 
-            entity.HasIndex(e => e.RoomNumber, "UQ__Rooms__AE10E07A5D43F0C7").IsUnique();
+            entity.HasIndex(e => e.RoomNumber, "UQ__Rooms__AE10E07A4BCB384A").IsUnique();
 
             entity.Property(e => e.Notes).IsUnicode(false);
             entity.Property(e => e.RoomNumber)
@@ -98,11 +98,11 @@ public partial class ReservationTrackerContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4C6A1C7976");
+            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4C6DE2FE98");
 
-            entity.HasIndex(e => e.GoogleId, "UQ__Users__A6FBF2FBD94CDB12").IsUnique();
+            entity.HasIndex(e => e.GoogleId, "UQ__Users__A6FBF2FBD7EDED63").IsUnique();
 
-            entity.HasIndex(e => e.Email, "UQ__Users__A9D10534EB1E0A09").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__Users__A9D105346E409037").IsUnique();
 
             entity.Property(e => e.DisplayName)
                 .HasMaxLength(100)
