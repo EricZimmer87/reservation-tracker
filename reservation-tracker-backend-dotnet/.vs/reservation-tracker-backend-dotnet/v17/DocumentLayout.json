@@ -3,24 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\Eric Zimmer\\Documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|c:\\users\\eric zimmer\\documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|c:\\users\\eric zimmer\\documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\models\\reservationtrackercontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|solutionrelative:models\\reservationtrackercontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|c:\\users\\eric zimmer\\documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|c:\\users\\eric zimmer\\documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\controllers\\roomscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|solutionrelative:controllers\\roomscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|c:\\users\\eric zimmer\\documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|solutionrelative:data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|c:\\users\\eric zimmer\\documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|c:\\users\\eric zimmer\\documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|c:\\users\\eric zimmer\\documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6CFA9233-AD48-407A-8768-0F4BEE04B0B1}|reservation-tracker-backend-dotnet.csproj|c:\\users\\eric zimmer\\documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\models\\guest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -34,32 +30,20 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ReservationTrackerContext.cs",
-              "DocumentMoniker": "C:\\Users\\Eric Zimmer\\Documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\Models\\ReservationTrackerContext.cs",
-              "RelativeDocumentMoniker": "Models\\ReservationTrackerContext.cs",
-              "ToolTip": "C:\\Users\\Eric Zimmer\\Documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\Models\\ReservationTrackerContext.cs",
-              "RelativeToolTip": "Models\\ReservationTrackerContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwBIAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "RoomsController.cs",
+              "DocumentMoniker": "C:\\Users\\Eric Zimmer\\Documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\Controllers\\RoomsController.cs",
+              "RelativeDocumentMoniker": "Controllers\\RoomsController.cs",
+              "ToolTip": "C:\\Users\\Eric Zimmer\\Documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\Controllers\\RoomsController.cs",
+              "RelativeToolTip": "Controllers\\RoomsController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-01T00:26:28.247Z",
+              "WhenOpened": "2025-10-01T01:34:38.881Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "launchSettings.json",
-              "DocumentMoniker": "C:\\Users\\Eric Zimmer\\Documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\Properties\\launchSettings.json",
-              "RelativeDocumentMoniker": "Properties\\launchSettings.json",
-              "ToolTip": "C:\\Users\\Eric Zimmer\\Documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\Properties\\launchSettings.json",
-              "RelativeToolTip": "Properties\\launchSettings.json",
-              "ViewState": "AgIAABUAAAAAAAAAAAAAABoAAAAdAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-09-30T21:25:26.217Z"
             },
             {
               "$type": "Document",
@@ -69,40 +53,40 @@
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "C:\\Users\\Eric Zimmer\\Documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAABcAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAC0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-30T21:18:39.876Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\Eric Zimmer\\Documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
               "ToolTip": "C:\\Users\\Eric Zimmer\\Documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\appsettings.json",
               "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAACHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2025-09-30T21:18:40.819Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "AppDbContext.cs",
               "DocumentMoniker": "C:\\Users\\Eric Zimmer\\Documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\Data\\AppDbContext.cs",
               "RelativeDocumentMoniker": "Data\\AppDbContext.cs",
               "ToolTip": "C:\\Users\\Eric Zimmer\\Documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\Data\\AppDbContext.cs",
               "RelativeToolTip": "Data\\AppDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-30T21:18:31.626Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
               "Title": "Guest.cs",
               "DocumentMoniker": "C:\\Users\\Eric Zimmer\\Documents\\reservation-tracker\\reservation-tracker-backend-dotnet\\Models\\Guest.cs",
               "RelativeDocumentMoniker": "Models\\Guest.cs",
