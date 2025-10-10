@@ -14,6 +14,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     // Seed database if in development
     if (builder.Environment.IsDevelopment())
     {
+        // Seed both synchronously and asynchronously, as per documentation
         options.UseSeeding((context, _) => DbSeeder.Seed(context))
             .UseAsyncSeeding((context, _, ct) => DbSeeder.SeedAsync(context, ct));
     }
