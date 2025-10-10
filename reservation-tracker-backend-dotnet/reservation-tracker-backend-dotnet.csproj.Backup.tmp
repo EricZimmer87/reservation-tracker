@@ -1,11 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>reservation_tracker_backend_dotnet</RootNamespace>
-    <UserSecretsId>78b984b2-0292-4f8c-abd5-5d6368a0aac6</UserSecretsId>
+    <UserSecretsId>21388900-ff71-42da-bcf0-fc7eaf60b806</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
