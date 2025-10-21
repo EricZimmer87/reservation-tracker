@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 // Helper to seed database
 public static class DbSeeder
 {
-    private static readonly List<Room> SeedRooms = new()
-    {
+    private static readonly List<Room> SeedRooms =
+    [
         new Room { RoomNumber = "101", RoomType = "Double Queen" },
         new Room { RoomNumber = "102", RoomType = "Double Queen" },
         new Room { RoomNumber = "103", RoomType = "Double Queen" },
@@ -24,10 +24,10 @@ public static class DbSeeder
         new Room { RoomNumber = "114", RoomType = "Double Queen" },
         new Room { RoomNumber = "115", RoomType = "King Suite" },
         new Room { RoomNumber = "116", RoomType = "King Suite" }
-    };
+    ];
 
-    private static readonly List<Guest> SeedGuests = new()
-    {
+    private static readonly List<Guest> SeedGuests =
+    [
         new Guest
         {
             FirstName = "John",
@@ -110,7 +110,7 @@ public static class DbSeeder
             Zipcode = "68901",
             Notes = "Talks a lot"
         }
-    };
+    ];
     
     public static void Seed(DbContext context)
     {
