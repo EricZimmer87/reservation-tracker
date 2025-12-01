@@ -10,6 +10,8 @@ obj/
 # User-specific files
 *.user
 *.suo
+*.userosscache
+*.sln.docstates
 
 # EF Core migration snapshot junk
 Migrations/
