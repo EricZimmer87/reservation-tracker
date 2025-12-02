@@ -1,5 +1,7 @@
 /secret/
 
+.env
+
 # Build results
 bin/
 obj/
