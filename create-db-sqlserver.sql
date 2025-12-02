@@ -60,8 +60,8 @@ CREATE TABLE Reservations (
 );
 
 -- USERS
-INSERT INTO Users (Email, IsAdmin)
-VALUES ('ericzimmer87@gmail.com', 1);
+-- INSERT INTO Users (Email, IsAdmin)
+-- VALUES ('ericzimmer87@gmail.com', 1);
 
 -- ROOMS DATA
 INSERT INTO Rooms (RoomNumber, RoomType) VALUES
