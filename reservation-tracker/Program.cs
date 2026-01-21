@@ -15,7 +15,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ReservationTrackerContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ReservationTracker")));
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 {
