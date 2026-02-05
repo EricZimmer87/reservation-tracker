@@ -73,7 +73,15 @@ namespace reservation_tracker.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GuestId"] = new SelectList(_context.Guests, "GuestId", "GuestId", reservation.GuestId);
+            ViewData["GuestId"] = new SelectList(_context.Guests
+              .Select(g => new
+              {
+                  g.GuestId,
+                  FullName = g.GuestId + " " + g.LastName + ", " + g.FirstName
+              })
+              .ToList(),
+              "GuestId",
+              "FullName");
             ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomId", reservation.RoomId);
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", reservation.UserId);
             return View(reservation);
