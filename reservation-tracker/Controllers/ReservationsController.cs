@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using reservation_tracker.Data;
@@ -50,7 +46,15 @@ namespace reservation_tracker.Controllers
         // GET: Reservations/Create
         public IActionResult Create()
         {
-            ViewData["GuestId"] = new SelectList(_context.Guests, "GuestId", "GuestId");
+            ViewData["GuestId"] = new SelectList(_context.Guests
+                .Select(g => new
+                {
+                    g.GuestId,
+                    FullName = g.GuestId + " " + g.LastName + ", " + g.FirstName
+                })
+                .ToList(),
+                "GuestId",
+                "FullName");
             ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomId");
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId");
             return View();
@@ -88,7 +92,18 @@ namespace reservation_tracker.Controllers
             {
                 return NotFound();
             }
-            ViewData["GuestId"] = new SelectList(_context.Guests, "GuestId", "GuestId", reservation.GuestId);
+            ViewData["GuestId"] = new SelectList(
+                _context.Guests
+                    .Select(g => new
+                    {
+                        g.GuestId,
+                        FullName = g.GuestId + " " + g.LastName + ", " + g.FirstName
+                    }),
+                "GuestId",
+                "FullName",
+                reservation.GuestId
+            );
+
             ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomId", reservation.RoomId);
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", reservation.UserId);
             return View(reservation);
@@ -126,7 +141,17 @@ namespace reservation_tracker.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GuestId"] = new SelectList(_context.Guests, "GuestId", "GuestId", reservation.GuestId);
+            ViewData["GuestId"] = new SelectList(
+                _context.Guests
+                    .Select(g => new
+                    {
+                        g.GuestId,
+                        FullName = g.GuestId + " " + g.LastName + ", " + g.FirstName
+                    }),
+                "GuestId",
+                "FullName",
+                reservation.GuestId
+            );
             ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomId", reservation.RoomId);
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", reservation.UserId);
             return View(reservation);
