@@ -55,7 +55,7 @@ namespace reservation_tracker.Controllers
                 .ToList(),
                 "GuestId",
                 "FullName");
-            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomId");
+            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomNumber");
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId");
             return View();
         }
@@ -82,7 +82,7 @@ namespace reservation_tracker.Controllers
               .ToList(),
               "GuestId",
               "FullName");
-            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomId", reservation.RoomId);
+            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomNumber", reservation.RoomId);
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", reservation.UserId);
             return View(reservation);
         }
@@ -112,7 +112,7 @@ namespace reservation_tracker.Controllers
                 reservation.GuestId
             );
 
-            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomId", reservation.RoomId);
+            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomNumber", reservation.RoomId);
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", reservation.UserId);
             return View(reservation);
         }
@@ -128,7 +128,6 @@ namespace reservation_tracker.Controllers
             {
                 return NotFound();
             }
-
             if (ModelState.IsValid)
             {
                 try
@@ -160,7 +159,7 @@ namespace reservation_tracker.Controllers
                 "FullName",
                 reservation.GuestId
             );
-            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomId", reservation.RoomId);
+            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomNumber", reservation.RoomId);
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", reservation.UserId);
             return View(reservation);
         }
