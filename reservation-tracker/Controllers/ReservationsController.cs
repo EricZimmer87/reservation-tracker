@@ -67,6 +67,7 @@ namespace reservation_tracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ReservationId,GuestId,UserId,RoomId,DateReserved,CheckInDate,CheckOutDate,NumberOfGuests,Notes,Status,CardLastFour")] Reservation reservation)
         {
+            ModelState.Remove("Room");
             if (ModelState.IsValid)
             {
                 _context.Add(reservation);
@@ -128,6 +129,7 @@ namespace reservation_tracker.Controllers
             {
                 return NotFound();
             }
+            ModelState.Remove("Room");
             if (ModelState.IsValid)
             {
                 try

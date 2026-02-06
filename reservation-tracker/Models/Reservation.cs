@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace reservation_tracker.Models;
+﻿namespace reservation_tracker.Models;
 
 public partial class Reservation
 {
