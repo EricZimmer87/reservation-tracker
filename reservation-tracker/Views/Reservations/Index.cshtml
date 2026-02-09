@@ -13,13 +13,32 @@
     <thead>
         <tr>
             <th>
+                <a asp-action="Index"
+                asp-route-sort="DateReserved"
+                asp-route-dir="@(ViewData["Sort"]?.ToString() == "DateReserved" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
                 @Html.DisplayNameFor(model => model.DateReserved)
+                </a>
             </th>
             <th>
+                <a asp-action="Index"
+                   asp-route-sort="LastName"
+                   asp-route-dir="@(ViewData["Sort"]?.ToString() == "LastName" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
+                    @Html.DisplayNameFor(model => model.Guest)
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="CheckInDate"
+                   asp-route-dir="@(ViewData["Sort"]?.ToString() == "CheckInDate" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
                 @Html.DisplayNameFor(model => model.CheckInDate)
+                </a>
             </th>
             <th>
+                <a asp-action="Index"
+                asp-route-sort="CheckOutDate"
+                asp-route-dir="@(ViewData["Sort"]?.ToString() == "CheckOutDate" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
                 @Html.DisplayNameFor(model => model.CheckOutDate)
+                </a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.NumberOfGuests)
@@ -32,9 +51,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CardLastFour)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Guest)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Room)
@@ -51,6 +67,11 @@
             <td>
                 @Html.DisplayFor(modelItem => item.DateReserved)
             </td>
+                <td>
+                    @(item.Guest != null
+                        ? $"{item.Guest.LastName}, {item.Guest.FirstName}"
+                        : "-")
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CheckInDate)
             </td>
@@ -64,16 +85,17 @@
                 @Html.DisplayFor(modelItem => item.Notes)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Status)
+                    <span class="@(item.Status?.Equals("Canceled", StringComparison.OrdinalIgnoreCase) == true
+                                  ? "fw-bold text-danger"
+                                  : "")">
+                        @item.Status
+                    </span>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CardLastFour)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Guest.GuestId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Room.RoomId)
+                @Html.DisplayFor(modelItem => item.Room.RoomNumber)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.User.UserId)

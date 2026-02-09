@@ -16,10 +16,42 @@ namespace reservation_tracker.Controllers
         }
 
         // GET: Reservations
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sort, string dir)
         {
-            var reservationTrackerContext = _context.Reservations.Include(r => r.Guest).Include(r => r.Room).Include(r => r.User);
-            return View(await reservationTrackerContext.ToListAsync());
+            dir = dir?.ToLower() == "desc" ? "desc" : "asc";
+
+            var reservations = _context.Reservations
+                .Include(r => r.Guest)
+                .Include(r => r.Room)
+                .Include(r => r.User)
+                .OrderBy(r => r.CheckInDate);
+
+            reservations = sort switch
+            {
+                "DateReserved" => dir == "asc"
+                ? reservations.OrderBy(r => r.DateReserved)
+                : reservations.OrderByDescending(r => r.DateReserved),
+
+                "CheckInDate" => dir == "asc"
+                ? reservations.OrderBy(r => r.CheckInDate)
+                : reservations.OrderByDescending(r => r.CheckInDate),
+
+                "CheckOutDate" => dir == "asc"
+                ? reservations.OrderBy(r => r.CheckOutDate)
+                : reservations.OrderByDescending(r => r.CheckOutDate),
+
+                "LastName" => dir == "asc"
+                ? reservations.OrderBy(r => r.Guest.LastName)
+                : reservations.OrderByDescending(r => r.Guest.LastName),
+
+                // Default sorting
+                _ => reservations.OrderBy(r => r.CheckInDate)
+            };
+
+            ViewData["Sort"] = sort;
+            ViewData["Dir"] = dir;
+
+            return View(await reservations.ToListAsync());
         }
 
         // GET: Reservations/Details/5
@@ -67,6 +99,7 @@ namespace reservation_tracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ReservationId,GuestId,UserId,RoomId,DateReserved,CheckInDate,CheckOutDate,NumberOfGuests,Notes,Status,CardLastFour")] Reservation reservation)
         {
+            // Must have this to avoid Room field null error, as it cannot be null in model
             ModelState.Remove("Room");
             if (ModelState.IsValid)
             {
@@ -129,6 +162,7 @@ namespace reservation_tracker.Controllers
             {
                 return NotFound();
             }
+            // Must have this to avoid Room field null error, as it cannot be null in model
             ModelState.Remove("Room");
             if (ModelState.IsValid)
             {
