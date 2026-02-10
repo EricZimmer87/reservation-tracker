@@ -56,18 +56,22 @@
             @Html.DisplayNameFor(model => model.Guest)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Guest.GuestId)
+            @(Model.Guest != null
+                ? $"{Model.Guest.LastName}, {Model.Guest.FirstName}"
+                : "-")
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Room)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Room.RoomId)
+            @Html.DisplayFor(model => model.Room.RoomNumber)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.User)
         </dt>
         <dd class = "col-sm-10">
+            @(Model.User != null
+            ? Model.User.UserId : "-")
             @Html.DisplayFor(model => model.User.UserId)
         </dd>
     </dl>
