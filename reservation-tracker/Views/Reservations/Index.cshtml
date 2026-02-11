@@ -102,7 +102,9 @@
                 @Html.DisplayFor(modelItem => item.Room.RoomNumber)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.User.UserId)
+                @(item.User != null
+                    ? item.User.UserId
+                    : "-")
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ReservationId">Edit</a> |

@@ -15,6 +15,24 @@ namespace reservation_tracker.Controllers
             _context = context;
         }
 
+        // Used to populate drop-down lists
+        private void PopulateSelectLists(long? guestId = null, long? roomId = null, long? userId = null)
+        {
+            ViewData["GuestId"] = new SelectList(_context.Guests
+                .Select(g => new
+                {
+                    g.GuestId,
+                    FullName = g.LastName + ", " + g.FirstName
+                })
+                .ToList(),
+                "GuestId",
+                "FullName",
+                guestId);
+
+            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomNumber", roomId);
+            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", userId);
+        }
+
         // GET: Reservations
         public async Task<IActionResult> Index(string sort, string dir)
         {
@@ -82,18 +100,20 @@ namespace reservation_tracker.Controllers
         // GET: Reservations/Create
         public IActionResult Create()
         {
-            ViewData["GuestId"] = new SelectList(_context.Guests
-                .Select(g => new
-                {
-                    g.GuestId,
-                    FullName = g.GuestId + " " + g.LastName + ", " + g.FirstName
-                })
-                .ToList(),
-                "GuestId",
-                "FullName");
-            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomNumber");
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId");
-            return View();
+            PopulateSelectLists();
+
+            var today = DateOnly.FromDateTime(DateTime.Today);
+
+            // Set default values for a new reservation
+            var model = new ReservationFormViewModel
+            {
+                CheckInDate = today,
+                CheckOutDate = today.AddDays(1),
+                NumberOfGuests = 1,
+                Status = "booked"
+            };
+
+            return View(model);
         }
 
         // POST: Reservations/Create
@@ -101,108 +121,96 @@ namespace reservation_tracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ReservationId,GuestId,UserId,RoomId,DateReserved,CheckInDate,CheckOutDate,NumberOfGuests,Notes,Status,CardLastFour")] Reservation reservation)
+        public async Task<IActionResult> Create(ReservationFormViewModel model)
         {
-            // Must have this to avoid Room field null error, as it cannot be null in model
-            ModelState.Remove("Room");
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(reservation);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                PopulateSelectLists(model.GuestId, model.RoomId, model.UserId);
+                return View(model);
             }
-            ViewData["GuestId"] = new SelectList(_context.Guests
-              .Select(g => new
-              {
-                  g.GuestId,
-                  FullName = g.GuestId + " " + g.LastName + ", " + g.FirstName
-              })
-              .ToList(),
-              "GuestId",
-              "FullName");
-            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomNumber", reservation.RoomId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", reservation.UserId);
-            return View(reservation);
+
+            var entity = new Reservation
+            {
+                GuestId = model.GuestId,
+                UserId = model.UserId,
+                RoomId = model.RoomId,
+
+                DateReserved = DateTime.Now,
+                CheckInDate = model.CheckInDate,
+                CheckOutDate = model.CheckOutDate,
+
+                NumberOfGuests = model.NumberOfGuests,
+                Notes = model.Notes,
+                Status = model.Status,
+                CardLastFour = model.CardLastFour
+            };
+
+            _context.Reservations.Add(entity);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Reservations/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var reservation = await _context.Reservations.FindAsync(id);
-            if (reservation == null)
-            {
-                return NotFound();
-            }
-            ViewData["GuestId"] = new SelectList(
-                _context.Guests
-                    .Select(g => new
-                    {
-                        g.GuestId,
-                        FullName = g.GuestId + " " + g.LastName + ", " + g.FirstName
-                    }),
-                "GuestId",
-                "FullName",
-                reservation.GuestId
-            );
+            var entity = await _context.Reservations.FindAsync(id);
+            if (entity == null) return NotFound();
 
-            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomNumber", reservation.RoomId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", reservation.UserId);
-            return View(reservation);
+            // Populate fields with existing data
+            var model = new ReservationFormViewModel
+            {
+                ReservationId = entity.ReservationId,
+                GuestId = entity.GuestId,
+                UserId = entity.UserId,
+                RoomId = entity.RoomId,
+                CheckInDate = entity.CheckInDate,
+                CheckOutDate = entity.CheckOutDate,
+                NumberOfGuests = entity.NumberOfGuests,
+                Notes = entity.Notes,
+                Status = entity.Status,
+                CardLastFour = entity.CardLastFour
+            };
+
+            PopulateSelectLists(model.GuestId, model.RoomId, model.UserId);
+            return View(model);
         }
+
 
         // POST: Reservations/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("ReservationId,GuestId,UserId,RoomId,DateReserved,CheckInDate,CheckOutDate,NumberOfGuests,Notes,Status,CardLastFour")] Reservation reservation)
+        public async Task<IActionResult> Edit(long id, ReservationFormViewModel model)
         {
-            if (id != reservation.ReservationId)
-            {
+            if (model.ReservationId == null || id != model.ReservationId.Value)
                 return NotFound();
-            }
-            // Must have this to avoid Room field null error, as it cannot be null in model
-            ModelState.Remove("Room");
-            if (ModelState.IsValid)
+
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(reservation);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ReservationExists(reservation.ReservationId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                PopulateSelectLists(model.GuestId, model.RoomId, model.UserId);
+                return View(model);
             }
-            ViewData["GuestId"] = new SelectList(
-                _context.Guests
-                    .Select(g => new
-                    {
-                        g.GuestId,
-                        FullName = g.GuestId + " " + g.LastName + ", " + g.FirstName
-                    }),
-                "GuestId",
-                "FullName",
-                reservation.GuestId
-            );
-            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomNumber", reservation.RoomId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", reservation.UserId);
-            return View(reservation);
+
+            var entity = await _context.Reservations.FindAsync(id);
+            if (entity == null) return NotFound();
+
+            entity.GuestId = model.GuestId;
+            entity.UserId = model.UserId;
+            entity.RoomId = model.RoomId;
+            entity.CheckInDate = model.CheckInDate;
+            entity.CheckOutDate = model.CheckOutDate;
+            entity.NumberOfGuests = model.NumberOfGuests;
+            entity.Notes = model.Notes;
+            entity.Status = model.Status;
+            entity.CardLastFour = model.CardLastFour;
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
+
 
         // GET: Reservations/Delete/5
         public async Task<IActionResult> Delete(long? id)

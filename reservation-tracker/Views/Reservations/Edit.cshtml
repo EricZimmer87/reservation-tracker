@@ -1,4 +1,4 @@
-﻿@model reservation_tracker.Models.Reservation
+﻿@model reservation_tracker.Models.ReservationFormViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -22,11 +22,6 @@
                 <label asp-for="RoomId" class="control-label">Room</label>
                 <select asp-for="RoomId" class="form-control" asp-items="@(ViewData["RoomId"] as SelectList)"></select>
                 <span asp-validation-for="RoomId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateReserved" class="control-label"></label>
-                <input asp-for="DateReserved" class="form-control" />
-                <span asp-validation-for="DateReserved" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CheckInDate" class="control-label"></label>
