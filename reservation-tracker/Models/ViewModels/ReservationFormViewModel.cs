@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace reservation_tracker.Models;
+namespace reservation_tracker.Models.ViewModels;
 
 public class ReservationFormViewModel : IValidatableObject
 {
@@ -30,8 +30,8 @@ public class ReservationFormViewModel : IValidatableObject
     {
         // If either date didn't bind, don't do the comparison yet.
         // (Let the [Required] / binder errors handle it.)
-        if (CheckInDate == default || CheckOutDate == default)
-            yield break;
+        //if (CheckInDate == default || CheckOutDate == default)
+        //    yield break;
 
         if (CheckOutDate <= CheckInDate)
         {

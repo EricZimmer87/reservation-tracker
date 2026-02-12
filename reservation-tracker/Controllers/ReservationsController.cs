@@ -3,17 +3,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using reservation_tracker.Data;
 using reservation_tracker.Models;
+using reservation_tracker.Models.ViewModels;
 
 namespace reservation_tracker.Controllers
 {
-    public class ReservationsController : Controller
+    public class ReservationsController(ReservationTrackerContext context) : Controller
     {
-        private readonly ReservationTrackerContext _context;
-
-        public ReservationsController(ReservationTrackerContext context)
-        {
-            _context = context;
-        }
+        private readonly ReservationTrackerContext _context = context;
 
         // Used to populate drop-down lists
         private void PopulateSelectLists(long? guestId = null, long? roomId = null, long? userId = null)
