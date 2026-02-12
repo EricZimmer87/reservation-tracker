@@ -35,10 +35,21 @@ namespace reservation_tracker.Controllers
             dir = dir?.ToLower() == "desc" ? "desc" : "asc";
 
             var reservations = _context.Reservations
-                .Include(r => r.Guest)
-                .Include(r => r.Room)
-                .Include(r => r.User)
-                .OrderBy(r => r.CheckInDate);
+                .Select(r => new ReservationIndexViewModel
+                {
+                    ReservationId = r.ReservationId,
+                    DateReserved = r.DateReserved,
+                    CheckInDate = r.CheckInDate,
+                    CheckOutDate = r.CheckOutDate,
+                    GuestLastName = r.Guest.LastName,
+                    GuestFirstName = r.Guest.FirstName,
+                    NumberOfGuests = r.NumberOfGuests,
+                    Notes = r.Notes,
+                    Status = r.Status,
+                    CardLastFour = r.CardLastFour,
+                    RoomNumber = r.Room.RoomNumber,
+                    ReservedByDisplayName = r.User.DisplayName
+                });
 
             reservations = sort switch
             {
@@ -55,12 +66,16 @@ namespace reservation_tracker.Controllers
                 : reservations.OrderByDescending(r => r.CheckOutDate),
 
                 "LastName" => dir == "asc"
-                ? reservations.OrderBy(r => r.Guest.LastName)
-                : reservations.OrderByDescending(r => r.Guest.LastName),
+                ? reservations.OrderBy(r => r.GuestLastName)
+                : reservations.OrderByDescending(r => r.GuestLastName),
 
                 "RoomNumber" => dir == "asc"
-                ? reservations.OrderBy(r => r.Room.RoomNumber)
-                : reservations.OrderByDescending(r => r.Room.RoomNumber),
+                ? reservations.OrderBy(r => r.RoomNumber)
+                : reservations.OrderByDescending(r => r.RoomNumber),
+
+                "DisplayName" => dir == "asc"
+                ? reservations.OrderBy(r => r.ReservedByDisplayName)
+                : reservations.OrderByDescending(r => r.ReservedByDisplayName),
 
                 // Default sorting
                 _ => reservations.OrderBy(r => r.CheckInDate)

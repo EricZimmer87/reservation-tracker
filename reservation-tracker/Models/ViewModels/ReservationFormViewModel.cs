@@ -7,6 +7,7 @@ public class ReservationFormViewModel : IValidatableObject
     public long? ReservationId { get; set; } // null for Create, set for Edit
 
     public long? GuestId { get; set; }
+    [Display(Name = "Reserved By")]
     public long? UserId { get; set; }
 
     [Required]
@@ -28,11 +29,6 @@ public class ReservationFormViewModel : IValidatableObject
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        // If either date didn't bind, don't do the comparison yet.
-        // (Let the [Required] / binder errors handle it.)
-        //if (CheckInDate == default || CheckOutDate == default)
-        //    yield break;
-
         if (CheckOutDate <= CheckInDate)
         {
             yield return new ValidationResult(

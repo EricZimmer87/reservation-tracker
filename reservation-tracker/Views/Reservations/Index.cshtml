@@ -1,4 +1,4 @@
-﻿@model IEnumerable<reservation_tracker.Models.Reservation>
+﻿@model IEnumerable<reservation_tracker.Models.ViewModels.ReservationIndexViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -23,7 +23,7 @@
                 <a asp-action="Index"
                    asp-route-sort="LastName"
                    asp-route-dir="@(ViewData["Sort"]?.ToString() == "LastName" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
-                    @Html.DisplayNameFor(model => model.Guest)
+                    @Html.DisplayNameFor(model => model.GuestFullName)
                 </a>
             </th>
             <th>
@@ -54,13 +54,17 @@
             </th>
             <th>
                 <a asp-action="Index"
-                   asp-route-sort="RoomNumber"
-                   asp-route-dir="@(ViewData["Sort"]?.ToString() == "RoomNumber" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
-                    @Html.DisplayNameFor(model => model.Room.RoomNumber)
+                asp-route-sort="RoomNumber"
+                asp-route-dir="@(ViewData["Sort"]?.ToString() == "RoomNumber" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
+                @Html.DisplayNameFor(model => model.RoomNumber)
                 </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User)
+                <a asp-action="Index"
+                asp-route-sort="DisplayName"
+                asp-route-dir="@(ViewData["Sort"]?.ToString() == "DisplayName" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
+                @Html.DisplayNameFor(model => model.ReservedByDisplayName)
+                </a>
             </th>
             <th></th>
         </tr>
@@ -71,10 +75,8 @@
             <td>
                 @Html.DisplayFor(modelItem => item.DateReserved)
             </td>
-                <td>
-                    @(item.Guest != null
-                        ? $"{item.Guest.LastName}, {item.Guest.FirstName}"
-                        : "-")
+            <td>
+                @item.GuestFullName
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CheckInDate)
@@ -99,12 +101,14 @@
                 @Html.DisplayFor(modelItem => item.CardLastFour)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Room.RoomNumber)
+                @Html.DisplayFor(modelItem => item.RoomNumber)
             </td>
             <td>
-                @(item.User != null
-                    ? item.User.UserId
-                    : "-")
+                    @(
+                        item.ReservedByDisplayName != null
+                        ? item.ReservedByDisplayName
+                        : "-"
+                )
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ReservationId">Edit</a> |
