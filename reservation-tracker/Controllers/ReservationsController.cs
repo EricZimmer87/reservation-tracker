@@ -66,8 +66,8 @@ namespace reservation_tracker.Controllers
                 : reservations.OrderByDescending(r => r.CheckOutDate),
 
                 "LastName" => dir == "asc"
-                ? reservations.OrderBy(r => r.GuestLastName)
-                : reservations.OrderByDescending(r => r.GuestLastName),
+                ? reservations.OrderBy(r => r.GuestLastName).ThenBy(r => r.GuestFirstName)
+                : reservations.OrderByDescending(r => r.GuestLastName).ThenBy(r => r.GuestFirstName),
 
                 "RoomNumber" => dir == "asc"
                 ? reservations.OrderBy(r => r.RoomNumber)

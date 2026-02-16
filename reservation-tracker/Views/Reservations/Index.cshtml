@@ -2,6 +2,18 @@
 
 @{
     ViewData["Title"] = "Index";
+
+    // Helper
+    string currentSort = ViewData["Sort"]?.ToString();
+    string currentDir = ViewData["Dir"]?.ToString() ?? "asc";
+
+    string Arrow(string column)
+    {
+        if (currentSort != column)
+            return "";
+
+        return currentDir == "asc" ? " ↑" : " ↓";
+    }
 }
 
 <h1>Index</h1>
@@ -16,28 +28,28 @@
                 <a asp-action="Index"
                 asp-route-sort="DateReserved"
                 asp-route-dir="@(ViewData["Sort"]?.ToString() == "DateReserved" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
-                @Html.DisplayNameFor(model => model.DateReserved)
+                    @Html.DisplayNameFor(model => model.DateReserved)@Arrow("DateReserved")
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="LastName"
                    asp-route-dir="@(ViewData["Sort"]?.ToString() == "LastName" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
-                    @Html.DisplayNameFor(model => model.GuestFullName)
+                    @Html.DisplayNameFor(model => model.GuestFullName)@Arrow("LastName")
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="CheckInDate"
                    asp-route-dir="@(ViewData["Sort"]?.ToString() == "CheckInDate" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
-                @Html.DisplayNameFor(model => model.CheckInDate)
+                @Html.DisplayNameFor(model => model.CheckInDate)@Arrow("CheckInDate")
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                 asp-route-sort="CheckOutDate"
                 asp-route-dir="@(ViewData["Sort"]?.ToString() == "CheckOutDate" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
-                @Html.DisplayNameFor(model => model.CheckOutDate)
+                @Html.DisplayNameFor(model => model.CheckOutDate)@Arrow("CheckOutDate")
                 </a>
             </th>
             <th>
@@ -56,14 +68,14 @@
                 <a asp-action="Index"
                 asp-route-sort="RoomNumber"
                 asp-route-dir="@(ViewData["Sort"]?.ToString() == "RoomNumber" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
-                @Html.DisplayNameFor(model => model.RoomNumber)
+                    @Html.DisplayNameFor(model => model.RoomNumber)@Arrow("RoomNumber")
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                 asp-route-sort="DisplayName"
                 asp-route-dir="@(ViewData["Sort"]?.ToString() == "DisplayName" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
-                @Html.DisplayNameFor(model => model.ReservedByDisplayName)
+                    @Html.DisplayNameFor(model => model.ReservedByDisplayName)@Arrow("DisplayName")
                 </a>
             </th>
             <th></th>
