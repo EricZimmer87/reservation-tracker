@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using reservation_tracker.Data;
 using reservation_tracker.Models;
+using reservation_tracker.Models.ViewModels;
 
 namespace reservation_tracker.Controllers
 {
@@ -15,9 +16,45 @@ namespace reservation_tracker.Controllers
         }
 
         // GET: Guests
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sort, string dir)
         {
-            return View(await _context.Guests.ToListAsync());
+            dir = string.Equals(dir, "desc", StringComparison.OrdinalIgnoreCase)
+                ? "desc" : "asc";
+
+            var guests = _context.Guests
+                .Select(g => new GuestIndexViewModel
+                {
+                    GuestId = g.GuestId,
+                    FirstName = g.FirstName,
+                    LastName = g.LastName,
+                    PhoneNumber = g.PhoneNumber,
+                    Address = g.Address,
+                    City = g.City,
+                    State = g.State,
+                    Zipcode = g.Zipcode,
+                    Email = g.Email,
+                    Notes = g.Notes,
+                    Company = g.Company
+                });
+
+            guests = sort switch
+            {
+                "LastName" => dir == "asc"
+                ? guests.OrderBy(g => g.LastName).ThenBy(g => g.FirstName)
+                : guests.OrderByDescending(g => g.LastName).ThenBy(g => g.FirstName),
+
+                // Default sorting
+                _ => guests.OrderBy(g => g.LastName)
+            };
+
+            var pageModel = new GuestIndexPageViewModel
+            {
+                Guests = await guests.ToListAsync(),
+                CurrentSort = sort,
+                CurrentDir = dir
+            };
+
+            return View(pageModel);
         }
 
         // GET: Guests/Details/5

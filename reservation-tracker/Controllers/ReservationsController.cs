@@ -32,7 +32,8 @@ namespace reservation_tracker.Controllers
         // GET: Reservations
         public async Task<IActionResult> Index(string sort, string dir)
         {
-            dir = dir?.ToLower() == "desc" ? "desc" : "asc";
+            dir = string.Equals(dir, "desc", StringComparison.OrdinalIgnoreCase)
+                ? "desc" : "asc";
 
             var reservations = _context.Reservations
                 .Select(r => new ReservationIndexViewModel

@@ -27,28 +27,28 @@
             <th>
                 <a asp-action="Index"
                 asp-route-sort="DateReserved"
-                asp-route-dir="@(ViewData["Sort"]?.ToString() == "DateReserved" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
+                asp-route-dir="@(currentSort == "DateReserved" && currentDir == "asc" ? "desc" : "asc")">
                     @Html.DisplayNameFor(model => model.DateReserved)@Arrow("DateReserved")
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="LastName"
-                   asp-route-dir="@(ViewData["Sort"]?.ToString() == "LastName" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
+                   asp-route-dir="@(currentSort == "LastName" && currentDir == "asc" ? "desc" : "asc")">
                     @Html.DisplayNameFor(model => model.GuestFullName)@Arrow("LastName")
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="CheckInDate"
-                   asp-route-dir="@(ViewData["Sort"]?.ToString() == "CheckInDate" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
+                   asp-route-dir="@(currentSort == "CheckInDate" && currentDir == "asc" ? "desc" : "asc")">
                 @Html.DisplayNameFor(model => model.CheckInDate)@Arrow("CheckInDate")
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                 asp-route-sort="CheckOutDate"
-                asp-route-dir="@(ViewData["Sort"]?.ToString() == "CheckOutDate" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
+                asp-route-dir="@(currentSort == "CheckOutDate" && currentDir == "asc" ? "desc" : "asc")">
                 @Html.DisplayNameFor(model => model.CheckOutDate)@Arrow("CheckOutDate")
                 </a>
             </th>
@@ -67,14 +67,14 @@
             <th>
                 <a asp-action="Index"
                 asp-route-sort="RoomNumber"
-                asp-route-dir="@(ViewData["Sort"]?.ToString() == "RoomNumber" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
+                asp-route-dir="@(currentSort == "RoomNumber" && currentDir == "asc" ? "desc" : "asc")">
                     @Html.DisplayNameFor(model => model.RoomNumber)@Arrow("RoomNumber")
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                 asp-route-sort="DisplayName"
-                asp-route-dir="@(ViewData["Sort"]?.ToString() == "DisplayName" && ViewData["Dir"]?.ToString() == "asc" ? "desc" : "asc")">
+                asp-route-dir="@(currentSort == "DisplayName" & currentDir == "asc" ? "desc" : "asc")">
                     @Html.DisplayNameFor(model => model.ReservedByDisplayName)@Arrow("DisplayName")
                 </a>
             </th>

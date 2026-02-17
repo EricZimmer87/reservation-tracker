@@ -1,7 +1,11 @@
-﻿@model IEnumerable<reservation_tracker.Models.Guest>
+﻿@* @model IEnumerable<reservation_tracker.Models.ViewModels.GuestIndexViewModel> *@
 
+@model reservation_tracker.Models.ViewModels.GuestIndexPageViewModel
 @{
     ViewData["Title"] = "Index";
+
+    string currentSort = Model.CurrentSort;
+    string currentDir = Model.CurrentDir ?? "asc";
 }
 
 <h1>Index</h1>
@@ -13,46 +17,44 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                <a asp-action="Index"
+                asp-route-sort="LastName"
+                asp-route-dir="@(currentSort == "LastName" && currentDir == "asc" ? "desc" : "asc")">
+                Name
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
+                PhoneNumber
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PhoneNumber)
+                Address
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Address)
+                City
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.City)
+                State
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.State)
+                Zipcode
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Zipcode)
+                Email
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Email)
+                Notes
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Notes)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Company)
+                Company
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Guests) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
+                @Html.DisplayFor(modelItem => item.FullName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PhoneNumber)

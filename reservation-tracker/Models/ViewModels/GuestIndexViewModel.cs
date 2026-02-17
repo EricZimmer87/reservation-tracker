@@ -1,4 +1,6 @@
-﻿namespace reservation_tracker.Models.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace reservation_tracker.Models.ViewModels
 {
     public class GuestIndexViewModel
     {
@@ -7,6 +9,7 @@
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
+        [Display(Name = "Name")]
         public string FullName =>
             string.IsNullOrEmpty(LastName)
             ? "-"
@@ -27,7 +30,5 @@
         public string? Notes { get; set; }
 
         public string? Company { get; set; }
-
-        public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
     }
 }
