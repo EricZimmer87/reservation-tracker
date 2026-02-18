@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using reservation_tracker.Data;
 using reservation_tracker.Models;
-using reservation_tracker.Models.ViewModels;
+using reservation_tracker.Models.ViewModels.Guests;
 
 namespace reservation_tracker.Controllers
 {
@@ -42,6 +42,38 @@ namespace reservation_tracker.Controllers
                 "LastName" => dir == "asc"
                 ? guests.OrderBy(g => g.LastName).ThenBy(g => g.FirstName)
                 : guests.OrderByDescending(g => g.LastName).ThenBy(g => g.FirstName),
+
+                "PhoneNumber" => dir == "asc"
+                ? guests.OrderBy(g => g.PhoneNumber)
+                : guests.OrderByDescending(g => g.PhoneNumber),
+
+                "Address" => dir == "asc"
+                ? guests.OrderBy(g => g.Address)
+                : guests.OrderByDescending(g => g.Address),
+
+                "City" => dir == "asc"
+                ? guests.OrderBy(g => g.City)
+                : guests.OrderByDescending(g => g.City),
+
+                "State" => dir == "asc"
+                ? guests.OrderBy(g => g.State)
+                : guests.OrderByDescending(g => g.State),
+
+                "Zipcode" => dir == "asc"
+                ? guests.OrderBy(g => g.Zipcode)
+                : guests.OrderByDescending(g => g.Zipcode),
+
+                "Email" => dir == "asc"
+                ? guests.OrderBy(g => g.Email)
+                : guests.OrderByDescending(g => g.Email),
+
+                "Notes" => dir == "asc"
+                ? guests.OrderBy(g => g.Notes)
+                : guests.OrderByDescending(g => g.Notes),
+
+                "Company" => dir == "asc"
+                ? guests.OrderBy(g => g.Company)
+                : guests.OrderByDescending(g => g.Company),
 
                 // Default sorting
                 _ => guests.OrderBy(g => g.LastName)

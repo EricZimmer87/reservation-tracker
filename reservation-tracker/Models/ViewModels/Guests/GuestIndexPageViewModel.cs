@@ -1,4 +1,4 @@
-﻿namespace reservation_tracker.Models.ViewModels
+﻿namespace reservation_tracker.Models.ViewModels.Guests
 {
     public class GuestIndexPageViewModel
     {

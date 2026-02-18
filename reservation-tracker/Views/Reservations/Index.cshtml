@@ -1,19 +1,11 @@
-﻿@model IEnumerable<reservation_tracker.Models.ViewModels.ReservationIndexViewModel>
+﻿@model reservation_tracker.Models.ViewModels.Reservations.ReservationIndexPageViewModel
 
 @{
     ViewData["Title"] = "Index";
 
-    // Helper
-    string currentSort = ViewData["Sort"]?.ToString();
-    string currentDir = ViewData["Dir"]?.ToString() ?? "asc";
-
-    string Arrow(string column)
-    {
-        if (currentSort != column)
-            return "";
-
-        return currentDir == "asc" ? " ↑" : " ↓";
-    }
+    // Sorting variables
+    string currentSort = Model.CurrentSort;
+    string currentDir = Model.CurrentDir ?? "asc";
 }
 
 <h1>Index</h1>
@@ -28,61 +20,77 @@
                 <a asp-action="Index"
                 asp-route-sort="DateReserved"
                 asp-route-dir="@(currentSort == "DateReserved" && currentDir == "asc" ? "desc" : "asc")">
-                    @Html.DisplayNameFor(model => model.DateReserved)@Arrow("DateReserved")
+                 Date Reserved
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="LastName"
                    asp-route-dir="@(currentSort == "LastName" && currentDir == "asc" ? "desc" : "asc")">
-                    @Html.DisplayNameFor(model => model.GuestFullName)@Arrow("LastName")
+                    Guest Name
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="CheckInDate"
                    asp-route-dir="@(currentSort == "CheckInDate" && currentDir == "asc" ? "desc" : "asc")">
-                @Html.DisplayNameFor(model => model.CheckInDate)@Arrow("CheckInDate")
+                    Check-In Date
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                 asp-route-sort="CheckOutDate"
                 asp-route-dir="@(currentSort == "CheckOutDate" && currentDir == "asc" ? "desc" : "asc")">
-                @Html.DisplayNameFor(model => model.CheckOutDate)@Arrow("CheckOutDate")
+                    Check-Out Date
                 </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.NumberOfGuests)
+                <a asp-action="Index"
+                   asp-route-sort="NumberOfGuests"
+                   asp-route-dir="@(currentSort == "NumberOfGuests" && currentDir == "asc" ? "desc" : "asc")">
+                    Number of Guests
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Notes)
+                <a asp-action="Index"
+                   asp-route-sort="Notes"
+                   asp-route-dir="@(currentSort == "Notes" && currentDir == "asc" ? "desc" : "asc")">
+                    Notes
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Status)
+                <a asp-action="Index"
+                   asp-route-sort="Status"
+                   asp-route-dir="@(currentSort == "Status" && currentDir == "asc" ? "desc" : "asc")">
+                    Status
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CardLastFour)
+                <a asp-action="Index"
+                   asp-route-sort="CardLastFour"
+                   asp-route-dir="@(currentSort == "CardLastFour" && currentDir == "asc" ? "desc" : "asc")">
+                    Card Last Four
+                </a>
             </th>
             <th>
                 <a asp-action="Index"
                 asp-route-sort="RoomNumber"
                 asp-route-dir="@(currentSort == "RoomNumber" && currentDir == "asc" ? "desc" : "asc")">
-                    @Html.DisplayNameFor(model => model.RoomNumber)@Arrow("RoomNumber")
+                    Room Number
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                 asp-route-sort="DisplayName"
                 asp-route-dir="@(currentSort == "DisplayName" & currentDir == "asc" ? "desc" : "asc")">
-                    @Html.DisplayNameFor(model => model.ReservedByDisplayName)@Arrow("DisplayName")
+                    Reserved By
                 </a>
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Reservations) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.DateReserved)

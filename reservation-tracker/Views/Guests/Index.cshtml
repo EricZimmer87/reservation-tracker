@@ -1,9 +1,8 @@
-﻿@* @model IEnumerable<reservation_tracker.Models.ViewModels.GuestIndexViewModel> *@
-
-@model reservation_tracker.Models.ViewModels.GuestIndexPageViewModel
+﻿@model reservation_tracker.Models.ViewModels.Guests.GuestIndexPageViewModel
 @{
     ViewData["Title"] = "Index";
 
+    // Sorting variables
     string currentSort = Model.CurrentSort;
     string currentDir = Model.CurrentDir ?? "asc";
 }
@@ -20,32 +19,64 @@
                 <a asp-action="Index"
                 asp-route-sort="LastName"
                 asp-route-dir="@(currentSort == "LastName" && currentDir == "asc" ? "desc" : "asc")">
-                Name
+                    Name
                 </a>
             </th>
             <th>
-                PhoneNumber
+                <a asp-action="Index"
+                   asp-route-sort="PhoneNumber"
+                   asp-route-dir="@(currentSort == "PhoneNumber" && currentDir == "asc" ? "desc" : "asc")">
+                    Phone Number
+                </a>
             </th>
             <th>
-                Address
+                <a asp-action="Index"
+                   asp-route-sort="Address"
+                   asp-route-dir="@(currentSort == "Address" && currentDir == "asc" ? "desc" : "asc")">
+                    Address
+                </a>
             </th>
             <th>
-                City
+                <a asp-action="Index"
+                asp-route-sort="City"
+                asp-route-dir="@(currentSort == "City" && currentDir == "asc" ? "desc" : "asc")">
+                    City
+                </a>
             </th>
             <th>
-                State
+                <a asp-action="Index"
+                asp-route-sort="State"
+                asp-route-dir="@(currentSort == "State" && currentDir == "asc" ? "desc" : "asc")">
+                    State
+                </a>
             </th>
             <th>
-                Zipcode
+                <a asp-action="Index"
+                   asp-route-sort="Zipcode"
+                   asp-route-dir="@(currentSort == "Zipcode" && currentDir == "asc" ? "desc" : "asc")">
+                    Zip Code
+                </a>
             </th>
             <th>
-                Email
+                <a asp-action="Index"
+                   asp-route-sort="Email"
+                   asp-route-dir="@(currentSort == "Email" && currentDir == "asc" ? "desc" : "asc")">
+                    Email
+                </a>
             </th>
             <th>
-                Notes
+                <a asp-action="Index"
+                   asp-route-sort="Notes"
+                   asp-route-dir="@(currentSort == "Notes" && currentDir == "asc" ? "desc" : "asc")">
+                    Notes
+                </a>
             </th>
             <th>
-                Company
+                <a asp-action="Index"
+                   asp-route-sort="Company"
+                   asp-route-dir="@(currentSort == "Company" && currentDir == "asc" ? "desc" : "asc")">
+                    Company
+                </a>
             </th>
             <th></th>
         </tr>

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace reservation_tracker.Models.ViewModels
+namespace reservation_tracker.Models.ViewModels.Reservations
 {
     public class ReservationIndexViewModel
     {

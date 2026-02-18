@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using reservation_tracker.Data;
 using reservation_tracker.Models;
-using reservation_tracker.Models.ViewModels;
+using reservation_tracker.Models.ViewModels.Reservations;
 
 namespace reservation_tracker.Controllers
 {
@@ -58,6 +58,10 @@ namespace reservation_tracker.Controllers
                 ? reservations.OrderBy(r => r.DateReserved)
                 : reservations.OrderByDescending(r => r.DateReserved),
 
+                "LastName" => dir == "asc"
+                ? reservations.OrderBy(r => r.GuestLastName).ThenBy(r => r.GuestFirstName)
+                : reservations.OrderByDescending(r => r.GuestLastName).ThenBy(r => r.GuestFirstName),
+
                 "CheckInDate" => dir == "asc"
                 ? reservations.OrderBy(r => r.CheckInDate)
                 : reservations.OrderByDescending(r => r.CheckInDate),
@@ -66,9 +70,21 @@ namespace reservation_tracker.Controllers
                 ? reservations.OrderBy(r => r.CheckOutDate)
                 : reservations.OrderByDescending(r => r.CheckOutDate),
 
-                "LastName" => dir == "asc"
-                ? reservations.OrderBy(r => r.GuestLastName).ThenBy(r => r.GuestFirstName)
-                : reservations.OrderByDescending(r => r.GuestLastName).ThenBy(r => r.GuestFirstName),
+                "NumberOfGuests" => dir == "asc"
+                ? reservations.OrderBy(r => r.NumberOfGuests)
+                : reservations.OrderByDescending(r => r.NumberOfGuests),
+
+                "Notes" => dir == "asc"
+                ? reservations.OrderBy(r => r.Notes)
+                : reservations.OrderByDescending(r => r.Notes),
+
+                "Status" => dir == "asc"
+                ? reservations.OrderBy(r => r.Status)
+                : reservations.OrderByDescending(r => r.Status),
+
+                "CardLastFour" => dir == "asc"
+                ? reservations.OrderBy(r => r.CardLastFour)
+                : reservations.OrderByDescending(r => r.CardLastFour),
 
                 "RoomNumber" => dir == "asc"
                 ? reservations.OrderBy(r => r.RoomNumber)
@@ -82,10 +98,17 @@ namespace reservation_tracker.Controllers
                 _ => reservations.OrderBy(r => r.CheckInDate)
             };
 
-            ViewData["Sort"] = sort;
-            ViewData["Dir"] = dir;
+            //ViewData["Sort"] = sort;
+            //ViewData["Dir"] = dir;
 
-            return View(await reservations.ToListAsync());
+            var pageModel = new ReservationIndexPageViewModel
+            {
+                Reservations = await reservations.ToListAsync(),
+                CurrentSort = sort,
+                CurrentDir = dir
+            };
+
+            return View(pageModel);
         }
 
         // GET: Reservations/Details/5
