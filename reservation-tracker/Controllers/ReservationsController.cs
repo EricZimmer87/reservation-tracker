@@ -30,12 +30,21 @@ namespace reservation_tracker.Controllers
         }
 
         // GET: Reservations
-        public async Task<IActionResult> Index(string sort, string dir)
+        public async Task<IActionResult> Index(string sort, string dir, int page = 1)
         {
             dir = string.Equals(dir, "desc", StringComparison.OrdinalIgnoreCase)
                 ? "desc" : "asc";
 
+            // Fixed page size of 25
+            const int pageSize = 25;
+            // Ensure page is never lower than 1
+            if (page < 1) page = 1;
+
+            var today = DateOnly.FromDateTime(DateTime.Today);
+
             var reservations = _context.Reservations
+                .AsNoTracking() // do not track in change tracker
+                .Where(r => r.CheckOutDate >= today) // filter out past reservations
                 .Select(r => new ReservationIndexViewModel
                 {
                     ReservationId = r.ReservationId,
@@ -55,57 +64,64 @@ namespace reservation_tracker.Controllers
             reservations = sort switch
             {
                 "DateReserved" => dir == "asc"
-                ? reservations.OrderBy(r => r.DateReserved)
-                : reservations.OrderByDescending(r => r.DateReserved),
+                ? reservations.OrderBy(r => r.DateReserved).ThenBy(r => r.ReservationId)
+                : reservations.OrderByDescending(r => r.DateReserved).ThenBy(r => r.ReservationId),
 
                 "LastName" => dir == "asc"
-                ? reservations.OrderBy(r => r.GuestLastName).ThenBy(r => r.GuestFirstName)
-                : reservations.OrderByDescending(r => r.GuestLastName).ThenBy(r => r.GuestFirstName),
+                ? reservations.OrderBy(r => r.GuestLastName).ThenBy(r => r.GuestFirstName).ThenBy(r => r.ReservationId)
+                : reservations.OrderByDescending(r => r.GuestLastName).ThenBy(r => r.GuestFirstName).ThenBy(r => r.ReservationId),
 
                 "CheckInDate" => dir == "asc"
-                ? reservations.OrderBy(r => r.CheckInDate)
-                : reservations.OrderByDescending(r => r.CheckInDate),
+                ? reservations.OrderBy(r => r.CheckInDate).ThenBy(r => r.ReservationId)
+                : reservations.OrderByDescending(r => r.CheckInDate).ThenBy(r => r.ReservationId),
 
                 "CheckOutDate" => dir == "asc"
-                ? reservations.OrderBy(r => r.CheckOutDate)
-                : reservations.OrderByDescending(r => r.CheckOutDate),
+                ? reservations.OrderBy(r => r.CheckOutDate).ThenBy(r => r.ReservationId)
+                : reservations.OrderByDescending(r => r.CheckOutDate).ThenBy(r => r.ReservationId),
 
                 "NumberOfGuests" => dir == "asc"
-                ? reservations.OrderBy(r => r.NumberOfGuests)
-                : reservations.OrderByDescending(r => r.NumberOfGuests),
+                ? reservations.OrderBy(r => r.NumberOfGuests).ThenBy(r => r.ReservationId)
+                : reservations.OrderByDescending(r => r.NumberOfGuests).ThenBy(r => r.ReservationId),
 
                 "Notes" => dir == "asc"
-                ? reservations.OrderBy(r => r.Notes)
-                : reservations.OrderByDescending(r => r.Notes),
+                ? reservations.OrderBy(r => r.Notes).ThenBy(r => r.ReservationId)
+                : reservations.OrderByDescending(r => r.Notes).ThenBy(r => r.ReservationId),
 
                 "Status" => dir == "asc"
-                ? reservations.OrderBy(r => r.Status)
-                : reservations.OrderByDescending(r => r.Status),
+                ? reservations.OrderBy(r => r.Status).ThenBy(r => r.ReservationId)
+                : reservations.OrderByDescending(r => r.Status).ThenBy(r => r.ReservationId),
 
                 "CardLastFour" => dir == "asc"
-                ? reservations.OrderBy(r => r.CardLastFour)
-                : reservations.OrderByDescending(r => r.CardLastFour),
+                ? reservations.OrderBy(r => r.CardLastFour).ThenBy(r => r.ReservationId)
+                : reservations.OrderByDescending(r => r.CardLastFour).ThenBy(r => r.ReservationId),
 
                 "RoomNumber" => dir == "asc"
-                ? reservations.OrderBy(r => r.RoomNumber)
-                : reservations.OrderByDescending(r => r.RoomNumber),
+                ? reservations.OrderBy(r => r.RoomNumber).ThenBy(r => r.ReservationId)
+                : reservations.OrderByDescending(r => r.RoomNumber).ThenBy(r => r.ReservationId),
 
                 "DisplayName" => dir == "asc"
-                ? reservations.OrderBy(r => r.ReservedByDisplayName)
-                : reservations.OrderByDescending(r => r.ReservedByDisplayName),
+                ? reservations.OrderBy(r => r.ReservedByDisplayName).ThenBy(r => r.ReservationId)
+                : reservations.OrderByDescending(r => r.ReservedByDisplayName).ThenBy(r => r.ReservationId),
 
                 // Default sorting
-                _ => reservations.OrderBy(r => r.CheckInDate)
+                _ => reservations.OrderBy(r => r.CheckInDate).ThenBy(r => r.ReservationId)
             };
 
-            //ViewData["Sort"] = sort;
-            //ViewData["Dir"] = dir;
+            var totalCount = await reservations.CountAsync();
+
+            var items = await reservations
+                .Skip((page - 1) * pageSize) // filter out prev pages
+                .Take(pageSize) // take only pageSize amount of res to display
+                .ToListAsync();
 
             var pageModel = new ReservationIndexPageViewModel
             {
-                Reservations = await reservations.ToListAsync(),
+                Reservations = items,
                 CurrentSort = sort,
-                CurrentDir = dir
+                CurrentDir = dir,
+                Page = page,
+                PageSize = pageSize,
+                TotalCount = totalCount
             };
 
             return View(pageModel);

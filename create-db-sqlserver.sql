@@ -97,43 +97,43 @@ INSERT INTO Reservations
     (GuestId, UserId, RoomId, CheckInDate, CheckOutDate, NumberOfGuests, Notes, Status, CardLastFour)
 VALUES
 -- Feb 15–17
-(1, NULL, 1,  '2025-02-15', '2025-02-17', 2, 'Requested quiet room', 'past', '1234'),
+(1, NULL, 1,  '2026-02-15', '2026-02-17', 2, 'Requested quiet room', 'past', '1234'),
 
 -- Feb 16–18
-(2, NULL, 2,  '2025-02-16', '2025-02-18', 1, 'Late arrival confirmed', 'past', '5678'),
+(2, NULL, 2,  '2026-02-16', '2026-02-18', 1, 'Late arrival confirmed', 'past', '5678'),
 
 -- Feb 18–20
-(3, NULL, 15, '2025-02-18', '2025-02-20', 2, 'Business stay', 'past', '9012'),
+(3, NULL, 15, '2026-02-18', '2026-02-20', 2, 'Business stay', 'past', '9012'),
 
 -- Feb 20–22
-(4, NULL, 3,  '2025-02-20', '2025-02-22', 2, NULL, 'past', '3456'),
+(4, NULL, 3,  '2026-02-20', '2026-02-22', 2, NULL, 'past', '3456'),
 
 -- Feb 22–25
-(5, NULL, 16, '2025-02-22', '2025-02-25', 3, 'Prefers top floor', 'past', NULL),
+(5, NULL, 16, '2026-02-22', '2026-02-25', 3, 'Prefers top floor', 'past', NULL),
 
 -- Feb 26–28
-(6, NULL, 4,  '2025-02-26', '2025-02-28', 1, NULL, 'checked_in', '7788'),
+(6, NULL, 4,  '2026-02-26', '2026-02-28', 1, NULL, 'checked_in', '7788'),
 
 -- Feb 27–Mar 1
-(7, NULL, 5,  '2025-02-27', '2025-03-01', 2, 'Extended stay possible', 'checked_in', '9900'),
+(7, NULL, 5,  '2026-02-27', '2026-03-01', 2, 'Extended stay possible', 'checked_in', '9900'),
 
 -- Mar 2–4
-(1, NULL, 6,  '2025-03-02', '2025-03-04', 2, NULL, 'booked', '1122'),
+(1, NULL, 6,  '2026-03-02', '2026-03-04', 2, NULL, 'booked', '1122'),
 
 -- Mar 3–6
-(2, NULL, 7,  '2025-03-03', '2025-03-06', 1, 'Early check-in requested', 'booked', '3344'),
+(2, NULL, 7,  '2026-03-03', '2026-03-06', 1, 'Early check-in requested', 'booked', '3344'),
 
 -- Mar 5–7
-(3, NULL, 14, '2025-03-05', '2025-03-07', 2, 'Pet allergy noted', 'booked', '5566'),
+(3, NULL, 14, '2026-03-05', '2026-03-07', 2, 'Pet allergy noted', 'booked', '5566'),
 
 -- Mar 8–10 (Canceled)
-(4, NULL, 8,  '2025-03-08', '2025-03-10', 2, 'Canceled due to weather', 'canceled', NULL),
+(4, NULL, 8,  '2026-03-08', '2026-03-10', 2, 'Canceled due to weather', 'canceled', NULL),
 
 -- Mar 10–12
-(5, NULL, 9,  '2025-03-10', '2025-03-12', 1, NULL, 'booked', '7788'),
+(5, NULL, 9,  '2026-03-10', '2026-03-12', 1, NULL, 'booked', '7788'),
 
 -- Mar 12–15
-(6, NULL, 10, '2025-03-12', '2025-03-15', 1, 'Handicap-accessible room', 'booked', '4455'),
+(6, NULL, 10, '2026-03-12', '2026-03-15', 1, 'Handicap-accessible room', 'booked', '4455'),
 
 -- Mar 15–18
-(7, NULL, 11, '2025-03-15', '2025-03-18', 2, NULL, 'booked', '6677');
+(7, NULL, 11, '2026-03-15', '2026-03-18', 2, NULL, 'booked', '6677');

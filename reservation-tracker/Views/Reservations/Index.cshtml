@@ -19,70 +19,80 @@
             <th>
                 <a asp-action="Index"
                 asp-route-sort="DateReserved"
-                asp-route-dir="@(currentSort == "DateReserved" && currentDir == "asc" ? "desc" : "asc")">
+                asp-route-dir="@(currentSort == "DateReserved" && currentDir == "asc" ? "desc" : "asc")"
+                asp-route-page="1">
                  Date Reserved
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="LastName"
-                   asp-route-dir="@(currentSort == "LastName" && currentDir == "asc" ? "desc" : "asc")">
+                   asp-route-dir="@(currentSort == "LastName" && currentDir == "asc" ? "desc" : "asc")"
+                   asp-route-page="1">
                     Guest Name
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="CheckInDate"
-                   asp-route-dir="@(currentSort == "CheckInDate" && currentDir == "asc" ? "desc" : "asc")">
+                   asp-route-dir="@(currentSort == "CheckInDate" && currentDir == "asc" ? "desc" : "asc")"
+                   asp-route-page="1">
                     Check-In Date
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                 asp-route-sort="CheckOutDate"
-                asp-route-dir="@(currentSort == "CheckOutDate" && currentDir == "asc" ? "desc" : "asc")">
+                asp-route-dir="@(currentSort == "CheckOutDate" && currentDir == "asc" ? "desc" : "asc")"
+                asp-route-page="1">
                     Check-Out Date
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="NumberOfGuests"
-                   asp-route-dir="@(currentSort == "NumberOfGuests" && currentDir == "asc" ? "desc" : "asc")">
+                   asp-route-dir="@(currentSort == "NumberOfGuests" && currentDir == "asc" ? "desc" : "asc")"
+                   asp-route-page="1">
                     Number of Guests
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="Notes"
-                   asp-route-dir="@(currentSort == "Notes" && currentDir == "asc" ? "desc" : "asc")">
+                   asp-route-dir="@(currentSort == "Notes" && currentDir == "asc" ? "desc" : "asc")"
+                   asp-route-page="1">
                     Notes
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="Status"
-                   asp-route-dir="@(currentSort == "Status" && currentDir == "asc" ? "desc" : "asc")">
+                   asp-route-dir="@(currentSort == "Status" && currentDir == "asc" ? "desc" : "asc")"
+                   asp-route-page="1">
                     Status
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="CardLastFour"
-                   asp-route-dir="@(currentSort == "CardLastFour" && currentDir == "asc" ? "desc" : "asc")">
+                   asp-route-dir="@(currentSort == "CardLastFour" && currentDir == "asc" ? "desc" : "asc")"
+                   asp-route-page="1">
                     Card Last Four
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                 asp-route-sort="RoomNumber"
-                asp-route-dir="@(currentSort == "RoomNumber" && currentDir == "asc" ? "desc" : "asc")">
+                asp-route-dir="@(currentSort == "RoomNumber" && currentDir == "asc" ? "desc" : "asc")"
+                asp-route-page="1">
                     Room Number
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                 asp-route-sort="DisplayName"
-                asp-route-dir="@(currentSort == "DisplayName" & currentDir == "asc" ? "desc" : "asc")">
+                asp-route-dir="@(currentSort == "DisplayName" && currentDir == "asc" ? "desc" : "asc")"
+                asp-route-page="1">
                     Reserved By
                 </a>
             </th>
@@ -139,3 +149,34 @@
 }
     </tbody>
 </table>
+
+<nav class="mt-3">
+    <ul class="pagination">
+        <li class="page-item @(Model.HasPrev ? "" : "disabled")">
+            <a class="page-link"
+               asp-action="Index"
+               asp-route-page="@(Model.Page - 1)"
+               asp-route-sort="@Model.CurrentSort"
+               asp-route-dir="@Model.CurrentDir">
+                Previous
+            </a>
+        </li>
+
+        <li class="page-item disabled">
+            <span class="page-link">
+                Page @Model.Page of @Model.TotalPages
+            </span>
+        </li>
+
+        <li class="page-item @(Model.HasNext ? "" : "disabled")">
+            <a class="page-link"
+               asp-action="Index"
+               asp-route-page="@(Model.Page + 1)"
+               asp-route-sort="@Model.CurrentSort"
+               asp-route-dir="@Model.CurrentDir">
+                Next
+            </a>
+        </li>
+    </ul>
+</nav>
+
