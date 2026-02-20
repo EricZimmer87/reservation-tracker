@@ -30,7 +30,7 @@ namespace reservation_tracker.Controllers
         }
 
         // GET: Reservations
-        public async Task<IActionResult> Index(string sort, string dir, int page = 1)
+        public async Task<IActionResult> Index(string sort, string dir, int page = 1, string scope = "current")
         {
             dir = string.Equals(dir, "desc", StringComparison.OrdinalIgnoreCase)
                 ? "desc" : "asc";
@@ -39,77 +39,92 @@ namespace reservation_tracker.Controllers
             const int pageSize = 25;
             // Ensure page is never lower than 1
             if (page < 1) page = 1;
+            scope = string.Equals(scope, "past", StringComparison.OrdinalIgnoreCase) ? "past" : "current";
 
             var today = DateOnly.FromDateTime(DateTime.Today);
 
-            var reservations = _context.Reservations
-                .AsNoTracking() // do not track in change tracker
-                .Where(r => r.CheckOutDate >= today) // filter out past reservations
-                .Select(r => new ReservationIndexViewModel
-                {
-                    ReservationId = r.ReservationId,
-                    DateReserved = r.DateReserved,
-                    CheckInDate = r.CheckInDate,
-                    CheckOutDate = r.CheckOutDate,
-                    GuestLastName = r.Guest.LastName,
-                    GuestFirstName = r.Guest.FirstName,
-                    NumberOfGuests = r.NumberOfGuests,
-                    Notes = r.Notes,
-                    Status = r.Status,
-                    CardLastFour = r.CardLastFour,
-                    RoomNumber = r.Room.RoomNumber,
-                    ReservedByDisplayName = r.User.DisplayName
-                });
+            // Automatically change past reservations' status to "past"
+            await _context.Database.ExecuteSqlInterpolatedAsync($@"
+                UPDATE Reservations
+                SET Status = {"past"}
+                WHERE CheckOutDate < {today}
+                  AND (Status = {"booked"} OR Status = {"checked_in"})
+                  AND Status <> {"past"};
+            ");
 
-            reservations = sort switch
+            var reservations = _context.Reservations
+                .AsNoTracking(); // do not track in change tracker
+
+            reservations = scope == "past"
+                ? reservations.Where(r => r.CheckOutDate < today) // show past reservations
+                : reservations.Where(r => r.CheckOutDate >= today); // show current reservations
+
+            var projectedReservations = reservations.Select(r => new ReservationIndexViewModel
+            {
+                ReservationId = r.ReservationId,
+                DateReserved = r.DateReserved,
+                CheckInDate = r.CheckInDate,
+                CheckOutDate = r.CheckOutDate,
+                GuestLastName = r.Guest.LastName,
+                GuestFirstName = r.Guest.FirstName,
+                NumberOfGuests = r.NumberOfGuests,
+                Notes = r.Notes,
+                Status = r.Status,
+                CardLastFour = r.CardLastFour,
+                RoomNumber = r.Room.RoomNumber,
+                ReservedByDisplayName = r.User.DisplayName
+            });
+
+            projectedReservations = sort switch
             {
                 "DateReserved" => dir == "asc"
-                ? reservations.OrderBy(r => r.DateReserved).ThenBy(r => r.ReservationId)
-                : reservations.OrderByDescending(r => r.DateReserved).ThenBy(r => r.ReservationId),
+                ? projectedReservations.OrderBy(r => r.DateReserved).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.DateReserved).ThenBy(r => r.ReservationId),
 
                 "LastName" => dir == "asc"
-                ? reservations.OrderBy(r => r.GuestLastName).ThenBy(r => r.GuestFirstName).ThenBy(r => r.ReservationId)
-                : reservations.OrderByDescending(r => r.GuestLastName).ThenBy(r => r.GuestFirstName).ThenBy(r => r.ReservationId),
+                ? projectedReservations.OrderBy(r => r.GuestLastName).ThenBy(r => r.GuestFirstName).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.GuestLastName).ThenBy(r => r.GuestFirstName).ThenBy(r => r.ReservationId),
 
                 "CheckInDate" => dir == "asc"
-                ? reservations.OrderBy(r => r.CheckInDate).ThenBy(r => r.ReservationId)
-                : reservations.OrderByDescending(r => r.CheckInDate).ThenBy(r => r.ReservationId),
+                ? projectedReservations.OrderBy(r => r.CheckInDate).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.CheckInDate).ThenBy(r => r.ReservationId),
 
                 "CheckOutDate" => dir == "asc"
-                ? reservations.OrderBy(r => r.CheckOutDate).ThenBy(r => r.ReservationId)
-                : reservations.OrderByDescending(r => r.CheckOutDate).ThenBy(r => r.ReservationId),
+                ? projectedReservations.OrderBy(r => r.CheckOutDate).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.CheckOutDate).ThenBy(r => r.ReservationId),
 
                 "NumberOfGuests" => dir == "asc"
-                ? reservations.OrderBy(r => r.NumberOfGuests).ThenBy(r => r.ReservationId)
-                : reservations.OrderByDescending(r => r.NumberOfGuests).ThenBy(r => r.ReservationId),
+                ? projectedReservations.OrderBy(r => r.NumberOfGuests).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.NumberOfGuests).ThenBy(r => r.ReservationId),
 
                 "Notes" => dir == "asc"
-                ? reservations.OrderBy(r => r.Notes).ThenBy(r => r.ReservationId)
-                : reservations.OrderByDescending(r => r.Notes).ThenBy(r => r.ReservationId),
+                ? projectedReservations.OrderBy(r => r.Notes).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.Notes).ThenBy(r => r.ReservationId),
 
                 "Status" => dir == "asc"
-                ? reservations.OrderBy(r => r.Status).ThenBy(r => r.ReservationId)
-                : reservations.OrderByDescending(r => r.Status).ThenBy(r => r.ReservationId),
+                ? projectedReservations.OrderBy(r => r.Status).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.Status).ThenBy(r => r.ReservationId),
 
                 "CardLastFour" => dir == "asc"
-                ? reservations.OrderBy(r => r.CardLastFour).ThenBy(r => r.ReservationId)
-                : reservations.OrderByDescending(r => r.CardLastFour).ThenBy(r => r.ReservationId),
+                ? projectedReservations.OrderBy(r => r.CardLastFour).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.CardLastFour).ThenBy(r => r.ReservationId),
 
                 "RoomNumber" => dir == "asc"
-                ? reservations.OrderBy(r => r.RoomNumber).ThenBy(r => r.ReservationId)
-                : reservations.OrderByDescending(r => r.RoomNumber).ThenBy(r => r.ReservationId),
+                ? projectedReservations.OrderBy(r => r.RoomNumber).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.RoomNumber).ThenBy(r => r.ReservationId),
 
                 "DisplayName" => dir == "asc"
-                ? reservations.OrderBy(r => r.ReservedByDisplayName).ThenBy(r => r.ReservationId)
-                : reservations.OrderByDescending(r => r.ReservedByDisplayName).ThenBy(r => r.ReservationId),
+                ? projectedReservations.OrderBy(r => r.ReservedByDisplayName).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.ReservedByDisplayName).ThenBy(r => r.ReservationId),
 
                 // Default sorting
-                _ => reservations.OrderBy(r => r.CheckInDate).ThenBy(r => r.ReservationId)
+                _ => projectedReservations.OrderBy(r => r.CheckInDate).ThenBy(r => r.ReservationId)
             };
 
-            var totalCount = await reservations.CountAsync();
+            // Get total count to determine total amount of pages for displaying in view
+            var totalCount = await projectedReservations.CountAsync();
 
-            var items = await reservations
+            var items = await projectedReservations
                 .Skip((page - 1) * pageSize) // filter out prev pages
                 .Take(pageSize) // take only pageSize amount of res to display
                 .ToListAsync();
@@ -121,7 +136,8 @@ namespace reservation_tracker.Controllers
                 CurrentDir = dir,
                 Page = page,
                 PageSize = pageSize,
-                TotalCount = totalCount
+                TotalCount = totalCount,
+                Scope = scope
             };
 
             return View(pageModel);

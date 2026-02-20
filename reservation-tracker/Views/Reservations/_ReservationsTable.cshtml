@@ -1,0 +1,195 @@
+﻿@model reservation_tracker.Models.ViewModels.Reservations.ReservationIndexPageViewModel
+
+@{
+    // Sorting helpers
+    string currentSort = Model.CurrentSort;
+    string currentDir = Model.CurrentDir;
+    string NextDir(string col) => (currentSort == col && currentDir == "asc") ? "desc" : "asc";
+
+    // Toggle past/current reservations helper
+    var isPast = string.Equals(Model.Scope, "past", StringComparison.OrdinalIgnoreCase);
+
+}
+
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <a class="nav-link @(isPast ? "" : "active")"
+           asp-action="Index"
+           asp-route-scope="current"
+           asp-route-page="1"
+           asp-route-sort="@Model.CurrentSort"
+           asp-route-dir="@Model.CurrentDir">
+            Current Reservations
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link @(isPast ? "active" : "")"
+           asp-action="Index"
+           asp-route-scope="past"
+           asp-route-page="1"
+           asp-route-sort="@Model.CurrentSort"
+           asp-route-dir="@Model.CurrentDir">
+            Past Reservations
+        </a>
+    </li>
+</ul>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="DateReserved"
+                   asp-route-dir="@NextDir("DateReserved")"
+                   asp-route-page="1"
+                   asp-route-scope="@Model.Scope">
+                    Date Reserved
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="LastName"
+                   asp-route-dir="@NextDir("LastName")"
+                   asp-route-page="1"
+                   asp-route-scope="@Model.Scope">
+                    Guest Name
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="CheckInDate"
+                   asp-route-dir="@NextDir("CheckInDate")"
+                   asp-route-page="1"
+                   asp-route-scope="@Model.Scope">
+                    Check-In Date
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="CheckOutDate"
+                   asp-route-dir="@NextDir("CheckOutDate")"
+                   asp-route-page="1"
+                   asp-route-scope="@Model.Scope">
+                    Check-Out Date
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="NumberOfGuests"
+                   asp-route-dir="@NextDir("NumberOfGuests")"
+                   asp-route-page="1"
+                   asp-route-scope="@Model.Scope">
+                    Number of Guests
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="Notes"
+                   asp-route-dir="@NextDir("Notes")"
+                   asp-route-page="1"
+                   asp-route-scope="@Model.Scope">
+                    Notes
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="Status"
+                   asp-route-dir="@NextDir("Status")"
+                   asp-route-page="1"
+                   asp-route-scope="@Model.Scope">
+                    Status
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="CardLastFour"
+                   asp-route-dir="@NextDir("CardLastFour")"
+                   asp-route-page="1"
+                   asp-route-scope="@Model.Scope">
+                    Card Last Four
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="RoomNumber"
+                   asp-route-dir="@NextDir("RoomNumber")"
+                   asp-route-page="1"
+                   asp-route-scope="@Model.Scope">
+                    Room Number
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="DisplayName"
+                   asp-route-dir="@NextDir("DisplayName")"
+                   asp-route-page="1"
+                   asp-route-scope="@Model.Scope">
+                    Reserved By
+                </a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model.Reservations)
+        {
+            <tr>
+                <td>@Html.DisplayFor(_ => item.DateReserved)</td>
+                <td>@item.GuestFullName</td>
+                <td>@Html.DisplayFor(_ => item.CheckInDate)</td>
+                <td>@Html.DisplayFor(_ => item.CheckOutDate)</td>
+                <td>@Html.DisplayFor(_ => item.NumberOfGuests)</td>
+                <td>@Html.DisplayFor(_ => item.Notes)</td>
+                <td>
+                    <span class="@(item.Status?.Equals("Canceled", StringComparison.OrdinalIgnoreCase) == true
+                                                              ? "fw-bold text-danger"
+                                                              : "")">
+                        @item.Status
+                    </span>
+                </td>
+                <td>@Html.DisplayFor(_ => item.CardLastFour)</td>
+                <td>@Html.DisplayFor(_ => item.RoomNumber)</td>
+                <td>@(item.ReservedByDisplayName ?? "-")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ReservationId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ReservationId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ReservationId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav class="mt-3">
+    <ul class="pagination">
+        <li class="page-item @(Model.HasPrev ? "" : "disabled")">
+            <a class="page-link"
+               asp-action="Index"
+               asp-route-page="@(Model.Page - 1)"
+               asp-route-sort="@Model.CurrentSort"
+               asp-route-dir="@Model.CurrentDir"
+               asp-route-scope="@Model.Scope">
+                Previous
+            </a>
+        </li>
+
+        <li class="page-item disabled">
+            <span class="page-link">
+                Page @Model.Page of @Model.TotalPages
+            </span>
+        </li>
+
+        <li class="page-item @(Model.HasNext ? "" : "disabled")">
+            <a class="page-link"
+               asp-action="Index"
+               asp-route-page="@(Model.Page + 1)"
+               asp-route-sort="@Model.CurrentSort"
+               asp-route-dir="@Model.CurrentDir"
+               asp-route-scope="@Model.Scope">
+                Next
+            </a>
+        </li>
+    </ul>
+</nav>

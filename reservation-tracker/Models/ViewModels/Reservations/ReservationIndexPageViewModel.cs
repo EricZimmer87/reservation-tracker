@@ -14,5 +14,7 @@
         public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
         public bool HasPrev => Page > 1;
         public bool HasNext => Page < TotalPages;
+
+        public string Scope { get; set; }
     }
 }
