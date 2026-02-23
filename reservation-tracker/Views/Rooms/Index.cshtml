@@ -1,10 +1,14 @@
-﻿@model IEnumerable<reservation_tracker.Models.Room>
+﻿@model reservation_tracker.Models.ViewModels.Rooms.RoomsIndexPageViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Rooms";
+
+    // Sorting helper variables
+    var currentSort = Model.CurrentSort;
+    var currentDir = Model.CurrentDir ?? "asc";
 }
 
-<h1>Index</h1>
+<h1>Rooms</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -13,19 +17,31 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.RoomNumber)
+                <a asp-action="Index"
+                   asp-route-sort="RoomNumber"
+                   asp-route-dir="@(Model.CurrentSort == "RoomNumber" && Model.CurrentDir == "asc" ? "desc" : "asc")">
+                    Room Number
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.RoomType)
+                <a asp-action="Index"
+                   asp-route-sort="RoomType"
+                   asp-route-dir="@(Model.CurrentSort == "RoomType" && Model.CurrentDir == "asc" ? "desc" : "asc")">
+                    Room Type
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Notes)
+                <a asp-action="Index"
+                   asp-route-sort="Notes"
+                   asp-route-dir="@(Model.CurrentSort == "Notes" && Model.CurrentDir == "asc" ? "desc" : "asc")">
+                    Notes
+                </a>
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Rooms) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.RoomNumber)

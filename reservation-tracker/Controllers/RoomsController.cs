@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using reservation_tracker.Data;
 using reservation_tracker.Models;
+using reservation_tracker.Models.ViewModels.Rooms;
 
 namespace reservation_tracker.Controllers
 {
@@ -19,10 +20,62 @@ namespace reservation_tracker.Controllers
             _context = context;
         }
 
-        // GET: Rooms
-        public async Task<IActionResult> Index()
+        // Used to populate drop-down lists
+        private async Task PopulateSelectLists(string? roomType = null)
         {
-            return View(await _context.Rooms.ToListAsync());
+            ViewBag.RoomTypeList = await _context.Rooms
+                .Select(r => r.RoomType)
+                .Where(rt => rt != null && rt != "")
+                .Distinct()
+                .OrderBy(rt => rt)
+                .ToListAsync();
+        }
+
+        // GET: Rooms
+        public async Task<IActionResult> Index(string sort, string dir)
+        {
+            dir = string.Equals(dir, "desc", StringComparison.OrdinalIgnoreCase)
+                ? "desc" : "asc";
+
+            var rooms = _context.Rooms
+                .Select(r => new RoomsIndexViewModel
+                {
+                    RoomId = r.RoomId,
+                    RoomNumber = r.RoomNumber,
+                    RoomType = r.RoomType,
+                    Notes = r.Notes
+                });
+
+            rooms = sort switch
+            {
+                "RoomId" => dir == "asc"
+                ? rooms.OrderBy(r => r.RoomId)
+                : rooms.OrderByDescending(r => r.RoomId),
+
+                "RoomNumber" => dir == "asc"
+                ? rooms.OrderBy(r => r.RoomNumber).ThenBy(r => r.RoomId)
+                : rooms.OrderByDescending(r => r.RoomNumber).ThenBy(r => r.RoomId),
+
+                "RoomType" => dir == "asc"
+                ? rooms.OrderBy(r => r.RoomType).ThenBy(r => r.RoomId)
+                : rooms.OrderByDescending(r => r.RoomType).ThenBy(r => r.RoomId),
+
+                "Notes" => dir == "asc"
+                ? rooms.OrderBy(r => r.Notes ?? "").ThenBy(r => r.RoomId)
+                : rooms.OrderByDescending(r => r.Notes ?? "").ThenBy(r => r.RoomId),
+
+                // Default sorting
+                _ => rooms.OrderBy(r => r.RoomId)
+            };
+
+            var pageModel = new RoomsIndexPageViewModel
+            {
+                Rooms = await rooms.ToListAsync(),
+                CurrentSort = sort,
+                CurrentDir = dir
+            };
+
+            return View(pageModel);
         }
 
         // GET: Rooms/Details/5
@@ -44,9 +97,19 @@ namespace reservation_tracker.Controllers
         }
 
         // GET: Rooms/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var model = new RoomFormViewModel
+            {
+                RoomTypeList = await _context.Rooms
+                    .Select(r => r.RoomType)
+                    .Where(rt => !string.IsNullOrWhiteSpace(rt))
+                    .Distinct()
+                    .OrderBy(rt => rt)
+                    .ToListAsync()
+            };
+
+            return View(model);
         }
 
         // POST: Rooms/Create
@@ -54,15 +117,32 @@ namespace reservation_tracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RoomId,RoomNumber,RoomType,Notes")] Room room)
+        public async Task<IActionResult> Create(RoomFormViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(room);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                model.RoomTypeList = await _context.Rooms
+                    .Select(r => r.RoomType)
+                    .Where(rt => !string.IsNullOrWhiteSpace(rt))
+                    .Distinct()
+                    .OrderBy(rt => rt)
+                    .ToListAsync();
+
+                return View(model);
             }
-            return View(room);
+
+            // Map ViewModel to Entity
+            var room = new Room
+            {
+                RoomNumber = model.RoomNumber,
+                RoomType = model.RoomType,
+                Notes = model.Notes
+            };
+
+            _context.Add(room);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Rooms/Edit/5
