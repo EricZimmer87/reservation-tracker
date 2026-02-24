@@ -1,10 +1,10 @@
-﻿@model reservation_tracker.Models.Room
+﻿@model reservation_tracker.Models.ViewModels.Rooms.RoomFormViewModel
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1>Edit Room</h1>
 
 <h4>Room</h4>
 <hr />
@@ -20,7 +20,13 @@
             </div>
             <div class="form-group">
                 <label asp-for="RoomType" class="control-label"></label>
-                <input asp-for="RoomType" class="form-control" />
+                <input asp-for="RoomType" class="form-control" list="roomTypeList" />
+                <datalist id="roomTypeList">
+                    @foreach (var type in Model.RoomTypeList)
+                    {
+                        <option value="@type"></option>
+                    }
+                </datalist>
                 <span asp-validation-for="RoomType" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -29,7 +35,7 @@
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-primary mt-2" />
             </div>
         </form>
     </div>

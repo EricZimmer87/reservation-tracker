@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using reservation_tracker.Data;
 using reservation_tracker.Models;
@@ -18,17 +13,6 @@ namespace reservation_tracker.Controllers
         public RoomsController(ReservationTrackerContext context)
         {
             _context = context;
-        }
-
-        // Used to populate drop-down lists
-        private async Task PopulateSelectLists(string? roomType = null)
-        {
-            ViewBag.RoomTypeList = await _context.Rooms
-                .Select(r => r.RoomType)
-                .Where(rt => rt != null && rt != "")
-                .Distinct()
-                .OrderBy(rt => rt)
-                .ToListAsync();
         }
 
         // GET: Rooms
@@ -131,7 +115,7 @@ namespace reservation_tracker.Controllers
                 return View(model);
             }
 
-            // Map ViewModel to Entity
+            // Map view model to Entity
             var room = new Room
             {
                 RoomNumber = model.RoomNumber,
@@ -158,7 +142,22 @@ namespace reservation_tracker.Controllers
             {
                 return NotFound();
             }
-            return View(room);
+
+            var model = new RoomFormViewModel
+            {
+                RoomId = room.RoomId,
+                RoomNumber = room.RoomNumber,
+                RoomType = room.RoomType,
+                Notes = room.Notes,
+                RoomTypeList = await _context.Rooms
+                .Select(r => r.RoomType)
+                .Where(rt => !string.IsNullOrWhiteSpace(rt))
+                .Distinct()
+                .OrderBy(rt => rt)
+                .ToListAsync()
+            };
+
+            return View(model);
         }
 
         // POST: Rooms/Edit/5
@@ -166,34 +165,37 @@ namespace reservation_tracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("RoomId,RoomNumber,RoomType,Notes")] Room room)
+        public async Task<IActionResult> Edit(long id, RoomFormViewModel model)
         {
-            if (id != room.RoomId)
+            if (id != model.RoomId)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(room);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!RoomExists(room.RoomId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                model.RoomTypeList = await _context.Rooms
+                    .Select(r => r.RoomType)
+                    .Where(rt => !string.IsNullOrWhiteSpace(rt))
+                    .Distinct()
+                    .OrderBy(rt => rt)
+                    .ToListAsync();
+
+                return View(model);
             }
-            return View(room);
+
+            var room = await _context.Rooms.FindAsync(id);
+            if (room == null)
+            {
+                return NotFound();
+            }
+
+            room.RoomNumber = model.RoomNumber;
+            room.RoomType = model.RoomType;
+            room.Notes = model.Notes;
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Rooms/Delete/5

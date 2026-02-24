@@ -2,7 +2,7 @@
 {
     public class RoomFormViewModel
     {
-        public long? RoomId { get; set; }
+        public long RoomId { get; set; }
 
         public string RoomNumber { get; set; }
 
