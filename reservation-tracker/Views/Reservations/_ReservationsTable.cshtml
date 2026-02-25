@@ -18,7 +18,8 @@
            asp-route-scope="current"
            asp-route-page="1"
            asp-route-sort="@Model.CurrentSort"
-           asp-route-dir="@Model.CurrentDir">
+           asp-route-dir="@Model.CurrentDir"
+           asp-route-search="@Model.Search">
             Current Reservations
         </a>
     </li>
@@ -29,7 +30,8 @@
            asp-route-scope="past"
            asp-route-page="1"
            asp-route-sort="@Model.CurrentSort"
-           asp-route-dir="@Model.CurrentDir">
+           asp-route-dir="@Model.CurrentDir"
+           asp-route-search="@Model.Search">
             Past Reservations
         </a>
     </li>
@@ -42,6 +44,7 @@
                 <a asp-action="Index"
                    asp-route-sort="DateReserved"
                    asp-route-dir="@NextDir("DateReserved")"
+                   asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope">
                     Date Reserved
@@ -51,6 +54,7 @@
                 <a asp-action="Index"
                    asp-route-sort="LastName"
                    asp-route-dir="@NextDir("LastName")"
+                   asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope">
                     Guest Name
@@ -60,6 +64,7 @@
                 <a asp-action="Index"
                    asp-route-sort="CheckInDate"
                    asp-route-dir="@NextDir("CheckInDate")"
+                   asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope">
                     Check-In Date
@@ -69,6 +74,7 @@
                 <a asp-action="Index"
                    asp-route-sort="CheckOutDate"
                    asp-route-dir="@NextDir("CheckOutDate")"
+                   asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope">
                     Check-Out Date
@@ -78,6 +84,7 @@
                 <a asp-action="Index"
                    asp-route-sort="NumberOfGuests"
                    asp-route-dir="@NextDir("NumberOfGuests")"
+                   asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope">
                     Number of Guests
@@ -87,6 +94,7 @@
                 <a asp-action="Index"
                    asp-route-sort="Notes"
                    asp-route-dir="@NextDir("Notes")"
+                   asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope">
                     Notes
@@ -96,6 +104,7 @@
                 <a asp-action="Index"
                    asp-route-sort="Status"
                    asp-route-dir="@NextDir("Status")"
+                   asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope">
                     Status
@@ -105,6 +114,7 @@
                 <a asp-action="Index"
                    asp-route-sort="CardLastFour"
                    asp-route-dir="@NextDir("CardLastFour")"
+                   asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope">
                     Card Last Four
@@ -114,6 +124,7 @@
                 <a asp-action="Index"
                    asp-route-sort="RoomNumber"
                    asp-route-dir="@NextDir("RoomNumber")"
+                   asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope">
                     Room Number
@@ -123,6 +134,7 @@
                 <a asp-action="Index"
                    asp-route-sort="DisplayName"
                    asp-route-dir="@NextDir("DisplayName")"
+                   asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope">
                     Reserved By
@@ -170,7 +182,8 @@
                asp-route-page="@(Model.Page - 1)"
                asp-route-sort="@Model.CurrentSort"
                asp-route-dir="@Model.CurrentDir"
-               asp-route-scope="@Model.Scope">
+               asp-route-scope="@Model.Scope"
+               asp-route-search="@Model.Search">
                 Previous
             </a>
         </li>
@@ -187,9 +200,28 @@
                asp-route-page="@(Model.Page + 1)"
                asp-route-sort="@Model.CurrentSort"
                asp-route-dir="@Model.CurrentDir"
-               asp-route-scope="@Model.Scope">
+               asp-route-scope="@Model.Scope"
+               asp-route-search="@Model.Search">
                 Next
             </a>
+        </li>
+
+        <li class="page-item ms-3">
+            <form method="get" asp-action="Index" class="d-flex align-items-center">
+                <input type="hidden" name="sort" value="@Model.CurrentSort" />
+                <input type="hidden" name="dir" value="@Model.CurrentDir" />
+                <button type="submit" class="page-link">
+                    Go to page...
+                </button>
+                <input type="number"
+                       name="page"
+                       min="1"
+                       max="@Model.TotalPages"
+                       value="@Model.Page"
+                       class="form-control form-control-sm"
+                       style="width: 80px;"
+                       title="Go to page" />
+            </form>
         </li>
     </ul>
 </nav>

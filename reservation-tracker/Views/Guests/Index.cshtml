@@ -12,69 +12,104 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<!-- Search -->
+<form method="get" asp-action="Index" class="row g-2 mb-3">
+    <input type="hidden" name="sort" value="@Model.CurrentSort" />
+    <input type="hidden" name="dir" value="@Model.CurrentDir" />
+
+    <div class="col-auto">
+        <input type="text"
+               name="search"
+               value="@Model.Search"
+               class="form-control"
+               placeholder="Search guests..." />
+    </div>
+
+    <div class="col-auto">
+        <button class="btn btn-primary" type="submit">Search</button>
+        <a class="btn btn-outline-secondary"
+           asp-action="Index"
+           asp-route-sort="@Model.CurrentSort"
+           asp-route-dir="@Model.CurrentDir">
+            Clear
+        </a>
+    </div>
+</form>
+
+<!-- Guests Table -->
 <table class="table">
     <thead>
         <tr>
             <th>
                 <a asp-action="Index"
                 asp-route-sort="LastName"
-                asp-route-dir="@(currentSort == "LastName" && currentDir == "asc" ? "desc" : "asc")">
+                asp-route-dir="@(currentSort == "LastName" && currentDir == "asc" ? "desc" : "asc")"
+                asp-route-search="@Model.Search">
                     Name
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="PhoneNumber"
-                   asp-route-dir="@(currentSort == "PhoneNumber" && currentDir == "asc" ? "desc" : "asc")">
+                   asp-route-dir="@(currentSort == "PhoneNumber" && currentDir == "asc" ? "desc" : "asc")"
+                   asp-route-search="@Model.Search">
                     Phone Number
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="Address"
-                   asp-route-dir="@(currentSort == "Address" && currentDir == "asc" ? "desc" : "asc")">
+                   asp-route-dir="@(currentSort == "Address" && currentDir == "asc" ? "desc" : "asc")"
+                   asp-route-search="@Model.Search">
                     Address
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                 asp-route-sort="City"
-                asp-route-dir="@(currentSort == "City" && currentDir == "asc" ? "desc" : "asc")">
+                asp-route-dir="@(currentSort == "City" && currentDir == "asc" ? "desc" : "asc")"
+                asp-route-search="@Model.Search">
                     City
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                 asp-route-sort="State"
-                asp-route-dir="@(currentSort == "State" && currentDir == "asc" ? "desc" : "asc")">
+                asp-route-dir="@(currentSort == "State" && currentDir == "asc" ? "desc" : "asc")"
+                asp-route-search="@Model.Search">
                     State
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="Zipcode"
-                   asp-route-dir="@(currentSort == "Zipcode" && currentDir == "asc" ? "desc" : "asc")">
+                   asp-route-dir="@(currentSort == "Zipcode" && currentDir == "asc" ? "desc" : "asc")"
+                   asp-route-search="@Model.Search">
                     Zip Code
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="Email"
-                   asp-route-dir="@(currentSort == "Email" && currentDir == "asc" ? "desc" : "asc")">
+                   asp-route-dir="@(currentSort == "Email" && currentDir == "asc" ? "desc" : "asc")"
+                   asp-route-search="@Model.Search">
                     Email
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="Notes"
-                   asp-route-dir="@(currentSort == "Notes" && currentDir == "asc" ? "desc" : "asc")">
+                   asp-route-dir="@(currentSort == "Notes" && currentDir == "asc" ? "desc" : "asc")"
+                   asp-route-search="@Model.Search">
                     Notes
                 </a>
             </th>
             <th>
                 <a asp-action="Index"
                    asp-route-sort="Company"
-                   asp-route-dir="@(currentSort == "Company" && currentDir == "asc" ? "desc" : "asc")">
+                   asp-route-dir="@(currentSort == "Company" && currentDir == "asc" ? "desc" : "asc")"
+                   asp-route-search="@Model.Search">
                     Company
                 </a>
             </th>
@@ -120,3 +155,53 @@
 }
     </tbody>
 </table>
+
+<nav class="mt-3">
+    <ul class="pagination">
+        <li class="page-item @(Model.HasPrev ? "" : "disabled")">
+            <a class="page-link"
+                asp-action="Index"
+                asp-route-page="@(Model.Page - 1)"
+                asp-route-sort="@Model.CurrentSort"
+                asp-route-dir="@Model.CurrentDir"
+                asp-route-search="@Model.Search">
+                Previous
+            </a>
+        </li>
+
+        <li class="page-item disabled">
+            <span class="page-link">
+                Page @Model.Page of @Model.TotalPages
+            </span>
+        </li>
+
+        <li class="page-item @(Model.HasNext ? "" : "disabled")">
+            <a class="page-link"
+               asp-action="Index"
+               asp-route-page="@(Model.Page + 1)"
+               asp-route-sort="@Model.CurrentSort"
+               asp-route-dir="@Model.CurrentDir"
+               asp-route-search="@Model.Search">
+                Next
+            </a>
+        </li>
+
+        <li class="page-item ms-3">
+            <form method="get" asp-action="Index" class="d-flex align-items-center">
+                <input type="hidden" name="sort" value="@Model.CurrentSort" />
+                <input type="hidden" name="dir" value="@Model.CurrentDir" />
+                <button type="submit" class="page-link">
+                    Go to page...
+                </button>
+                <input type="number"
+                       name="page"
+                       min="1"
+                       max="@Model.TotalPages"
+                       value="@Model.Page"
+                       class="form-control form-control-sm"
+                       style="width: 80px;"
+                       title="Go to page" />
+            </form>
+        </li>
+    </ul>
+</nav>

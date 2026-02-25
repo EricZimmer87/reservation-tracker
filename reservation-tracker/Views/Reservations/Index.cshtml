@@ -15,6 +15,31 @@
     <a asp-action="Create">Create New</a>
 </p>
 
+<!-- Search -->
+<form method="get" asp-action="Index" class="row g-2 mb-3">
+    <input type="hidden" name="sort" value="@Model.CurrentSort" />
+    <input type="hidden" name="dir" value="@Model.CurrentDir" />
+
+    <div class="col-auto">
+        <input type="text"
+               name="search"
+               value="@Model.Search"
+               class="form-control"
+               placeholder="Search guests..." />
+    </div>
+
+    <div class="col-auto">
+        <button class="btn btn-primary" type="submit">Search</button>
+        <a class="btn btn-outline-secondary"
+           asp-action="Index"
+           asp-route-sort="@Model.CurrentSort"
+           asp-route-dir="@Model.CurrentDir"
+           asp-route-scope="@Model.Scope">
+            Clear
+        </a>
+    </div>
+</form>
+
 @await Html.PartialAsync("_ReservationsTable", Model)
 
 

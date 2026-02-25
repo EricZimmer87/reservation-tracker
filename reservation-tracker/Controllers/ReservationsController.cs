@@ -30,7 +30,7 @@ namespace reservation_tracker.Controllers
         }
 
         // GET: Reservations
-        public async Task<IActionResult> Index(string sort, string dir, int page = 1, string scope = "current")
+        public async Task<IActionResult> Index(string sort, string dir, string search, int page = 1, string scope = "current")
         {
             dir = string.Equals(dir, "desc", StringComparison.OrdinalIgnoreCase)
                 ? "desc" : "asc";
@@ -75,6 +75,24 @@ namespace reservation_tracker.Controllers
                 ReservedByDisplayName = r.User.DisplayName
             });
 
+            // Search
+            if(!string.IsNullOrWhiteSpace(search))
+            {
+                search = search.Trim().ToLower();
+                projectedReservations = projectedReservations.Where(r =>
+                    r.GuestLastName.ToLower().Contains(search) ||
+                    r.GuestFirstName.ToLower().Contains(search) ||
+                    r.RoomNumber.ToLower().Contains(search) ||
+                    r.ReservedByDisplayName.ToLower().Contains(search) ||
+                    (r.Notes != null && r.Notes.ToLower().Contains(search)) ||
+                    (r.CardLastFour != null && r.CardLastFour.Contains(search))
+                );
+
+                // Go back to page 1 when searching
+                page = 1;
+            }
+
+            // Sort
             projectedReservations = sort switch
             {
                 "DateReserved" => dir == "asc"
@@ -134,6 +152,7 @@ namespace reservation_tracker.Controllers
                 Reservations = items,
                 CurrentSort = sort,
                 CurrentDir = dir,
+                Search = search,
                 Page = page,
                 PageSize = pageSize,
                 TotalCount = totalCount,
