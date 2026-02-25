@@ -67,43 +67,43 @@ namespace reservation_tracker.Controllers
             guests = sort switch
             {
                 "LastName" => dir == "asc"
-                ? guests.OrderBy(g => g.LastName).ThenBy(g => g.FirstName)
-                : guests.OrderByDescending(g => g.LastName).ThenBy(g => g.FirstName),
+                ? guests.OrderBy(g => g.LastName).ThenBy(g => g.FirstName).ThenBy(g => g.GuestId)
+                : guests.OrderByDescending(g => g.LastName).ThenBy(g => g.FirstName).ThenBy(g => g.GuestId),
 
                 "PhoneNumber" => dir == "asc"
-                ? guests.OrderBy(g => g.PhoneNumber)
-                : guests.OrderByDescending(g => g.PhoneNumber),
+                ? guests.OrderBy(g => g.PhoneNumber).ThenBy(g => g.GuestId)
+                : guests.OrderByDescending(g => g.PhoneNumber).ThenBy(g => g.GuestId),
 
                 "Address" => dir == "asc"
-                ? guests.OrderBy(g => g.Address)
-                : guests.OrderByDescending(g => g.Address),
+                ? guests.OrderBy(g => g.Address).ThenBy(g => g.GuestId)
+                : guests.OrderByDescending(g => g.Address).ThenBy(g => g.GuestId),
 
                 "City" => dir == "asc"
-                ? guests.OrderBy(g => g.City)
-                : guests.OrderByDescending(g => g.City),
+                ? guests.OrderBy(g => g.City).ThenBy(g => g.GuestId)
+                : guests.OrderByDescending(g => g.City).ThenBy(g => g.GuestId),
 
                 "State" => dir == "asc"
-                ? guests.OrderBy(g => g.State)
-                : guests.OrderByDescending(g => g.State),
+                ? guests.OrderBy(g => g.State).ThenBy(g => g.GuestId)
+                : guests.OrderByDescending(g => g.State).ThenBy(g => g.GuestId),
 
                 "Zipcode" => dir == "asc"
-                ? guests.OrderBy(g => g.Zipcode)
-                : guests.OrderByDescending(g => g.Zipcode),
+                ? guests.OrderBy(g => g.Zipcode).ThenBy(g => g.GuestId)
+                : guests.OrderByDescending(g => g.Zipcode).ThenBy(g => g.GuestId),
 
                 "Email" => dir == "asc"
-                ? guests.OrderBy(g => g.Email)
-                : guests.OrderByDescending(g => g.Email),
+                ? guests.OrderBy(g => g.Email).ThenBy(g => g.GuestId)
+                : guests.OrderByDescending(g => g.Email).ThenBy(g => g.GuestId),
 
                 "Notes" => dir == "asc"
-                ? guests.OrderBy(g => g.Notes)
-                : guests.OrderByDescending(g => g.Notes),
+                ? guests.OrderBy(g => g.Notes).ThenBy(g => g.GuestId)
+                : guests.OrderByDescending(g => g.Notes).ThenBy(g => g.GuestId),
 
                 "Company" => dir == "asc"
-                ? guests.OrderBy(g => g.Company)
-                : guests.OrderByDescending(g => g.Company),
+                ? guests.OrderBy(g => g.Company).ThenBy(g => g.GuestId)
+                : guests.OrderByDescending(g => g.Company).ThenBy(g => g.GuestId),
 
                 // Default sorting
-                _ => guests.OrderBy(g => g.LastName)
+                _ => guests.OrderBy(g => g.LastName).ThenBy(g => g.GuestId)
             };
 
             // Get total count of guests for pagination
