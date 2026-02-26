@@ -11,33 +11,36 @@
 
 }
 
-<ul class="nav nav-tabs mb-3">
-    <li class="nav-item">
-        <a class="nav-link @(isPast ? "" : "active")"
-           asp-action="Index"
-           asp-route-scope="current"
-           asp-route-page="1"
-           asp-route-sort="@Model.CurrentSort"
-           asp-route-dir="@Model.CurrentDir"
-           asp-route-search="@Model.Search"
-           asp-route-pageSize="@Model.PageSize">
-            Current Reservations
-        </a>
-    </li>
+@if (!string.Equals(Model.Scope, "all", StringComparison.OrdinalIgnoreCase))
+{
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+            <a class="nav-link @(Model.Scope == "current" ? "active" : "")"
+               asp-action="Index"
+               asp-route-scope="current"
+               asp-route-page="1"
+               asp-route-sort="@Model.CurrentSort"
+               asp-route-dir="@Model.CurrentDir"
+               asp-route-search="@Model.Search"
+               asp-route-pageSize="@Model.PageSize">
+                Current Reservations
+            </a>
+        </li>
 
-    <li class="nav-item">
-        <a class="nav-link @(isPast ? "active" : "")"
-           asp-action="Index"
-           asp-route-scope="past"
-           asp-route-page="1"
-           asp-route-sort="@Model.CurrentSort"
-           asp-route-dir="@Model.CurrentDir"
-           asp-route-search="@Model.Search"
-           asp-route-pageSize="@Model.PageSize">
-            Past Reservations
-        </a>
-    </li>
-</ul>
+        <li class="nav-item">
+            <a class="nav-link @(Model.Scope == "past" ? "active" : "")"
+               asp-action="Index"
+               asp-route-scope="past"
+               asp-route-page="1"
+               asp-route-sort="@Model.CurrentSort"
+               asp-route-dir="@Model.CurrentDir"
+               asp-route-search="@Model.Search"
+               asp-route-pageSize="@Model.PageSize">
+                Past Reservations
+            </a>
+        </li>
+    </ul>
+}
 
 <table class="table">
     <thead>
@@ -49,7 +52,11 @@
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope"
-                   asp-route-pageSize="@Model.PageSize">
+                   asp-route-pageSize="@Model.PageSize"
+                   asp-route-stayFrom="@Model.StayFrom"
+                   asp-route-stayTo="@Model.StayTo"
+                   asp-route-reservedFrom="@Model.ReservedFrom"
+                   asp-route-reservedTo="@Model.ReservedTo">
                     Date Reserved
                 </a>
             </th>
@@ -60,7 +67,11 @@
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope"
-                   asp-route-pageSize="@Model.PageSize">
+                   asp-route-pageSize="@Model.PageSize"
+                   asp-route-stayFrom="@Model.StayFrom"
+                   asp-route-stayTo="@Model.StayTo"
+                   asp-route-reservedFrom="@Model.ReservedFrom"
+                   asp-route-reservedTo="@Model.ReservedTo">
                     Guest Name
                 </a>
             </th>
@@ -71,7 +82,11 @@
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope"
-                   asp-route-pageSize="@Model.PageSize">
+                   asp-route-pageSize="@Model.PageSize"
+                   asp-route-stayFrom="@Model.StayFrom"
+                   asp-route-stayTo="@Model.StayTo"
+                   asp-route-reservedFrom="@Model.ReservedFrom"
+                   asp-route-reservedTo="@Model.ReservedTo">
                     Check-In Date
                 </a>
             </th>
@@ -82,7 +97,11 @@
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope"
-                   asp-route-pageSize="@Model.PageSize">
+                   asp-route-pageSize="@Model.PageSize"
+                   asp-route-stayFrom="@Model.StayFrom"
+                   asp-route-stayTo="@Model.StayTo"
+                   asp-route-reservedFrom="@Model.ReservedFrom"
+                   asp-route-reservedTo="@Model.ReservedTo">
                     Check-Out Date
                 </a>
             </th>
@@ -93,7 +112,11 @@
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope"
-                   asp-route-pageSize="@Model.PageSize">
+                   asp-route-pageSize="@Model.PageSize"
+                   asp-route-stayFrom="@Model.StayFrom"
+                   asp-route-stayTo="@Model.StayTo"
+                   asp-route-reservedFrom="@Model.ReservedFrom"
+                   asp-route-reservedTo="@Model.ReservedTo">
                     Number of Guests
                 </a>
             </th>
@@ -104,7 +127,11 @@
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope"
-                   asp-route-pageSize="@Model.PageSize">
+                   asp-route-pageSize="@Model.PageSize"
+                   asp-route-stayFrom="@Model.StayFrom"
+                   asp-route-stayTo="@Model.StayTo"
+                   asp-route-reservedFrom="@Model.ReservedFrom"
+                   asp-route-reservedTo="@Model.ReservedTo">
                     Notes
                 </a>
             </th>
@@ -115,7 +142,11 @@
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope"
-                   asp-route-pageSize="@Model.PageSize">
+                   asp-route-pageSize="@Model.PageSize"
+                   asp-route-stayFrom="@Model.StayFrom"
+                   asp-route-stayTo="@Model.StayTo"
+                   asp-route-reservedFrom="@Model.ReservedFrom"
+                   asp-route-reservedTo="@Model.ReservedTo">
                     Status
                 </a>
             </th>
@@ -126,7 +157,11 @@
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope"
-                   asp-route-pageSize="@Model.PageSize">
+                   asp-route-pageSize="@Model.PageSize"
+                   asp-route-stayFrom="@Model.StayFrom"
+                   asp-route-stayTo="@Model.StayTo"
+                   asp-route-reservedFrom="@Model.ReservedFrom"
+                   asp-route-reservedTo="@Model.ReservedTo">
                     Card Last Four
                 </a>
             </th>
@@ -137,7 +172,11 @@
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope"
-                   asp-route-pageSize="@Model.PageSize">
+                   asp-route-pageSize="@Model.PageSize"
+                   asp-route-stayFrom="@Model.StayFrom"
+                   asp-route-stayTo="@Model.StayTo"
+                   asp-route-reservedFrom="@Model.ReservedFrom"
+                   asp-route-reservedTo="@Model.ReservedTo">
                     Room Number
                 </a>
             </th>
@@ -148,7 +187,11 @@
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
                    asp-route-scope="@Model.Scope"
-                   asp-route-pageSize="@Model.PageSize">
+                   asp-route-pageSize="@Model.PageSize"
+                   asp-route-stayFrom="@Model.StayFrom"
+                   asp-route-stayTo="@Model.StayTo"
+                   asp-route-reservedFrom="@Model.ReservedFrom"
+                   asp-route-reservedTo="@Model.ReservedTo">
                     Reserved By
                 </a>
             </th>
@@ -196,7 +239,11 @@
                asp-route-dir="@Model.CurrentDir"
                asp-route-scope="@Model.Scope"
                asp-route-search="@Model.Search"
-               asp-route-pageSize="@Model.PageSize">
+               asp-route-pageSize="@Model.PageSize"
+               asp-route-stayFrom="@Model.StayFrom"
+               asp-route-stayTo="@Model.StayTo"
+               asp-route-reservedFrom="@Model.ReservedFrom"
+               asp-route-reservedTo="@Model.ReservedTo">
                 Previous
             </a>
         </li>
@@ -215,7 +262,11 @@
                asp-route-dir="@Model.CurrentDir"
                asp-route-scope="@Model.Scope"
                asp-route-search="@Model.Search"
-               asp-route-pageSize="@Model.PageSize">
+               asp-route-pageSize="@Model.PageSize"
+               asp-route-stayFrom="@Model.StayFrom"
+               asp-route-stayTo="@Model.StayTo"
+               asp-route-reservedFrom="@Model.ReservedFrom"
+               asp-route-reservedTo="@Model.ReservedTo">
                 Next
             </a>
         </li>
@@ -227,6 +278,10 @@
                 <input type="hidden" name="scope" value="@Model.Scope" />
                 <input type="hidden" name="search" value="@Model.Search" />
                 <input type="hidden" name="pageSize" value="@Model.PageSize" />
+                <input type="hidden" name="stayFrom" value="@(Model.StayFrom?.ToString("yyyy-MM-dd"))" />
+                <input type="hidden" name="stayTo" value="@(Model.StayTo?.ToString("yyyy-MM-dd"))" />
+                <input type="hidden" name="reservedFrom" value="@(Model.ReservedFrom?.ToString("yyyy-MM-dd"))" />
+                <input type="hidden" name="reservedTo" value="@(Model.ReservedTo?.ToString("yyyy-MM-dd"))" />
                 <button type="submit" class="page-link">
                     Go to page...
                 </button>
@@ -250,6 +305,10 @@
                 <input type="hidden" name="scope" value="@Model.Scope" />
                 <input type="hidden" name="search" value="@Model.Search" />
                 <input type="hidden" name="page" value="1" />
+                <input type="hidden" name="stayFrom" value="@(Model.StayFrom?.ToString("yyyy-MM-dd"))" />
+                <input type="hidden" name="stayTo" value="@(Model.StayTo?.ToString("yyyy-MM-dd"))" />
+                <input type="hidden" name="reservedFrom" value="@(Model.ReservedFrom?.ToString("yyyy-MM-dd"))" />
+                <input type="hidden" name="reservedTo" value="@(Model.ReservedTo?.ToString("yyyy-MM-dd"))" />
 
                 <label asp-for="PageSize" class="mb-0">Rows per page</label>
 

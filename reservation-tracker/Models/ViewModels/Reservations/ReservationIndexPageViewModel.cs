@@ -17,5 +17,10 @@
         public bool HasNext => Page < TotalPages;
 
         public string Scope { get; set; }
+
+        public DateOnly? StayFrom { get; set; }
+        public DateOnly? StayTo { get; set; }
+        public DateTime? ReservedFrom { get; set; }
+        public DateTime? ReservedTo { get; set; }
     }
 }

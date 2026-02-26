@@ -29,11 +29,35 @@ namespace reservation_tracker.Controllers
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", userId);
         }
 
+        // Normalize data ranges to avoid reversing them
+        static void Normalize(ref DateTime? from, ref DateTime? to)
+        {
+            if (from.HasValue && to.HasValue && from.Value > to.Value)
+                (from, to) = (to, from);
+        }
+        static void Normalize(ref DateOnly? from, ref DateOnly? to)
+        {
+            if (from.HasValue && to.HasValue && from.Value > to.Value)
+                (from, to) = (to, from);
+        }
+
         // GET: Reservations
-        public async Task<IActionResult> Index(string sort, string dir, string search, int pageSize = 10, int page = 1, string scope = "current")
+        public async Task<IActionResult> Index(
+            string sort,
+            string dir,
+            string search,
+            int pageSize = 10,
+            int page = 1,
+            string scope = "current",
+            DateOnly? stayFrom = null, DateOnly? stayTo = null,
+            DateTime? reservedFrom = null, DateTime? reservedTo = null)
         {
             dir = string.Equals(dir, "desc", StringComparison.OrdinalIgnoreCase)
                 ? "desc" : "asc";
+
+            // Normalize data ranges
+            Normalize(ref stayFrom, ref stayTo);
+            Normalize(ref reservedFrom, ref reservedTo);
 
             // Set pageSize to default (10) if it is set to an unallowed value
             var allowedPageSizes = new[] { 10, 25, 50, 75, 100 };
@@ -45,7 +69,8 @@ namespace reservation_tracker.Controllers
             // Ensure page is never lower than 1
             if (page < 1) page = 1;
 
-            scope = string.Equals(scope, "past", StringComparison.OrdinalIgnoreCase) ? "past" : "current";
+            scope = (scope ?? "current").ToLowerInvariant();
+            scope = scope is "past" or "current" or "all" ? scope : "current";
 
             var today = DateOnly.FromDateTime(DateTime.Today);
 
@@ -61,9 +86,44 @@ namespace reservation_tracker.Controllers
             var reservations = _context.Reservations
                 .AsNoTracking(); // do not track in change tracker
 
-            reservations = scope == "past"
-                ? reservations.Where(r => r.CheckOutDate < today) // show past reservations
-                : reservations.Where(r => r.CheckOutDate >= today); // show current reservations
+            // Determine if date ranges are being used
+            var hasAnyRange =
+                reservedFrom.HasValue || reservedTo.HasValue ||
+                stayFrom.HasValue || stayTo.HasValue;
+
+            // If any range is provided, override scope to all (so it searches everything)
+            if (hasAnyRange) scope = "all";
+
+            // Scope filter
+            if (scope == "past")
+                reservations = reservations.Where(r => r.CheckOutDate < today);
+            else if (scope == "current")
+                reservations = reservations.Where(r => r.CheckOutDate >= today);
+            // "all" => no scope filter
+
+            // DateReserved range
+            if (reservedFrom.HasValue)
+            {
+                var from = reservedFrom.Value.Date;
+                reservations = reservations.Where(r => r.DateReserved >= from);
+            }
+            if (reservedTo.HasValue)
+            {
+                var toExclusive = reservedTo.Value.Date.AddDays(1);
+                reservations = reservations.Where(r => r.DateReserved < toExclusive);
+            }
+
+            // Stay overlap range
+            if (stayFrom.HasValue || stayTo.HasValue)
+            {
+                var from = stayFrom ?? DateOnly.MinValue;
+                var to = stayTo ?? DateOnly.MaxValue;
+
+                reservations = reservations.Where(r =>
+                    r.CheckInDate <= to &&
+                    r.CheckOutDate >= from
+                );
+            }
 
             var projectedReservations = reservations.Select(r => new ReservationIndexViewModel
             {
@@ -84,7 +144,7 @@ namespace reservation_tracker.Controllers
             // Search
             if(!string.IsNullOrWhiteSpace(search))
             {
-                search = search.Trim().ToLower();
+                search = search.Trim();
                 projectedReservations = projectedReservations.Where(r =>
                     EF.Functions.Like(r.GuestLastName, $"%{search}%") ||
                     EF.Functions.Like(r.GuestFirstName, $"%{search}%") ||
@@ -166,7 +226,11 @@ namespace reservation_tracker.Controllers
                 Page = page,
                 PageSize = pageSize,
                 TotalCount = totalCount,
-                Scope = scope
+                Scope = scope,
+                StayFrom = stayFrom,
+                StayTo = stayTo,
+                ReservedFrom = reservedFrom,
+                ReservedTo = reservedTo
             };
 
             return View(pageModel);
