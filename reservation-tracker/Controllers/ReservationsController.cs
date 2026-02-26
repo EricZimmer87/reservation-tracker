@@ -30,15 +30,21 @@ namespace reservation_tracker.Controllers
         }
 
         // GET: Reservations
-        public async Task<IActionResult> Index(string sort, string dir, string search, int page = 1, string scope = "current")
+        public async Task<IActionResult> Index(string sort, string dir, string search, int pageSize = 10, int page = 1, string scope = "current")
         {
             dir = string.Equals(dir, "desc", StringComparison.OrdinalIgnoreCase)
                 ? "desc" : "asc";
 
-            // Fixed page size of 25
-            const int pageSize = 25;
+            // Set pageSize to default (10) if it is set to an unallowed value
+            var allowedPageSizes = new[] { 10, 25, 50, 75, 100 };
+            if (!allowedPageSizes.Contains(pageSize))
+            {
+                pageSize = 10;
+            }
+
             // Ensure page is never lower than 1
             if (page < 1) page = 1;
+
             scope = string.Equals(scope, "past", StringComparison.OrdinalIgnoreCase) ? "past" : "current";
 
             var today = DateOnly.FromDateTime(DateTime.Today);
@@ -80,11 +86,11 @@ namespace reservation_tracker.Controllers
             {
                 search = search.Trim().ToLower();
                 projectedReservations = projectedReservations.Where(r =>
-                    r.GuestLastName.ToLower().Contains(search) ||
-                    r.GuestFirstName.ToLower().Contains(search) ||
-                    r.RoomNumber.ToLower().Contains(search) ||
-                    r.ReservedByDisplayName.ToLower().Contains(search) ||
-                    (r.Notes != null && r.Notes.ToLower().Contains(search)) ||
+                    EF.Functions.Like(r.GuestLastName, $"%{search}%") ||
+                    EF.Functions.Like(r.GuestFirstName, $"%{search}%") ||
+                    EF.Functions.Like(r.RoomNumber, $"%{search}%") ||
+                    EF.Functions.Like(r.ReservedByDisplayName, $"%{search}%") ||
+                    (r.Notes != null && EF.Functions.Like(r.Notes, $"%{search}%")) ||
                     (r.CardLastFour != null && r.CardLastFour.Contains(search))
                 );
 
@@ -141,6 +147,10 @@ namespace reservation_tracker.Controllers
 
             // Get total count to determine total amount of pages for displaying in view
             var totalCount = await projectedReservations.CountAsync();
+
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+            totalPages = Math.Max(1, totalPages);
+            if (page > totalPages) page = totalPages;
 
             var items = await projectedReservations
                 .Skip((page - 1) * pageSize) // filter out prev pages

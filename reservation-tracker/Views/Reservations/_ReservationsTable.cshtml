@@ -19,7 +19,8 @@
            asp-route-page="1"
            asp-route-sort="@Model.CurrentSort"
            asp-route-dir="@Model.CurrentDir"
-           asp-route-search="@Model.Search">
+           asp-route-search="@Model.Search"
+           asp-route-pageSize="@Model.PageSize">
             Current Reservations
         </a>
     </li>
@@ -31,7 +32,8 @@
            asp-route-page="1"
            asp-route-sort="@Model.CurrentSort"
            asp-route-dir="@Model.CurrentDir"
-           asp-route-search="@Model.Search">
+           asp-route-search="@Model.Search"
+           asp-route-pageSize="@Model.PageSize">
             Past Reservations
         </a>
     </li>
@@ -46,7 +48,8 @@
                    asp-route-dir="@NextDir("DateReserved")"
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
-                   asp-route-scope="@Model.Scope">
+                   asp-route-scope="@Model.Scope"
+                   asp-route-pageSize="@Model.PageSize">
                     Date Reserved
                 </a>
             </th>
@@ -56,7 +59,8 @@
                    asp-route-dir="@NextDir("LastName")"
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
-                   asp-route-scope="@Model.Scope">
+                   asp-route-scope="@Model.Scope"
+                   asp-route-pageSize="@Model.PageSize">
                     Guest Name
                 </a>
             </th>
@@ -66,7 +70,8 @@
                    asp-route-dir="@NextDir("CheckInDate")"
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
-                   asp-route-scope="@Model.Scope">
+                   asp-route-scope="@Model.Scope"
+                   asp-route-pageSize="@Model.PageSize">
                     Check-In Date
                 </a>
             </th>
@@ -76,7 +81,8 @@
                    asp-route-dir="@NextDir("CheckOutDate")"
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
-                   asp-route-scope="@Model.Scope">
+                   asp-route-scope="@Model.Scope"
+                   asp-route-pageSize="@Model.PageSize">
                     Check-Out Date
                 </a>
             </th>
@@ -86,7 +92,8 @@
                    asp-route-dir="@NextDir("NumberOfGuests")"
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
-                   asp-route-scope="@Model.Scope">
+                   asp-route-scope="@Model.Scope"
+                   asp-route-pageSize="@Model.PageSize">
                     Number of Guests
                 </a>
             </th>
@@ -96,7 +103,8 @@
                    asp-route-dir="@NextDir("Notes")"
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
-                   asp-route-scope="@Model.Scope">
+                   asp-route-scope="@Model.Scope"
+                   asp-route-pageSize="@Model.PageSize">
                     Notes
                 </a>
             </th>
@@ -106,7 +114,8 @@
                    asp-route-dir="@NextDir("Status")"
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
-                   asp-route-scope="@Model.Scope">
+                   asp-route-scope="@Model.Scope"
+                   asp-route-pageSize="@Model.PageSize">
                     Status
                 </a>
             </th>
@@ -116,7 +125,8 @@
                    asp-route-dir="@NextDir("CardLastFour")"
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
-                   asp-route-scope="@Model.Scope">
+                   asp-route-scope="@Model.Scope"
+                   asp-route-pageSize="@Model.PageSize">
                     Card Last Four
                 </a>
             </th>
@@ -126,7 +136,8 @@
                    asp-route-dir="@NextDir("RoomNumber")"
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
-                   asp-route-scope="@Model.Scope">
+                   asp-route-scope="@Model.Scope"
+                   asp-route-pageSize="@Model.PageSize">
                     Room Number
                 </a>
             </th>
@@ -136,7 +147,8 @@
                    asp-route-dir="@NextDir("DisplayName")"
                    asp-route-search="@Model.Search"
                    asp-route-page="1"
-                   asp-route-scope="@Model.Scope">
+                   asp-route-scope="@Model.Scope"
+                   asp-route-pageSize="@Model.PageSize">
                     Reserved By
                 </a>
             </th>
@@ -183,7 +195,8 @@
                asp-route-sort="@Model.CurrentSort"
                asp-route-dir="@Model.CurrentDir"
                asp-route-scope="@Model.Scope"
-               asp-route-search="@Model.Search">
+               asp-route-search="@Model.Search"
+               asp-route-pageSize="@Model.PageSize">
                 Previous
             </a>
         </li>
@@ -201,7 +214,8 @@
                asp-route-sort="@Model.CurrentSort"
                asp-route-dir="@Model.CurrentDir"
                asp-route-scope="@Model.Scope"
-               asp-route-search="@Model.Search">
+               asp-route-search="@Model.Search"
+               asp-route-pageSize="@Model.PageSize">
                 Next
             </a>
         </li>
@@ -210,6 +224,9 @@
             <form method="get" asp-action="Index" class="d-flex align-items-center">
                 <input type="hidden" name="sort" value="@Model.CurrentSort" />
                 <input type="hidden" name="dir" value="@Model.CurrentDir" />
+                <input type="hidden" name="scope" value="@Model.Scope" />
+                <input type="hidden" name="search" value="@Model.Search" />
+                <input type="hidden" name="pageSize" value="@Model.PageSize" />
                 <button type="submit" class="page-link">
                     Go to page...
                 </button>
@@ -223,5 +240,30 @@
                        title="Go to page" />
             </form>
         </li>
+
+        <li class="page-item ms-3 d-flex align-items-center">
+            <form method="get"
+                  asp-action="Index"
+                  class="d-flex align-items-center gap-2 text-nowrap">
+                <input type="hidden" name="sort" value="@Model.CurrentSort" />
+                <input type="hidden" name="dir" value="@Model.CurrentDir" />
+                <input type="hidden" name="scope" value="@Model.Scope" />
+                <input type="hidden" name="search" value="@Model.Search" />
+                <input type="hidden" name="page" value="1" />
+
+                <label asp-for="PageSize" class="mb-0">Rows per page</label>
+
+                <select asp-for="PageSize"
+                        class="form-select form-select-sm w-auto"
+                        onchange="this.form.submit();">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="75">75</option>
+                    <option value="100">100</option>
+                </select>
+            </form>
+        </li>
+
     </ul>
 </nav>

@@ -19,13 +19,14 @@
 <form method="get" asp-action="Index" class="row g-2 mb-3">
     <input type="hidden" name="sort" value="@Model.CurrentSort" />
     <input type="hidden" name="dir" value="@Model.CurrentDir" />
+    <input type="hidden" name="pageSize" value="@Model.PageSize" />
 
     <div class="col-auto">
         <input type="text"
                name="search"
                value="@Model.Search"
                class="form-control"
-               placeholder="Search guests..." />
+               placeholder="Search reservations..." />
     </div>
 
     <div class="col-auto">
@@ -34,7 +35,8 @@
            asp-action="Index"
            asp-route-sort="@Model.CurrentSort"
            asp-route-dir="@Model.CurrentDir"
-           asp-route-scope="@Model.Scope">
+           asp-route-scope="@Model.Scope"
+           asp-route-pageSize="@Model.PageSize">
             Clear
         </a>
     </div>
