@@ -1,0 +1,196 @@
+﻿@model reservation_tracker.Models.ViewModels.Reservations.DailyReservationsViewModel
+
+@{
+    string currentSort = Model.CurrentSort ?? "";
+    string currentDir = Model.CurrentDir ?? "asc";
+    string NextDir(string col) => (currentSort == col && currentDir == "asc") ? "desc" : "asc";
+
+    var prevDay = Model.SelectedDay.AddDays(-1);
+    var nextDay = Model.SelectedDay.AddDays(1);
+    var prevMonth = Model.SelectedDay.AddMonths(-1);
+    var nextMonth = Model.SelectedDay.AddMonths(1);
+
+    // For <input type="date">
+    var selectedDayValue = Model.SelectedDay.ToString("yyyy-MM-dd");
+}
+
+<h1>Daily Reservations</h1>
+<div class="d-flex align-items-center gap-2 mb-3">
+    <!-- Prev month -->
+    <a class="btn btn-outline-secondary"
+       asp-action="Index"
+       asp-route-selectedDay="@prevMonth"
+       asp-route-sort="@Model.CurrentSort"
+       asp-route-dir="@Model.CurrentDir"
+       title="Previous month">
+        &laquo;
+    </a>
+
+    <!-- Prev day -->
+    <a class="btn btn-outline-secondary"
+       asp-action="Index"
+       asp-route-selectedDay="@prevDay"
+       asp-route-sort="@Model.CurrentSort"
+       asp-route-dir="@Model.CurrentDir"
+       title="Previous day">
+        &lsaquo;
+    </a>
+
+    <!-- Date picker (GET) -->
+    <form asp-action="Index" method="get" class="d-flex align-items-center gap-2 mb-0">
+        <input type="hidden" name="sort" value="@Model.CurrentSort" />
+        <input type="hidden" name="dir" value="@Model.CurrentDir" />
+
+        <input class="form-control"
+               type="date"
+               name="selectedDay"
+               value="@selectedDayValue" />
+
+        <button class="btn btn-primary" type="submit">Go</button>
+    </form>
+
+    <!-- Next day -->
+    <a class="btn btn-outline-secondary"
+       asp-action="Index"
+       asp-route-selectedDay="@nextDay"
+       asp-route-sort="@Model.CurrentSort"
+       asp-route-dir="@Model.CurrentDir"
+       title="Next day">
+        &rsaquo;
+    </a>
+
+    <!-- Next month -->
+    <a class="btn btn-outline-secondary"
+       asp-action="Index"
+       asp-route-selectedDay="@nextMonth"
+       asp-route-sort="@Model.CurrentSort"
+       asp-route-dir="@Model.CurrentDir"
+       title="Next month">
+        &raquo;
+    </a>
+
+    <span class="ms-2 text-muted">
+        @Model.SelectedDay.ToString("dddd, MMM d, yyyy")
+    </span>
+</div>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="RoomNumber"
+                   asp-route-dir="@NextDir("RoomNumber")"
+                   asp-route-selectedDay="@Model.SelectedDay">
+                    Room Number
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="DateReserved"
+                   asp-route-dir="@NextDir("DateReserved")"
+                   asp-route-selectedDay="@Model.SelectedDay">
+                    Date Reserved
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="LastName"
+                   asp-route-dir="@NextDir("LastName")"
+                   asp-route-selectedDay="@Model.SelectedDay">
+                    Guest Name
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="CheckInDate"
+                   asp-route-dir="@NextDir("CheckInDate")"
+                   asp-route-selectedDay="@Model.SelectedDay">
+                    Check-In Date
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="CheckOutDate"
+                   asp-route-dir="@NextDir("CheckOutDate")"
+                   asp-route-selectedDay="@Model.SelectedDay">
+                    Check-Out Date
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="NumberOfGuests"
+                   asp-route-dir="@NextDir("NumberOfGuests")"
+                   asp-route-selectedDay="@Model.SelectedDay">
+                    Number of Guests
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="Notes"
+                   asp-route-dir="@NextDir("Notes")"
+                   asp-route-selectedDay="@Model.SelectedDay">
+                    Notes
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="Status"
+                   asp-route-dir="@NextDir("Status")"
+                   asp-route-selectedDay="@Model.SelectedDay">
+                    Status
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="CardLastFour"
+                   asp-route-dir="@NextDir("CardLastFour")"
+                   asp-route-selectedDay="@Model.SelectedDay">
+                    Card Last Four
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="DisplayName"
+                   asp-route-dir="@NextDir("DisplayName")"
+                   asp-route-selectedDay="@Model.SelectedDay">
+                    Reserved By
+                </a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var row in Model.Rooms)
+        {
+            var item = row.Reservation;
+
+            <tr>
+                <td>@row.RoomNumber</td>
+                <td>@(item is null ? "-" : item.DateReserved.ToString("g"))</td>
+                <td>@(item is null ? "-" : item.GuestFullName)</td>
+                <td>@(item is null ? "-" : item.CheckInDate.ToString())</td>
+                <td>@(item is null ? "-" : item.CheckOutDate.ToString())</td>
+                <td>@(item is null ? "-" : (item.NumberOfGuests?.ToString() ?? "-"))</td>
+                <td>@(item is null ? "-" : (item.Notes ?? "-"))</td>
+                <td>@(item is null ? "-" : item.Status)</td>
+                <td>@(item is null ? "-" : (item.CardLastFour ?? "-"))</td>
+                <td>@(item is null ? "-" : (item.ReservedByDisplayName ?? "-"))</td>
+                <td>
+                    @if (item is null)
+                    {
+                        <span class="text-muted">-</span>
+                    }
+                    else
+                    {
+                        <a asp-controller="Reservations" asp-action="Edit" asp-route-id="@item.ReservationId">Edit</a>
+                        <a asp-controller="Reservations" asp-action="Details" asp-route-id="@item.ReservationId">Details</a>
+                        <a asp-controller="Reservations" asp-action="Delete" asp-route-id="@item.ReservationId">Delete</a>
+                     }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
