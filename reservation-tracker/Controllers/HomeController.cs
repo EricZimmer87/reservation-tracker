@@ -12,131 +12,51 @@ namespace reservation_tracker.Controllers
     {
         private readonly ReservationTrackerContext _context = context;
 
-        public async Task<IActionResult> Index(DateOnly? selectedDay, string? sort, string? dir)
+        public async Task<IActionResult> Index(DateOnly? selectedDay)
         {
-            dir = string.Equals(dir, "desc", StringComparison.OrdinalIgnoreCase) ? "desc" : "asc";
             var day = selectedDay ?? DateOnly.FromDateTime(DateTime.Today);
 
-            var baseQuery = _context.Rooms
+            var roomNumbers = await _context.Rooms
                 .AsNoTracking()
-                .Select(room => new DailyRoomRowViewModel
+                .OrderBy(r => r.RoomNumber)
+                .Select(r => r.RoomNumber)
+                .ToListAsync();
+
+            var todaysReservations = await _context.Reservations
+                .AsNoTracking()
+                .Where(r => r.CheckInDate <= day && r.CheckOutDate > day)
+                .Select(r => new ReservationIndexViewModel
                 {
-                    RoomNumber = room.RoomNumber,
-                    Reservation = room.Reservations
-                        .Where(r => r.CheckInDate <= day && r.CheckOutDate > day)
-                        .Select(r => new ReservationIndexViewModel
-                        {
-                            ReservationId = r.ReservationId,
-                            DateReserved = r.DateReserved,
-                            CheckInDate = r.CheckInDate,
-                            CheckOutDate = r.CheckOutDate,
-                            GuestLastName = r.Guest.LastName,
-                            GuestFirstName = r.Guest.FirstName,
-                            NumberOfGuests = r.NumberOfGuests,
-                            Notes = r.Notes,
-                            Status = r.Status,
-                            CardLastFour = r.CardLastFour,
-                            RoomNumber = room.RoomNumber,
-                            ReservedByDisplayName = r.User.DisplayName
-                        })
-                        .FirstOrDefault()
-                });
+                    ReservationId = r.ReservationId,
+                    DateReserved = r.DateReserved,
+                    CheckInDate = r.CheckInDate,
+                    CheckOutDate = r.CheckOutDate,
+                    GuestLastName = r.Guest.LastName,
+                    GuestFirstName = r.Guest.FirstName,
+                    NumberOfGuests = r.NumberOfGuests,
+                    Notes = r.Notes,
+                    Status = r.Status,
+                    CardLastFour = r.CardLastFour,
+                    RoomNumber = r.Room.RoomNumber,
+                    ReservedByDisplayName = r.User.DisplayName
+                })
+                .ToListAsync();
 
-            // Helpers for null-safe sorting:
-            // - first key: whether reservation is null (false=has reservation, true=vacant)
-            //   This pushes vacant rooms to the bottom. Flip the boolean if you want vacant first.
-            IOrderedQueryable<DailyRoomRowViewModel> projected = sort switch
+            var byRoom = todaysReservations.ToDictionary(r => r.RoomNumber);
+
+            var rows = roomNumbers.Select(rn => new DailyRoomRowViewModel
             {
-                "RoomNumber" => dir == "asc"
-                    ? baseQuery.OrderBy(x => x.RoomNumber)
-                    : baseQuery.OrderByDescending(x => x.RoomNumber),
+                RoomNumber = rn,
+                Reservation = byRoom.TryGetValue(rn, out var res) ? res : null
+            }).ToList();
 
-                "DateReserved" => dir == "asc"
-                    ? baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenBy(x => x.Reservation!.DateReserved)
-                              .ThenBy(x => x.RoomNumber)
-                    : baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenByDescending(x => x.Reservation!.DateReserved)
-                              .ThenBy(x => x.RoomNumber),
-
-                "LastName" => dir == "asc"
-                    ? baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenBy(x => x.Reservation!.GuestLastName)
-                              .ThenBy(x => x.Reservation!.GuestFirstName)
-                              .ThenBy(x => x.RoomNumber)
-                    : baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenByDescending(x => x.Reservation!.GuestLastName)
-                              .ThenBy(x => x.Reservation!.GuestFirstName)
-                              .ThenBy(x => x.RoomNumber),
-
-                "CheckInDate" => dir == "asc"
-                    ? baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenBy(x => x.Reservation!.CheckInDate)
-                              .ThenBy(x => x.RoomNumber)
-                    : baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenByDescending(x => x.Reservation!.CheckInDate)
-                              .ThenBy(x => x.RoomNumber),
-
-                "CheckOutDate" => dir == "asc"
-                    ? baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenBy(x => x.Reservation!.CheckOutDate)
-                              .ThenBy(x => x.RoomNumber)
-                    : baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenByDescending(x => x.Reservation!.CheckOutDate)
-                              .ThenBy(x => x.RoomNumber),
-
-                "NumberOfGuests" => dir == "asc"
-                    ? baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenBy(x => x.Reservation!.NumberOfGuests) // int? ok
-                              .ThenBy(x => x.RoomNumber)
-                    : baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenByDescending(x => x.Reservation!.NumberOfGuests)
-                              .ThenBy(x => x.RoomNumber),
-
-                "Notes" => dir == "asc"
-                    ? baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenBy(x => x.Reservation!.Notes)
-                              .ThenBy(x => x.RoomNumber)
-                    : baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenByDescending(x => x.Reservation!.Notes)
-                              .ThenBy(x => x.RoomNumber),
-
-                "Status" => dir == "asc"
-                    ? baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenBy(x => x.Reservation!.Status)
-                              .ThenBy(x => x.RoomNumber)
-                    : baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenByDescending(x => x.Reservation!.Status)
-                              .ThenBy(x => x.RoomNumber),
-
-                "CardLastFour" => dir == "asc"
-                    ? baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenBy(x => x.Reservation!.CardLastFour)
-                              .ThenBy(x => x.RoomNumber)
-                    : baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenByDescending(x => x.Reservation!.CardLastFour)
-                              .ThenBy(x => x.RoomNumber),
-
-                "DisplayName" => dir == "asc"
-                    ? baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenBy(x => x.Reservation!.ReservedByDisplayName)
-                              .ThenBy(x => x.RoomNumber)
-                    : baseQuery.OrderBy(x => x.Reservation == null)
-                              .ThenByDescending(x => x.Reservation!.ReservedByDisplayName)
-                              .ThenBy(x => x.RoomNumber),
-
-                _ => baseQuery.OrderBy(x => x.RoomNumber)
-            };
-
-            var items = new DailyReservationsViewModel
+            var vm = new DailyReservationsViewModel
             {
                 SelectedDay = day,
-                CurrentSort = sort,
-                CurrentDir = dir,
-                Rooms = await projected.ToListAsync()
+                Rooms = rows
             };
 
-            return View(items);
+            return View(vm);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
