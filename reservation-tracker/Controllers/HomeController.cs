@@ -16,12 +16,14 @@ namespace reservation_tracker.Controllers
         {
             var day = selectedDay ?? DateOnly.FromDateTime(DateTime.Today);
 
+            // Get the rooms
             var roomNumbers = await _context.Rooms
                 .AsNoTracking()
                 .OrderBy(r => r.RoomNumber)
                 .Select(r => r.RoomNumber)
                 .ToListAsync();
 
+            // Get today's reservations
             var todaysReservations = await _context.Reservations
                 .AsNoTracking()
                 .Where(r => r.CheckInDate <= day && r.CheckOutDate > day)
@@ -31,8 +33,15 @@ namespace reservation_tracker.Controllers
                     DateReserved = r.DateReserved,
                     CheckInDate = r.CheckInDate,
                     CheckOutDate = r.CheckOutDate,
-                    GuestLastName = r.Guest.LastName,
-                    GuestFirstName = r.Guest.FirstName,
+
+                    GuestLastName = r.Guest != null ? r.Guest.LastName : null,
+                    GuestFirstName = r.Guest != null ? r.Guest.FirstName : null,
+                    GuestPhoneNumber = r.Guest != null ? r.Guest.PhoneNumber : null,
+                    GuestAddress = r.Guest != null ? r.Guest.Address : null,
+                    GuestCity = r.Guest != null ? r.Guest.City : null,
+                    GuestState = r.Guest != null ? r.Guest.State : null,
+                    GuestZipcode = r.Guest != null ? r.Guest.Zipcode : null,
+
                     NumberOfGuests = r.NumberOfGuests,
                     Notes = r.Notes,
                     Status = r.Status,

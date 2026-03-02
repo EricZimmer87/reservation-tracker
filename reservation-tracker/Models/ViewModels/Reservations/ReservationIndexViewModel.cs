@@ -6,13 +6,21 @@ namespace reservation_tracker.Models.ViewModels.Reservations
     {
         public long ReservationId { get; set; }
         public DateTime DateReserved { get; set; }
+
+        public long? GuestId { get; set; }
         [Display(Name = "Guest")]
         public string GuestFullName =>
             string.IsNullOrEmpty(GuestLastName)
             ? "-"
             : $"{GuestLastName}, {GuestFirstName}";
-        public string GuestLastName { get; set; }
-        public string GuestFirstName { get; set; }
+        public string? GuestLastName { get; set; }
+        public string? GuestFirstName { get; set; }
+        public string? GuestPhoneNumber { get; set; }
+        public string? GuestAddress { get; set; }
+        public string? GuestCity { get; set; }
+        public string? GuestState { get; set; }
+        public string? GuestZipcode { get; set; }
+
         public DateOnly CheckInDate { get; set; }
         public DateOnly CheckOutDate { get; set; }
         public int? NumberOfGuests { get; set; }

@@ -131,8 +131,16 @@ namespace reservation_tracker.Controllers
                 DateReserved = r.DateReserved,
                 CheckInDate = r.CheckInDate,
                 CheckOutDate = r.CheckOutDate,
-                GuestLastName = r.Guest.LastName,
-                GuestFirstName = r.Guest.FirstName,
+
+                GuestId = r.GuestId,
+                GuestLastName = r.Guest != null ? r.Guest.LastName : null,
+                GuestFirstName = r.Guest != null ? r.Guest.FirstName : null,
+                GuestPhoneNumber = r.Guest != null ? r.Guest.PhoneNumber : null,
+                GuestAddress = r.Guest != null ? r.Guest.Address : null,
+                GuestCity = r.Guest != null ? r.Guest.City : null,
+                GuestState = r.Guest != null ? r.Guest.State : null,
+                GuestZipcode = r.Guest != null ? r.Guest.Zipcode : null,
+
                 NumberOfGuests = r.NumberOfGuests,
                 Notes = r.Notes,
                 Status = r.Status,
@@ -142,7 +150,7 @@ namespace reservation_tracker.Controllers
             });
 
             // Search
-            if(!string.IsNullOrWhiteSpace(search))
+            if (!string.IsNullOrWhiteSpace(search))
             {
                 search = search.Trim();
                 projectedReservations = projectedReservations.Where(r =>
@@ -168,6 +176,26 @@ namespace reservation_tracker.Controllers
                 "LastName" => dir == "asc"
                 ? projectedReservations.OrderBy(r => r.GuestLastName).ThenBy(r => r.GuestFirstName).ThenBy(r => r.ReservationId)
                 : projectedReservations.OrderByDescending(r => r.GuestLastName).ThenBy(r => r.GuestFirstName).ThenBy(r => r.ReservationId),
+
+                "Address" => dir == "asc"
+                ? projectedReservations.OrderBy(r => r.GuestAddress).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.GuestAddress).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId),
+
+                "City" => dir == "asc"
+                ? projectedReservations.OrderBy(r => r.GuestCity).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.GuestCity).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId),
+
+                "State" => dir == "asc"
+                ? projectedReservations.OrderBy(r => r.GuestState).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.GuestState).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId),
+
+                "Zipcode" => dir == "asc"
+                ? projectedReservations.OrderBy(r => r.GuestZipcode).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.GuestZipcode).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId),
+
+                "PhoneNumber" => dir == "asc"
+                ? projectedReservations.OrderBy(r => r.GuestPhoneNumber).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.GuestPhoneNumber).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId),
 
                 "CheckInDate" => dir == "asc"
                 ? projectedReservations.OrderBy(r => r.CheckInDate).ThenBy(r => r.ReservationId)
