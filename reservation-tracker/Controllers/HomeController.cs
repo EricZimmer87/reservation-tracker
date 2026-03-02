@@ -12,15 +12,16 @@ namespace reservation_tracker.Controllers
     {
         private readonly ReservationTrackerContext _context = context;
 
+        // Displays the rooms with reservations (if any) for the day
         public async Task<IActionResult> Index(DateOnly? selectedDay)
         {
             var day = selectedDay ?? DateOnly.FromDateTime(DateTime.Today);
 
             // Get the rooms
-            var roomNumbers = await _context.Rooms
+            var rooms = await _context.Rooms
                 .AsNoTracking()
                 .OrderBy(r => r.RoomNumber)
-                .Select(r => r.RoomNumber)
+                .Select(r => new { r.RoomId, r.RoomNumber })
                 .ToListAsync();
 
             // Get today's reservations
@@ -34,6 +35,7 @@ namespace reservation_tracker.Controllers
                     CheckInDate = r.CheckInDate,
                     CheckOutDate = r.CheckOutDate,
 
+                    GuestId = r.GuestId,
                     GuestLastName = r.Guest != null ? r.Guest.LastName : null,
                     GuestFirstName = r.Guest != null ? r.Guest.FirstName : null,
                     GuestPhoneNumber = r.Guest != null ? r.Guest.PhoneNumber : null,
@@ -46,17 +48,21 @@ namespace reservation_tracker.Controllers
                     Notes = r.Notes,
                     Status = r.Status,
                     CardLastFour = r.CardLastFour,
+                    RoomId = r.Room.RoomId,
                     RoomNumber = r.Room.RoomNumber,
                     ReservedByDisplayName = r.User.DisplayName
                 })
                 .ToListAsync();
 
-            var byRoom = todaysReservations.ToDictionary(r => r.RoomNumber);
+            var byRoom = todaysReservations
+                .GroupBy(r => r.RoomId)
+                .ToDictionary(g => g.Key, g => g.First());
 
-            var rows = roomNumbers.Select(rn => new DailyRoomRowViewModel
+            var rows = rooms.Select(room => new DailyRoomRowViewModel
             {
-                RoomNumber = rn,
-                Reservation = byRoom.TryGetValue(rn, out var res) ? res : null
+                RoomId = room.RoomId,
+                RoomNumber = room.RoomNumber,
+                Reservation = byRoom.TryGetValue(room.RoomId, out var res) ? res : null
             }).ToList();
 
             var vm = new DailyReservationsViewModel

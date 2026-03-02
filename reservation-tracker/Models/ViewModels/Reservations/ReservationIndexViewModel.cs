@@ -20,6 +20,11 @@ namespace reservation_tracker.Models.ViewModels.Reservations
         public string? GuestCity { get; set; }
         public string? GuestState { get; set; }
         public string? GuestZipcode { get; set; }
+        [Display(Name = "Address")]
+        public string GuestFullAddress =>
+            string.IsNullOrEmpty(GuestLastName)
+            ? "-"
+            : $"{GuestAddress}, {GuestCity}, {GuestState}, {GuestZipcode}";
 
         public DateOnly CheckInDate { get; set; }
         public DateOnly CheckOutDate { get; set; }
@@ -29,6 +34,7 @@ namespace reservation_tracker.Models.ViewModels.Reservations
         public string? CardLastFour { get; set; }
         [Display(Name = "Reserved By")]
         public string ReservedByDisplayName { get; set; }
+        public long RoomId { get; set; }
         public string RoomNumber { get; set; }
 
     }

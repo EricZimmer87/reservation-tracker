@@ -92,51 +92,6 @@
             </th>
             <th>
                 <a asp-action="Index"
-                   asp-route-sort="City"
-                   asp-route-dir="@NextDir("City")"
-                   asp-route-search="@Model.Search"
-                   asp-route-page="1"
-                   asp-route-scope="@Model.Scope"
-                   asp-route-pageSize="@Model.PageSize"
-                   asp-route-stayFrom="@Model.StayFrom"
-                   asp-route-stayTo="@Model.StayTo"
-                   asp-route-reservedFrom="@Model.ReservedFrom"
-                   asp-route-reservedTo="@Model.ReservedTo">
-                    City
-                </a>
-            </th>
-            <th>
-                <a asp-action="Index"
-                   asp-route-sort="State"
-                   asp-route-dir="@NextDir("State")"
-                   asp-route-search="@Model.Search"
-                   asp-route-page="1"
-                   asp-route-scope="@Model.Scope"
-                   asp-route-pageSize="@Model.PageSize"
-                   asp-route-stayFrom="@Model.StayFrom"
-                   asp-route-stayTo="@Model.StayTo"
-                   asp-route-reservedFrom="@Model.ReservedFrom"
-                   asp-route-reservedTo="@Model.ReservedTo">
-                    State
-                </a>
-            </th>
-            <th>
-                <a asp-action="Index"
-                   asp-route-sort="Zipcode"
-                   asp-route-dir="@NextDir("Zipcode")"
-                   asp-route-search="@Model.Search"
-                   asp-route-page="1"
-                   asp-route-scope="@Model.Scope"
-                   asp-route-pageSize="@Model.PageSize"
-                   asp-route-stayFrom="@Model.StayFrom"
-                   asp-route-stayTo="@Model.StayTo"
-                   asp-route-reservedFrom="@Model.ReservedFrom"
-                   asp-route-reservedTo="@Model.ReservedTo">
-                    Zipcode
-                </a>
-            </th>
-            <th>
-                <a asp-action="Index"
                    asp-route-sort="PhoneNumber"
                    asp-route-dir="@NextDir("PhoneNumber")"
                    asp-route-search="@Model.Search"
@@ -280,10 +235,7 @@
             <tr>
                 <td>@Html.DisplayFor(_ => item.DateReserved)</td>
                 <td><a asp-controller="Guests" asp-action="Details" asp-route-id="@item.GuestId">@item.GuestFullName</a></td>
-                <td>@item.GuestAddress</td>
-                <td>@item.GuestCity</td>
-                <td>@item.GuestState</td>
-                <td>@item.GuestZipcode</td>
+                <td>@item.GuestFullAddress</td>
                 <td>@item.GuestPhoneNumber</td>
                 <td>@Html.DisplayFor(_ => item.CheckInDate)</td>
                 <td>@Html.DisplayFor(_ => item.CheckOutDate)</td>

@@ -28,6 +28,7 @@
        asp-route-selectedDay="@prevMonth"
        title="Previous month">
         &laquo;
+        Prev Month
     </a>
 
     <!-- Prev day -->
@@ -36,6 +37,7 @@
        asp-route-selectedDay="@prevDay"
        title="Previous day">
         &lsaquo;
+        Prev Day
     </a>
 
     <!-- Date picker (GET) -->
@@ -53,6 +55,7 @@
        asp-action="Index"
        asp-route-selectedDay="@nextDay"
        title="Next day">
+        Next Day
         &rsaquo;
     </a>
 
@@ -61,6 +64,7 @@
        asp-action="Index"
        asp-route-selectedDay="@nextMonth"
        title="Next month">
+        Next Month
         &raquo;
     </a>
 
@@ -96,6 +100,8 @@
             <th>Room</th>
             <th>Date Reserved</th>
             <th>Guest</th>
+            <th>Address</th>
+            <th>Phone Number</th>
             <th>Check-In</th>
             <th>Check-Out</th>
             <th>Guests</th>
@@ -113,10 +119,23 @@
 
             <tr>
                 <td class="fw-bold">@row.RoomNumber</td>
-
                 <td>@(r?.DateReserved.ToString("g") ?? "-")</td>
-
-                <td>@(r?.GuestFullName ?? "-")</td>
+                <td>
+                    @if (!string.IsNullOrWhiteSpace(r?.GuestFullName) && r?.GuestId != null)
+                    {
+                        <a asp-controller="Guests"
+                           asp-action="Details"
+                           asp-route-id="@r.GuestId">
+                            @r.GuestFullName
+                        </a>
+                    }
+                    else
+                    {
+                        @:-
+                    }
+                </td>
+                <td>@(r?.GuestFullAddress ?? "-")</td>
+                <td>@(r?.GuestPhoneNumber ?? "-")</td>
 
                 <td>@(r is null ? "-" : r.CheckInDate.ToString("MM/dd/yyyy"))</td>
 
@@ -150,8 +169,8 @@
                     {
                         <a asp-controller="Reservations"
                            asp-action="Create"
-                           asp-route-roomNumber="@row.RoomNumber"
-                           asp-route-checkInDate="@Model.SelectedDay">
+                           asp-route-roomId="@row.RoomId"
+                           asp-route-checkInDate="@selectedDayValue">
                             Create
                         </a>
                     }

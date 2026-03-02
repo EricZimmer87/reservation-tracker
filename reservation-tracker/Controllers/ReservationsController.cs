@@ -178,24 +178,8 @@ namespace reservation_tracker.Controllers
                 : projectedReservations.OrderByDescending(r => r.GuestLastName).ThenBy(r => r.GuestFirstName).ThenBy(r => r.ReservationId),
 
                 "Address" => dir == "asc"
-                ? projectedReservations.OrderBy(r => r.GuestAddress).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId)
-                : projectedReservations.OrderByDescending(r => r.GuestAddress).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId),
-
-                "City" => dir == "asc"
-                ? projectedReservations.OrderBy(r => r.GuestCity).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId)
-                : projectedReservations.OrderByDescending(r => r.GuestCity).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId),
-
-                "State" => dir == "asc"
-                ? projectedReservations.OrderBy(r => r.GuestState).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId)
-                : projectedReservations.OrderByDescending(r => r.GuestState).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId),
-
-                "Zipcode" => dir == "asc"
-                ? projectedReservations.OrderBy(r => r.GuestZipcode).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId)
-                : projectedReservations.OrderByDescending(r => r.GuestZipcode).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId),
-
-                "PhoneNumber" => dir == "asc"
-                ? projectedReservations.OrderBy(r => r.GuestPhoneNumber).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId)
-                : projectedReservations.OrderByDescending(r => r.GuestPhoneNumber).ThenBy(r => r.GuestAddress).ThenBy(r => r.ReservationId),
+                ? projectedReservations.OrderBy(r => r.GuestState).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.GuestState).ThenBy(r => r.ReservationId),
 
                 "CheckInDate" => dir == "asc"
                 ? projectedReservations.OrderBy(r => r.CheckInDate).ThenBy(r => r.ReservationId)
@@ -286,20 +270,22 @@ namespace reservation_tracker.Controllers
         }
 
         // GET: Reservations/Create
-        public IActionResult Create()
+        public IActionResult Create(long? roomId = null, long? guestId = null, DateOnly? checkInDate = null)
         {
-            PopulateSelectLists();
-
-            var today = DateOnly.FromDateTime(DateTime.Today);
+            var start = checkInDate ?? DateOnly.FromDateTime(DateTime.Today);
 
             // Set default values for a new reservation
             var model = new ReservationFormViewModel
             {
-                CheckInDate = today,
-                CheckOutDate = today.AddDays(1),
+                CheckInDate = start,
+                CheckOutDate = start.AddDays(1),
                 NumberOfGuests = 1,
-                Status = "booked"
+                Status = "booked",
+                RoomId = roomId ?? 0,
+                GuestId = guestId
             };
+
+            PopulateSelectLists(guestId: model.GuestId, roomId: model.RoomId);
 
             return View(model);
         }
