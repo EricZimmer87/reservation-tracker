@@ -2,7 +2,7 @@
 
 @{
     // Sorting helpers
-    string currentSort = Model.CurrentSort;
+    string currentSort = Model.CurrentSort ?? "";
     string currentDir = Model.CurrentDir;
     string NextDir(string col) => (currentSort == col && currentDir == "asc") ? "desc" : "asc";
 

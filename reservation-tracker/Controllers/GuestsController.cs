@@ -15,6 +15,46 @@ namespace reservation_tracker.Controllers
             _context = context;
         }
 
+        // Search for Guests
+        [HttpGet]
+        public IActionResult Search(string? q, string returnUrl)
+        {
+            ViewBag.ReturnUrl = returnUrl;
+
+            var results = Enumerable.Empty<Guest>();
+
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                q = q.Trim();
+                var like = $"%{q}%";
+
+                results = _context.Guests
+                    .Where(g =>
+                        EF.Functions.Like(g.FirstName ?? "", like) ||
+                        EF.Functions.Like(g.LastName ?? "", like) ||
+                        EF.Functions.Like(g.Email ?? "", like) ||
+                        EF.Functions.Like(g.PhoneNumber ?? "", like))
+                    .OrderBy(g => g.LastName).ThenBy(g => g.FirstName)
+                    .Take(50)
+                    .ToList();
+            }
+
+            return View(results);
+        }
+
+        // Select a Guest after searching
+        [HttpGet]
+        public IActionResult Select(long guestId, string returnUrl)
+        {
+            // Basic safety: only allow local returnUrls
+            if (!Url.IsLocalUrl(returnUrl))
+                return BadRequest();
+
+            // Append guestId properly
+            var sep = returnUrl.Contains('?') ? "&" : "?";
+            return Redirect($"{returnUrl}{sep}guestId={guestId}");
+        }
+
         // GET: Guests
         public async Task<IActionResult> Index(string sort, string dir, string search, int page = 1)
         {
@@ -37,7 +77,7 @@ namespace reservation_tracker.Controllers
                     City = g.City,
                     State = g.State,
                     Zipcode = g.Zipcode,
-                    Email = g.Email,           
+                    Email = g.Email,
                     Notes = g.Notes,
                     Company = g.Company
                 });

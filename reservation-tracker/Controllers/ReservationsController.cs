@@ -278,20 +278,28 @@ namespace reservation_tracker.Controllers
         {
             var start = checkInDate ?? DateOnly.FromDateTime(DateTime.Today);
 
-            // Set default values for a new reservation
             var model = new ReservationFormViewModel
             {
+                RoomId = roomId ?? 0,
+                GuestId = guestId ?? 0,
                 CheckInDate = start,
                 CheckOutDate = start.AddDays(1),
                 NumberOfGuests = 1,
-                Status = "booked",
-                RoomId = roomId ?? 0,
-                GuestId = guestId ?? 0
+                Status = "booked"
             };
 
-            PopulateSelectLists(
-                guestId: model.GuestId == 0 ? (long?)null : model.GuestId,
-                roomId: model.RoomId == 0 ? (long?)null : model.RoomId
+            ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomNumber", model.RoomId);
+
+            // You can either load all guests here OR only load the selected one.
+            // Beginner-friendly: load all guests so it can display the selected one.
+            ViewData["GuestId"] = new SelectList(
+                _context.Guests
+                    .OrderBy(g => g.LastName).ThenBy(g => g.FirstName)
+                    .Select(g => new { g.GuestId, FullName = g.LastName + ", " + g.FirstName })
+                    .ToList(),
+                "GuestId",
+                "FullName",
+                model.GuestId
             );
 
             return View(model);
@@ -311,7 +319,7 @@ namespace reservation_tracker.Controllers
                     roomId: model.RoomId == 0 ? (long?)null : model.RoomId,
                     userId: model.UserId == 0 ? (long?)null : model.UserId
                 );
-                
+
                 return View(model);
             }
 
