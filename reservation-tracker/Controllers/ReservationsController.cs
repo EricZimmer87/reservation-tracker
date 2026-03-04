@@ -146,7 +146,8 @@ namespace reservation_tracker.Controllers
                 Status = r.Status,
                 CardLastFour = r.CardLastFour,
                 RoomNumber = r.Room.RoomNumber,
-                ReservedByDisplayName = r.User.DisplayName
+                ReservedByDisplayName = r.User != null
+                ? r.User.DisplayName : null
             });
 
             // Search
@@ -158,6 +159,9 @@ namespace reservation_tracker.Controllers
                     EF.Functions.Like(r.GuestFirstName, $"%{search}%") ||
                     EF.Functions.Like(r.RoomNumber, $"%{search}%") ||
                     EF.Functions.Like(r.ReservedByDisplayName, $"%{search}%") ||
+                    EF.Functions.Like(r.GuestState, $"%{search}%") ||
+                    EF.Functions.Like(r.GuestCity, $"%{search}%") ||
+                    EF.Functions.Like(r.GuestZipcode, $"%{search}%") ||
                     (r.Notes != null && EF.Functions.Like(r.Notes, $"%{search}%")) ||
                     (r.CardLastFour != null && r.CardLastFour.Contains(search))
                 );
@@ -282,10 +286,13 @@ namespace reservation_tracker.Controllers
                 NumberOfGuests = 1,
                 Status = "booked",
                 RoomId = roomId ?? 0,
-                GuestId = guestId
+                GuestId = guestId ?? 0
             };
 
-            PopulateSelectLists(guestId: model.GuestId, roomId: model.RoomId);
+            PopulateSelectLists(
+                guestId: model.GuestId == 0 ? (long?)null : model.GuestId,
+                roomId: model.RoomId == 0 ? (long?)null : model.RoomId
+            );
 
             return View(model);
         }
@@ -299,7 +306,12 @@ namespace reservation_tracker.Controllers
         {
             if (!ModelState.IsValid)
             {
-                PopulateSelectLists(model.GuestId, model.RoomId, model.UserId);
+                PopulateSelectLists(
+                    guestId: model.GuestId == 0 ? (long?)null : model.GuestId,
+                    roomId: model.RoomId == 0 ? (long?)null : model.RoomId,
+                    userId: model.UserId == 0 ? (long?)null : model.UserId
+                );
+                
                 return View(model);
             }
 
@@ -336,7 +348,7 @@ namespace reservation_tracker.Controllers
             var model = new ReservationFormViewModel
             {
                 ReservationId = entity.ReservationId,
-                GuestId = entity.GuestId,
+                GuestId = entity.GuestId ?? 0,
                 UserId = entity.UserId,
                 RoomId = entity.RoomId,
                 CheckInDate = entity.CheckInDate,

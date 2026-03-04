@@ -33,9 +33,9 @@ namespace reservation_tracker.Models.ViewModels.Reservations
         public string Status { get; set; } = "";
         public string? CardLastFour { get; set; }
         [Display(Name = "Reserved By")]
-        public string ReservedByDisplayName { get; set; }
+        public string? ReservedByDisplayName { get; set; }
         public long RoomId { get; set; }
-        public string RoomNumber { get; set; }
+        public string? RoomNumber { get; set; }
 
     }
 }

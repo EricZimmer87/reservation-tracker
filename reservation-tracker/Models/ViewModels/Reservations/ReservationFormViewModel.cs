@@ -6,7 +6,8 @@ public class ReservationFormViewModel : IValidatableObject
 {
     public long? ReservationId { get; set; } // null for Create, set for Edit
 
-    public long? GuestId { get; set; }
+    [Range(1, long.MaxValue, ErrorMessage = "Please select a guest.")]
+    public long GuestId { get; set; }
     [Display(Name = "Reserved By")]
     public long? UserId { get; set; }
 

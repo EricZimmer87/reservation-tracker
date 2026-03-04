@@ -50,7 +50,8 @@ namespace reservation_tracker.Controllers
                     CardLastFour = r.CardLastFour,
                     RoomId = r.Room.RoomId,
                     RoomNumber = r.Room.RoomNumber,
-                    ReservedByDisplayName = r.User.DisplayName
+                    ReservedByDisplayName = r.User != null
+                    ? r.User.DisplayName : null
                 })
                 .ToListAsync();
 
