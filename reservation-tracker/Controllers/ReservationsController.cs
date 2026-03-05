@@ -290,8 +290,7 @@ namespace reservation_tracker.Controllers
 
             ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomNumber", model.RoomId);
 
-            // You can either load all guests here OR only load the selected one.
-            // Beginner-friendly: load all guests so it can display the selected one.
+            // Load all guests into the drop down select list
             ViewData["GuestId"] = new SelectList(
                 _context.Guests
                     .OrderBy(g => g.LastName).ThenBy(g => g.FirstName)

@@ -6,7 +6,7 @@
 <form method="get" asp-action="Search">
     <input type="hidden" name="returnUrl" value="@returnUrl" />
     <input type="text" name="q" value="@Context.Request.Query["q"]" placeholder="Search guests..." />
-    <button type="submit">Search</button>
+    <button class="btn btn-primary" type="submit">Search</button>
 </form>
 
 <table class="table">
@@ -15,6 +15,10 @@
         {
             <tr>
                 <td>@g.LastName, @g.FirstName</td>
+                <td>@g.Address</td>
+                <td>@g.City</td>
+                <td>@g.State</td>
+                <td>@g.Zipcode</td>
                 <td>@g.Email</td>
                 <td>@g.PhoneNumber</td>
                 <td>

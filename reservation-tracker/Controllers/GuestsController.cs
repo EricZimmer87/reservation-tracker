@@ -20,7 +20,6 @@ namespace reservation_tracker.Controllers
         public IActionResult Search(string? q, string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
-
             var results = Enumerable.Empty<Guest>();
 
             if (!string.IsNullOrWhiteSpace(q))
@@ -32,6 +31,10 @@ namespace reservation_tracker.Controllers
                     .Where(g =>
                         EF.Functions.Like(g.FirstName ?? "", like) ||
                         EF.Functions.Like(g.LastName ?? "", like) ||
+                        EF.Functions.Like(g.Address ?? "", like) ||
+                        EF.Functions.Like(g.City ?? "", like) ||
+                        EF.Functions.Like(g.State ?? "", like) ||
+                        EF.Functions.Like(g.Zipcode ?? "", like) ||
                         EF.Functions.Like(g.Email ?? "", like) ||
                         EF.Functions.Like(g.PhoneNumber ?? "", like))
                     .OrderBy(g => g.LastName).ThenBy(g => g.FirstName)
@@ -46,11 +49,11 @@ namespace reservation_tracker.Controllers
         [HttpGet]
         public IActionResult Select(long guestId, string returnUrl)
         {
-            // Basic safety: only allow local returnUrls
+            // Only allow local returnUrls
             if (!Url.IsLocalUrl(returnUrl))
                 return BadRequest();
 
-            // Append guestId properly
+            // Append guestId to URL
             var sep = returnUrl.Contains('?') ? "&" : "?";
             return Redirect($"{returnUrl}{sep}guestId={guestId}");
         }
@@ -85,18 +88,18 @@ namespace reservation_tracker.Controllers
             // Search
             if (!string.IsNullOrWhiteSpace(search))
             {
-                search = search.Trim().ToLower();
+                search = search.Trim();
                 guests = guests.Where(g =>
-                    g.FirstName.ToLower().Contains(search) ||
-                    g.LastName.ToLower().Contains(search) ||
-                    g.PhoneNumber.ToLower().Contains(search) ||
-                    g.Address.ToLower().Contains(search) ||
-                    g.City.ToLower().Contains(search) ||
-                    g.State.ToLower().Contains(search) ||
-                    g.Zipcode.ToLower().Contains(search) ||
-                    (g.Email != null && g.Email.ToLower().Contains(search)) ||
-                    (g.Notes != null && g.Notes.ToLower().Contains(search)) ||
-                    (g.Company != null && g.Company.ToLower().Contains(search))
+                    EF.Functions.Like(g.FirstName, $"%{search}%") ||
+                    EF.Functions.Like(g.LastName, $"%{search}%") ||
+                    EF.Functions.Like(g.PhoneNumber, $"%{search}%") ||
+                    EF.Functions.Like(g.Address, $"%{search}%") ||
+                    EF.Functions.Like(g.City, $"%{search}%") ||
+                    EF.Functions.Like(g.State, $"%{search}%") ||
+                    EF.Functions.Like(g.Zipcode, $"%{search}%") ||
+                    EF.Functions.Like(g.Email, $"%{search}%") ||
+                    EF.Functions.Like(g.Notes, $"%{search}%") ||
+                    EF.Functions.Like(g.Company, $"%{search}%")
                 );
 
                 // Go back to page 1 when searching
@@ -188,8 +191,9 @@ namespace reservation_tracker.Controllers
         }
 
         // GET: Guests/Create
-        public IActionResult Create()
+        public IActionResult Create(string? returnUrl)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
@@ -198,15 +202,28 @@ namespace reservation_tracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("GuestId,FirstName,LastName,PhoneNumber,Address,City,State,Zipcode,Email,Notes,Company")] Guest guest)
+        public async Task<IActionResult> Create(
+            [Bind("GuestId,FirstName,LastName,PhoneNumber,Address,City,State,Zipcode,Email,Notes,Company")] Guest guest,
+            string? returnUrl)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(guest);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ViewData["ReturnUrl"] = returnUrl;
+                return View(guest);
             }
-            return View(guest);
+
+            _context.Add(guest);
+            await _context.SaveChangesAsync();
+
+            // If not coming from Index, use returnUrl
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                // Append guestId to the returnUrl
+                var separator = returnUrl.Contains('?') ? "&" : "?";
+                return Redirect(returnUrl + $"{separator}guestId={guest.GuestId}");
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Guests/Edit/5
