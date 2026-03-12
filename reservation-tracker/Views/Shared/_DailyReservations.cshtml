@@ -9,6 +9,7 @@
     // For <input type="date">
     var selectedDayValue = Model.SelectedDay.ToString("yyyy-MM-dd");
 
+    // Context is current HTTP context - Gets path + query to construct the URL
     var returnUrl = Context.Request.Path + Context.Request.QueryString;
 
     // Summary info

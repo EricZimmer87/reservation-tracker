@@ -361,6 +361,7 @@ namespace reservation_tracker.Controllers
             await _context.SaveChangesAsync();
 
             // Check if there is a return URL and if it is local, redirect to it. Otherwise, redirect to Index.
+            // Local URL check protects against open redirect attacks, ensuring the URL stays inside the site.
             if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
             {
                 return Redirect(model.ReturnUrl);
