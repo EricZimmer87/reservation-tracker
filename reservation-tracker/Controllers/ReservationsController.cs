@@ -274,10 +274,15 @@ namespace reservation_tracker.Controllers
         }
 
         // GET: Reservations/Create
-        public IActionResult Create(long? roomId = null, long? guestId = null, DateOnly? checkInDate = null)
+        public IActionResult Create(
+            long? roomId = null,
+            long? guestId = null,
+            DateOnly? checkInDate = null,
+            string? returnUrl = null)
         {
             var start = checkInDate ?? DateOnly.FromDateTime(DateTime.Today);
 
+            // Build new ReservationFormViewModel
             var model = new ReservationFormViewModel
             {
                 RoomId = roomId ?? 0,
@@ -285,9 +290,20 @@ namespace reservation_tracker.Controllers
                 CheckInDate = start,
                 CheckOutDate = start.AddDays(1),
                 NumberOfGuests = 1,
-                Status = "booked"
+                Status = "booked",
+                ReturnUrl = returnUrl
             };
 
+            // Set the model's GuestReturnUrl to /Create/Reservations/roomId, guestId, checkInDate, returnUrl fields
+            model.GuestReturnUrl = Url.Action("Create", "Reservations", new
+            {
+                roomId = model.RoomId,
+                guestId = model.GuestId > 0 ? model.GuestId : (long?)null,
+                checkInDate = model.CheckInDate.ToString("yyyy-MM-dd"),
+                returnUrl = model.ReturnUrl
+            });
+
+            // Set the RoomNumbers in the drop down to select a Room
             ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomNumber", model.RoomId);
 
             // Load all guests into the drop down select list
@@ -313,6 +329,7 @@ namespace reservation_tracker.Controllers
         {
             if (!ModelState.IsValid)
             {
+                // Invalid input, re-populate select lists and return view with current data to show validation errors
                 PopulateSelectLists(
                     guestId: model.GuestId == 0 ? (long?)null : model.GuestId,
                     roomId: model.RoomId == 0 ? (long?)null : model.RoomId,
@@ -322,6 +339,7 @@ namespace reservation_tracker.Controllers
                 return View(model);
             }
 
+            // Build the Reservation entity to be saved to the database
             var entity = new Reservation
             {
                 GuestId = model.GuestId,
@@ -338,8 +356,16 @@ namespace reservation_tracker.Controllers
                 CardLastFour = model.CardLastFour
             };
 
+            // Save the new reservation to the database
             _context.Reservations.Add(entity);
             await _context.SaveChangesAsync();
+
+            // Check if there is a return URL and if it is local, redirect to it. Otherwise, redirect to Index.
+            if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+            {
+                return Redirect(model.ReturnUrl);
+            }
+
             return RedirectToAction(nameof(Index));
         }
 

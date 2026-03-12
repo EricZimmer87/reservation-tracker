@@ -28,6 +28,10 @@ public class ReservationFormViewModel : IValidatableObject
 
     public string? CardLastFour { get; set; }
 
+    // Return URLs
+    public string? ReturnUrl { get; set; } // after creating reservation
+    public string? GuestReturnUrl { get; set; } // to return back to reservation form
+
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         if (CheckOutDate <= CheckInDate)

@@ -9,6 +9,8 @@
     // For <input type="date">
     var selectedDayValue = Model.SelectedDay.ToString("yyyy-MM-dd");
 
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+
     // Summary info
     var totalRooms = Model.Rooms.Count;
     var occupiedRooms = Model.Rooms.Where(x => x.Reservation is not null).ToList();
@@ -168,9 +170,10 @@
                     @if (r is null)
                     {
                         <a asp-controller="Reservations"
-                           asp-action="Create"
-                           asp-route-roomId="@row.RoomId"
-                           asp-route-checkInDate="@selectedDayValue">
+                            asp-action="Create"
+                            asp-route-roomId="@row.RoomId"
+                            asp-route-checkInDate="@selectedDayValue"
+                            asp-route-returnUrl="@returnUrl">
                             Create
                         </a>
                     }

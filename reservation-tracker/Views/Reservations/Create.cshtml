@@ -2,12 +2,6 @@
 
 @{
     ViewData["Title"] = "Create";
-
-    var returnUrl = Url.Action("Create", "Reservations", new
-    {
-        roomId = Model.RoomId,
-        checkInDate = Model.CheckInDate.ToString("yyyy-MM-dd")
-    });
 }
 
 <h1>Create</h1>
@@ -22,21 +16,25 @@
             <a class="btn btn-outline-primary"
             asp-controller="Guests"
             asp-action="Search"
-            asp-route-returnUrl="@returnUrl">
+            asp-route-returnUrl="@Model.GuestReturnUrl">
                 Find Guest
             </a>
             <!-- Create New Guest-->
             <a class="btn btn-outline-primary"
                asp-controller="Guests"
                asp-action="Create"
-               asp-route-returnUrl="@returnUrl">
+               asp-route-returnUrl="@Model.GuestReturnUrl">
                 Create New Guest
             </a>
         </div>
 
         <!-- Form to create a reservation -->
-        <form asp-action="Create">
+        <form asp-action="Create" method="post">
+            <input asp-for="ReturnUrl" type ="hidden" />
+            <input asp-for="GuestReturnUrl" type="hidden" />
+
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
                 <label asp-for="GuestId" class="control-label">Guest</label>
                 <select asp-for="GuestId" class="form-control" asp-items="ViewBag.GuestId"></select>
@@ -91,7 +89,13 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    @if (!string.IsNullOrEmpty(Model.ReturnUrl) && Url.IsLocalUrl(Model.ReturnUrl))
+    {
+        <a href="@Model.ReturnUrl">Back</a>
+    } else
+    {
+        <a asp-action="Index">Back to List</a>
+    }
 </div>
 
 @section Scripts {
