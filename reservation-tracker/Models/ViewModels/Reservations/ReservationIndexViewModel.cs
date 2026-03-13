@@ -22,7 +22,7 @@ namespace reservation_tracker.Models.ViewModels.Reservations
         public string? GuestZipcode { get; set; }
         [Display(Name = "Address")]
         public string GuestFullAddress =>
-            string.IsNullOrEmpty(GuestLastName)
+            string.IsNullOrEmpty(GuestAddress)
             ? "-"
             : $"{GuestAddress}, {GuestCity}, {GuestState}, {GuestZipcode}";
 
@@ -36,6 +36,8 @@ namespace reservation_tracker.Models.ViewModels.Reservations
         public string? ReservedByDisplayName { get; set; }
         public long RoomId { get; set; }
         public string? RoomNumber { get; set; }
-
+        public long? UserId { get; set; }
+        public string? User { get; set; }
+        public string? ReturnUrl { get; set; }
     }
 }

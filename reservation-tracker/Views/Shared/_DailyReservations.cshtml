@@ -183,12 +183,18 @@
                         <a asp-controller="Reservations"
                            asp-action="Edit"
                            asp-route-id="@r.ReservationId"
-                           class="me-2">Edit</a>
+                           asp-route-returnUrl="@returnUrl"
+                           class="me-2">
+                           Edit
+                       </a>
 
                         <a asp-controller="Reservations"
                            asp-action="Details"
-                           asp-route-id="@r.ReservationId">Details</a>
-                                }
+                           asp-route-id="@r.ReservationId"
+                           asp-route-returnUrl="@returnUrl">
+                           Details
+                        </a>
+                    }
                 </td>
             </tr>
         }

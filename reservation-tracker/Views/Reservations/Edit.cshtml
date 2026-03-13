@@ -13,6 +13,8 @@
         <form asp-action="Edit" asp-route-id="@Model.ReservationId">
             <div asp-validation-summary="All" class="text-danger"></div>
             <input type="hidden" asp-for="ReservationId" />
+            <input type="hidden" asp-for="ReturnUrl" />
+
             <div class="form-group">
                 <label asp-for="GuestId" class="control-label">Guest</label>
                 <select asp-for="GuestId" class="form-control" asp-items="@(ViewData["GuestId"] as SelectList)"></select>
@@ -60,19 +62,31 @@
                 <input asp-for="CardLastFour" class="form-control" />
                 <span asp-validation-for="CardLastFour" class="text-danger"></span>
             </div>
+
             <div class="form-group mt-1">
                 <input type="submit" value="Save" class="btn btn-primary" />
-                <a asp-action="Delete" asp-route-id="@Model.ReservationId"
-                   class="btn btn-danger">
-                   Delete
+
+                <a asp-action="Delete"
+                    asp-route-id="@Model.ReservationId"
+                    asp-route-returnUrl="@Model.ReturnUrl"
+                    class="btn btn-danger">
+                    Delete
                 </a>
             </div>
+
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    @if (!string.IsNullOrEmpty(Model.ReturnUrl) && Url.IsLocalUrl(Model.ReturnUrl))
+    {
+        <a href="@Model.ReturnUrl">Back</a>
+    }
+    else
+    {
+        <a asp-action="Index">Back to List</a>
+    }
 </div>
 
 @section Scripts {

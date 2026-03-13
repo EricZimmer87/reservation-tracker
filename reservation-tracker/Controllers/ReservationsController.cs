@@ -41,6 +41,42 @@ namespace reservation_tracker.Controllers
                 (from, to) = (to, from);
         }
 
+        // GET: Details and GET: Delete are nearly identical. Use this helper.
+        private async Task<ReservationIndexViewModel?> GetReservationViewModel(long id, string? returnUrl)
+        {
+            return await _context.Reservations
+                .Where(r => r.ReservationId == id)
+                .Select(r => new ReservationIndexViewModel
+                {
+                    ReservationId = r.ReservationId,
+                    CheckInDate = r.CheckInDate,
+                    CheckOutDate = r.CheckOutDate,
+                    DateReserved = r.DateReserved,
+                    NumberOfGuests = r.NumberOfGuests,
+                    Notes = r.Notes,
+                    Status = r.Status,
+                    CardLastFour = r.CardLastFour,
+
+                    RoomId = r.RoomId,
+                    RoomNumber = r.Room.RoomNumber,
+
+                    UserId = r.UserId,
+                    User = r.User != null ? r.User.DisplayName : null,
+
+                    GuestId = r.GuestId,
+                    GuestFirstName = r.Guest != null ? r.Guest.FirstName : null,
+                    GuestLastName = r.Guest != null ? r.Guest.LastName : null,
+                    GuestAddress = r.Guest != null ? r.Guest.Address : null,
+                    GuestCity = r.Guest != null ? r.Guest.City : null,
+                    GuestState = r.Guest != null ? r.Guest.State : null,
+                    GuestZipcode = r.Guest != null ? r.Guest.Zipcode : null,
+                    GuestPhoneNumber = r.Guest != null ? r.Guest.PhoneNumber : null,
+
+                    ReturnUrl = returnUrl
+                })
+                .FirstOrDefaultAsync();
+        }
+
         // GET: Reservations
         public async Task<IActionResult> Index(
             string sort,
@@ -253,18 +289,15 @@ namespace reservation_tracker.Controllers
         }
 
         // GET: Reservations/Details/5
-        public async Task<IActionResult> Details(long? id)
+        public async Task<IActionResult> Details(long? id, string? returnUrl = null)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var reservation = await _context.Reservations
-                .Include(r => r.Guest)
-                .Include(r => r.Room)
-                .Include(r => r.User)
-                .FirstOrDefaultAsync(m => m.ReservationId == id);
+            var reservation = await GetReservationViewModel(id.Value, returnUrl);
+
             if (reservation == null)
             {
                 return NotFound();
@@ -371,7 +404,7 @@ namespace reservation_tracker.Controllers
         }
 
         // GET: Reservations/Edit/5
-        public async Task<IActionResult> Edit(long? id)
+        public async Task<IActionResult> Edit(long? id, string? returnUrl = null)
         {
             if (id == null) return NotFound();
 
@@ -390,7 +423,8 @@ namespace reservation_tracker.Controllers
                 NumberOfGuests = entity.NumberOfGuests,
                 Notes = entity.Notes,
                 Status = entity.Status,
-                CardLastFour = entity.CardLastFour
+                CardLastFour = entity.CardLastFour,
+                ReturnUrl = returnUrl
             };
 
             PopulateSelectLists(model.GuestId, model.RoomId, model.UserId);
@@ -428,23 +462,26 @@ namespace reservation_tracker.Controllers
             entity.CardLastFour = model.CardLastFour;
 
             await _context.SaveChangesAsync();
+
+            // Check if there is a return URL and if it is local, redirect to it. Otherwise, redirect to Index.
+            if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+            {
+                return Redirect(model.ReturnUrl);
+            }
             return RedirectToAction(nameof(Index));
         }
 
 
         // GET: Reservations/Delete/5
-        public async Task<IActionResult> Delete(long? id)
+        public async Task<IActionResult> Delete(long? id, string? returnUrl)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var reservation = await _context.Reservations
-                .Include(r => r.Guest)
-                .Include(r => r.Room)
-                .Include(r => r.User)
-                .FirstOrDefaultAsync(m => m.ReservationId == id);
+            var reservation = await GetReservationViewModel(id.Value, returnUrl);
+
             if (reservation == null)
             {
                 return NotFound();
@@ -456,7 +493,7 @@ namespace reservation_tracker.Controllers
         // POST: Reservations/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(long id)
+        public async Task<IActionResult> DeleteConfirmed(long id, string? returnUrl)
         {
             var reservation = await _context.Reservations.FindAsync(id);
             if (reservation != null)
@@ -465,6 +502,13 @@ namespace reservation_tracker.Controllers
             }
 
             await _context.SaveChangesAsync();
+
+
+            // Check if there is a return URL and if it is local, redirect to it. Otherwise, redirect to Index.
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
             return RedirectToAction(nameof(Index));
         }
 
