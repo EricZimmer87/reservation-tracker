@@ -1,4 +1,4 @@
-﻿@model reservation_tracker.Models.Guest
+﻿@model reservation_tracker.Models.ViewModels.Guests.GuestFormViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -12,7 +12,10 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <input type="hidden" asp-for="GuestId" />
+            <input type="hidden" asp-for="ReturnUrl" />
+
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
                 <input asp-for="FirstName" class="form-control" />
@@ -71,7 +74,13 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    @if (!string.IsNullOrEmpty(Model.ReturnUrl) && Url.IsLocalUrl(Model.ReturnUrl))
+    {
+        <a href="@Model.ReturnUrl">Back</a>
+    } else
+    {
+        <a asp-action="Index">Back to List</a>
+    }
 </div>
 
 @section Scripts {

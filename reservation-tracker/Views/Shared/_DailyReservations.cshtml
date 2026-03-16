@@ -128,7 +128,8 @@
                     {
                         <a asp-controller="Guests"
                            asp-action="Details"
-                           asp-route-id="@r.GuestId">
+                           asp-route-id="@r.GuestId"
+                           asp-route-returnUrl="@returnUrl">
                             @r.GuestFullName
                         </a>
                     }

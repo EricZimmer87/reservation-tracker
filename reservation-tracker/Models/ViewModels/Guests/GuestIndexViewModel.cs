@@ -30,5 +30,7 @@ namespace reservation_tracker.Models.ViewModels.Guests
         public string? Notes { get; set; }
 
         public string? Company { get; set; }
+
+        public string? ReturnUrl { get; set; }
     }
 }

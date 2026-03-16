@@ -173,7 +173,7 @@ namespace reservation_tracker.Controllers
         }
 
         // GET: Guests/Details/5
-        public async Task<IActionResult> Details(long? id)
+        public async Task<IActionResult> Details(long? id, string? returnUrl)
         {
             if (id == null)
             {
@@ -181,7 +181,25 @@ namespace reservation_tracker.Controllers
             }
 
             var guest = await _context.Guests
-                .FirstOrDefaultAsync(m => m.GuestId == id);
+                .Where(g => g.GuestId == id)
+                .Select(g => new GuestIndexViewModel
+                {
+                    GuestId = g.GuestId,
+                    FirstName = g.FirstName,
+                    LastName = g.LastName,
+                    PhoneNumber = g.PhoneNumber,
+                    Address = g.Address,
+                    City = g.City,
+                    State = g.State,
+                    Zipcode = g.Zipcode,
+                    Email = g.Email,
+                    Notes = g.Notes,
+                    Company = g.Company,
+
+                    ReturnUrl = returnUrl
+                })
+                .FirstOrDefaultAsync();
+
             if (guest == null)
             {
                 return NotFound();
@@ -227,18 +245,38 @@ namespace reservation_tracker.Controllers
         }
 
         // GET: Guests/Edit/5
-        public async Task<IActionResult> Edit(long? id)
+        public async Task<IActionResult> Edit(long? id, string? returnUrl)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var guest = await _context.Guests.FindAsync(id);
+            var guest = await _context.Guests
+                .Where(g => g.GuestId == id)
+                .Select(g => new GuestFormViewModel
+                {
+                    GuestId = g.GuestId,
+                    FirstName = g.FirstName,
+                    LastName = g.LastName,
+                    PhoneNumber = g.PhoneNumber,
+                    Address = g.Address,
+                    City = g.City,
+                    State = g.State,
+                    Zipcode = g.Zipcode,
+                    Email = g.Email,
+                    Notes = g.Notes,
+                    Company = g.Company,
+
+                    ReturnUrl = returnUrl
+                })
+                .FirstOrDefaultAsync();
+
             if (guest == null)
             {
                 return NotFound();
             }
+
             return View(guest);
         }
 
@@ -247,34 +285,40 @@ namespace reservation_tracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("GuestId,FirstName,LastName,PhoneNumber,Address,City,State,Zipcode,Email,Notes,Company")] Guest guest)
+        public async Task<IActionResult> Edit(long id, GuestFormViewModel model)
         {
-            if (id != guest.GuestId)
+            if (model.GuestId == null || id != model.GuestId.Value)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(guest);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!GuestExists(guest.GuestId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(model);
             }
-            return View(guest);
+
+            var entity = await _context.Guests.FindAsync(id);
+            if (entity == null) return NotFound();
+
+            entity.FirstName = model.FirstName;
+            entity.LastName = model.LastName;
+            entity.PhoneNumber = model.PhoneNumber;
+            entity.Address = model.Address;
+            entity.City = model.City;
+            entity.State = model.State;
+            entity.Zipcode = model.Zipcode;
+            entity.Email = model.Email;
+            entity.Notes = model.Notes;
+            entity.Company = model.Company;
+
+            await _context.SaveChangesAsync();
+
+            // Check if there is a return URL and if it is local, redirect to it. Otherwise, redirect to Index.
+            if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+            {
+                return Redirect(model.ReturnUrl);
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Guests/Delete/5
