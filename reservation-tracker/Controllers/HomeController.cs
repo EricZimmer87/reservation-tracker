@@ -13,7 +13,7 @@ namespace reservation_tracker.Controllers
         private readonly ReservationTrackerContext _context = context;
 
         // Displays the rooms with reservations (if any) for the day
-        public async Task<IActionResult> Index(DateOnly? selectedDay)
+        public async Task<IActionResult> Index(DateOnly? selectedDay, bool showCanceled = false)
         {
             var day = selectedDay ?? DateOnly.FromDateTime(DateTime.Today);
 
@@ -57,19 +57,33 @@ namespace reservation_tracker.Controllers
 
             var byRoom = todaysReservations
                 .GroupBy(r => r.RoomId)
-                .ToDictionary(g => g.Key, g => g.First());
+                .ToDictionary(g => g.Key, g => g.ToList());
 
-            var rows = rooms.Select(room => new DailyRoomRowViewModel
+            var rows = rooms.Select(room =>
             {
-                RoomId = room.RoomId,
-                RoomNumber = room.RoomNumber,
-                Reservation = byRoom.TryGetValue(room.RoomId, out var res) ? res : null
+                var reservations = byRoom.TryGetValue(room.RoomId, out var roomReservations)
+                    ? roomReservations
+                    : new List<ReservationIndexViewModel>();
+
+                var visibleReservations = showCanceled
+                    ? reservations
+                    : reservations
+                        .Where(r => !string.Equals(r.Status, "Canceled", StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+
+                return new DailyRoomRowViewModel
+                {
+                    RoomId = room.RoomId,
+                    RoomNumber = room.RoomNumber,
+                    Reservations = visibleReservations
+                };
             }).ToList();
 
             var vm = new DailyReservationsViewModel
             {
                 SelectedDay = day,
-                Rooms = rows
+                Rooms = rows,
+                ShowCanceled = showCanceled
             };
 
             return View(vm);

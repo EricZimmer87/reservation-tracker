@@ -14,21 +14,45 @@
 
     // Summary info
     var totalRooms = Model.Rooms.Count;
-    var occupiedRooms = Model.Rooms.Where(x => x.Reservation is not null).ToList();
-    var vacantRooms = Model.Rooms.Where(x => x.Reservation is null).ToList();
-
-    var occupiedCount = occupiedRooms.Count;
-    var vacantCount = vacantRooms.Count;
-
-    var vacantRoomList = string.Join(", ", vacantRooms.Select(x => x.RoomNumber));
+    var occupiedCount = Model.Rooms.Count(x => x.IsOccupied);
+    var vacantCount = totalRooms - occupiedCount;
+    var vacantRoomList = string.Join(", ",
+        Model.Rooms
+            .Where(x => !x.IsOccupied)
+            .Select(x => x.RoomNumber));
 }
 
 <h1>Daily Reservations</h1>
+<!-- Date picker (GET) -->
+<div class="d-flex align-items-center gap-2 mb-3">
+    <form asp-action="Index" method="get" class="d-flex align-items-center gap-2 mb-0">
+        <input class="form-control"
+               type="date"
+               name="selectedDay"
+               value="@selectedDayValue" />
+
+        <div class="form-check">
+            <input class="form-check-input"
+                   type="checkbox"
+                   name="showCanceled"
+                   value="true"
+                   id="showCanceled"
+                   checked="@Model.ShowCanceled" />
+            <label class="form-check-label" for="showCanceled">
+                Show canceled
+            </label>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Go</button>
+    </form>
+</div>
+
 <div class="d-flex align-items-center gap-2 mb-3">
     <!-- Prev month -->
     <a class="btn btn-outline-secondary"
        asp-action="Index"
        asp-route-selectedDay="@prevMonth"
+       asp-route-showCanceled="@Model.ShowCanceled"
        title="Previous month">
         &laquo;
         Prev Month
@@ -38,25 +62,17 @@
     <a class="btn btn-outline-secondary"
        asp-action="Index"
        asp-route-selectedDay="@prevDay"
+       asp-route-showCanceled="@Model.ShowCanceled"
        title="Previous day">
         &lsaquo;
         Prev Day
     </a>
 
-    <!-- Date picker (GET) -->
-    <form asp-action="Index" method="get" class="d-flex align-items-center gap-2 mb-0">
-        <input class="form-control"
-               type="date"
-               name="selectedDay"
-               value="@selectedDayValue" />
-
-        <button class="btn btn-primary" type="submit">Go</button>
-    </form>
-
     <!-- Next day -->
     <a class="btn btn-outline-secondary"
        asp-action="Index"
        asp-route-selectedDay="@nextDay"
+       asp-route-showCanceled="@Model.ShowCanceled"
        title="Next day">
         Next Day
         &rsaquo;
@@ -66,6 +82,7 @@
     <a class="btn btn-outline-secondary"
        asp-action="Index"
        asp-route-selectedDay="@nextMonth"
+       asp-route-showCanceled="@Model.ShowCanceled"
        title="Next month">
         Next Month
         &raquo;
@@ -118,86 +135,103 @@
     <tbody>
         @foreach (var row in Model.Rooms)
         {
-            var r = row.Reservation;
-
-            <tr>
-                <td class="fw-bold">@row.RoomNumber</td>
-                <td>@(r?.DateReserved.ToString("g") ?? "-")</td>
-                <td>
-                    @if (!string.IsNullOrWhiteSpace(r?.GuestFullName) && r?.GuestId != null)
-                    {
-                        <a asp-controller="Guests"
-                           asp-action="Details"
-                           asp-route-id="@r.GuestId"
-                           asp-route-returnUrl="@returnUrl">
-                            @r.GuestFullName
-                        </a>
-                    }
-                    else
-                    {
-                        @:-
-                    }
-                </td>
-                <td>@(r?.GuestFullAddress ?? "-")</td>
-                <td>@(r?.GuestPhoneNumber ?? "-")</td>
-
-                <td>@(r is null ? "-" : r.CheckInDate.ToString("MM/dd/yyyy"))</td>
-
-                <td>@(r is null ? "-" : r.CheckOutDate.ToString("MM/dd/yyyy"))</td>
-
-                <td>@(r?.NumberOfGuests?.ToString() ?? "-")</td>
-
-                <td>
-                    @if (r is null)
-                    {
-                        <span class="badge bg-success">Vacant</span>
-                    }
-                    else if (r.Status.Equals("Canceled", StringComparison.OrdinalIgnoreCase))
-                    {
-                        <span class="fw-bold text-danger">@r.Status</span>
-                    }
-                    else
-                    {
-                        @r.Status
-                    }
-                </td>
-
-                <td>@(r?.Notes ?? "-")</td>
-
-                <td>@(r?.CardLastFour ?? "-")</td>
-
-                <td>@(r?.ReservedByDisplayName ?? "-")</td>
-
-                <td>
-                    @if (r is null)
-                    {
+            if (!row.Reservations.Any())
+            {
+                <tr>
+                    <td class="fw-bold">@row.RoomNumber</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td><span class="badge bg-success">Vacant</span></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>
                         <a asp-controller="Reservations"
-                            asp-action="Create"
-                            asp-route-roomId="@row.RoomId"
-                            asp-route-checkInDate="@selectedDayValue"
-                            asp-route-returnUrl="@returnUrl">
+                               asp-action="Create"
+                               asp-route-roomId="@row.RoomId"
+                               asp-route-checkInDate="@selectedDayValue"
+                               asp-route-returnUrl="@returnUrl">
                             Create
                         </a>
-                    }
-                    else
-                    {
-                        <a asp-controller="Reservations"
-                           asp-action="Edit"
-                           asp-route-id="@r.ReservationId"
-                           asp-route-returnUrl="@returnUrl"
-                           class="me-2">
-                           Edit
-                       </a>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var r in row.Reservations)
+                {
+                    <tr class="@(row.IsDoubleBooked ? "table-danger" : "")">
+                        <td class="fw-bold">
+                            @row.RoomNumber
+                            @if (row.IsDoubleBooked)
+                            {
+                                <div class="text-danger fw-bold">⚠ Double-booked</div>
+                            }
+                        </td>
 
-                        <a asp-controller="Reservations"
-                           asp-action="Details"
-                           asp-route-id="@r.ReservationId"
-                           asp-route-returnUrl="@returnUrl">
-                           Details
-                        </a>
-                    }
-                </td>
-            </tr>
+                        <td>@r.DateReserved.ToString("g")</td>
+
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(r.GuestFullName) && r.GuestId != null)
+                            {
+                                <a asp-controller="Guests"
+                                       asp-action="Details"
+                                       asp-route-id="@r.GuestId"
+                                       asp-route-returnUrl="@returnUrl">
+                                    @r.GuestFullName
+                                </a>
+                            }
+                            else
+                            {
+                                @:-
+                            }
+                        </td>
+
+                        <td>@(r.GuestFullAddress ?? "-")</td>
+                        <td>@(r.GuestPhoneNumber ?? "-")</td>
+                        <td>@r.CheckInDate.ToString("MM/dd/yyyy")</td>
+                        <td>@r.CheckOutDate.ToString("MM/dd/yyyy")</td>
+                        <td>@(r.NumberOfGuests?.ToString() ?? "-")</td>
+
+                        <td>
+                            @if (string.Equals(r.Status, "Canceled", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <span class="fw-bold text-danger">@r.Status</span>
+                            }
+                            else
+                            {
+                                @r.Status
+                            }
+                        </td>
+
+                        <td>@(r.Notes ?? "-")</td>
+                        <td>@(r.CardLastFour ?? "-")</td>
+                        <td>@(r.ReservedByDisplayName ?? "-")</td>
+
+                        <td>
+                            <a asp-controller="Reservations"
+                                   asp-action="Edit"
+                                   asp-route-id="@r.ReservationId"
+                                   asp-route-returnUrl="@returnUrl"
+                                   class="me-2">
+                                Edit
+                            </a>
+
+                            <a asp-controller="Reservations"
+                                   asp-action="Details"
+                                   asp-route-id="@r.ReservationId"
+                                   asp-route-returnUrl="@returnUrl">
+                                Details
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
         }
     </tbody>
 </table>
