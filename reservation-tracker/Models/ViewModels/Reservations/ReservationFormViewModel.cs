@@ -32,6 +32,9 @@ public class ReservationFormViewModel : IValidatableObject
     public string? ReturnUrl { get; set; } // after creating reservation
     public string? GuestReturnUrl { get; set; } // to return back to reservation form
 
+   public bool ConfirmDoubleBooking { get; set; }
+   public string? ConfirmAction { get; set; }
+
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         if (CheckOutDate <= CheckInDate)

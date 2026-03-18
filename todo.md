@@ -2,6 +2,10 @@
 
 - [ ] Modified On and Canceled On dates in Reservations tables
 - [ ] Deleting a guest deletes all reservations for that guest
-- [ ] What if you try to create a reservation that overlaps with an existing reservation so you have two reservations for the same day, same room?
+- [ ] Warning if you create a reservation that causes overbooking.
+  - [ ] Do for both Create and Edit
+  - [ ] Do for changing statuses in Edit, also
 
-- [ ] On Reservation Edit, change the CheckInDate and CheckOutDate to date selector input fields
+```C#
+
+```

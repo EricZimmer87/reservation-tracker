@@ -77,6 +77,25 @@ namespace reservation_tracker.Controllers
                 .FirstOrDefaultAsync();
         }
 
+        // Checks if there are overlapping reservations (double-booked), and includes the info for the
+        // reservations that are overlapping. Use for Edit and Create.
+        private async Task<List<Reservation>> GetOverlappingReservations(
+            long roomId,
+            DateOnly checkInDate,
+            DateOnly checkOutDate,
+            long? excludeReservationId = null)
+                {
+                    return await _context.Reservations
+                        .Where(r =>
+                            r.RoomId == roomId &&
+                            r.Status != "Canceled" &&
+                            (!excludeReservationId.HasValue || r.ReservationId != excludeReservationId.Value) &&
+                            checkInDate < r.CheckOutDate &&
+                            checkOutDate > r.CheckInDate)
+                        .OrderBy(r => r.CheckInDate)
+                        .ToListAsync();
+                }
+
         // GET: Reservations
         public async Task<IActionResult> Index(
             string sort,
@@ -372,6 +391,26 @@ namespace reservation_tracker.Controllers
                 return View(model);
             }
 
+            // Give a warning and confirm if new reservation causes double-booking
+            var overlaps = await GetOverlappingReservations(
+                model.RoomId,
+                model.CheckInDate,
+                model.CheckOutDate
+            );
+
+            if (overlaps.Any() && !model.ConfirmDoubleBooking)
+            {
+                var confirmVm = new ConfirmDoubleBookingViewModel
+                {
+                    Reservation = model,
+                    OverlappingReservations = overlaps
+                };
+
+                confirmVm.Reservation.ConfirmAction = "Create";
+
+                return View("ConfirmDoubleBooking", confirmVm);
+            }
+
             // Build the Reservation entity to be saved to the database
             var entity = new Reservation
             {
@@ -448,6 +487,27 @@ namespace reservation_tracker.Controllers
                 return View(model);
             }
 
+            // Give warning if the reservation causes double-booking
+            var overlaps = await GetOverlappingReservations(
+                model.RoomId,
+                model.CheckInDate,
+                model.CheckOutDate,
+                model.ReservationId
+            );
+
+            if (overlaps.Any() && !model.ConfirmDoubleBooking)
+            {
+                var confirmVm = new ConfirmDoubleBookingViewModel
+                {
+                    Reservation = model,
+                    OverlappingReservations = overlaps
+                };
+
+                confirmVm.Reservation.ConfirmAction = "Edit";
+
+                return View("ConfirmDoubleBooking", confirmVm);
+            }
+
             var entity = await _context.Reservations.FindAsync(id);
             if (entity == null) return NotFound();
 
@@ -488,6 +548,43 @@ namespace reservation_tracker.Controllers
             }
 
             return View(reservation);
+        }
+
+        // POST: Confirm Double Booking for Create or Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmDoubleBooking(ConfirmDoubleBookingViewModel vm)
+        {
+            vm.Reservation.ConfirmDoubleBooking = true;
+
+            if (vm.Reservation.ConfirmAction == "Edit" && vm.Reservation.ReservationId.HasValue)
+            {
+                return await Edit(vm.Reservation.ReservationId.Value, vm.Reservation);
+            }
+
+            return await Create(vm.Reservation);
+        }
+
+
+        // POST: Cancel Double Booking Confirmation and go back to Create or Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CancelDoubleBookingConfirmation(ConfirmDoubleBookingViewModel vm)
+        {
+            vm.Reservation.ConfirmDoubleBooking = false;
+
+            PopulateSelectLists(
+                guestId: vm.Reservation.GuestId == 0 ? (long?)null : vm.Reservation.GuestId,
+                roomId: vm.Reservation.RoomId == 0 ? (long?)null : vm.Reservation.RoomId,
+                userId: vm.Reservation.UserId == 0 ? (long?)null : vm.Reservation.UserId
+            );
+
+            if (vm.Reservation.ConfirmAction == "Edit")
+            {
+                return View("Edit", vm.Reservation);
+            }
+
+            return View("Create", vm.Reservation);
         }
 
         // POST: Reservations/Delete/5
