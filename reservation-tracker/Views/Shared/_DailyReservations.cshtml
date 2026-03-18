@@ -135,6 +135,7 @@
     <tbody>
         @foreach (var row in Model.Rooms)
         {
+            // If there are no reservations for this room
             if (!row.Reservations.Any())
             {
                 <tr>
@@ -161,7 +162,7 @@
                     </td>
                 </tr>
             }
-            else
+            else // There are reservations for this room
             {
                 foreach (var r in row.Reservations)
                 {

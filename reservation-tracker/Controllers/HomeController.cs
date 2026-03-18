@@ -17,14 +17,14 @@ namespace reservation_tracker.Controllers
         {
             var day = selectedDay ?? DateOnly.FromDateTime(DateTime.Today);
 
-            // Get the rooms
+            // Get the rooms sorted by room number
             var rooms = await _context.Rooms
                 .AsNoTracking()
                 .OrderBy(r => r.RoomNumber)
                 .Select(r => new { r.RoomId, r.RoomNumber })
                 .ToListAsync();
 
-            // Get today's reservations
+            // Get the day's reservations
             var todaysReservations = await _context.Reservations
                 .AsNoTracking()
                 .Where(r => r.CheckInDate <= day && r.CheckOutDate > day)
@@ -55,22 +55,26 @@ namespace reservation_tracker.Controllers
                 })
                 .ToListAsync();
 
+            // Group reservations by room into a dictionary - roomId:reservations
             var byRoom = todaysReservations
                 .GroupBy(r => r.RoomId)
                 .ToDictionary(g => g.Key, g => g.ToList());
 
+            // For each room, build a row with the reservations we want to display
             var rows = rooms.Select(room =>
             {
                 var reservations = byRoom.TryGetValue(room.RoomId, out var roomReservations)
                     ? roomReservations
                     : new List<ReservationIndexViewModel>();
 
+                // If showCanceled is true, show canceled reservations, else filter them out
                 var visibleReservations = showCanceled
                     ? reservations
                     : reservations
                         .Where(r => !string.Equals(r.Status, "Canceled", StringComparison.OrdinalIgnoreCase))
                         .ToList();
 
+                // Create the row
                 return new DailyRoomRowViewModel
                 {
                     RoomId = room.RoomId,
@@ -79,6 +83,7 @@ namespace reservation_tracker.Controllers
                 };
             }).ToList();
 
+            // Set the model
             var vm = new DailyReservationsViewModel
             {
                 SelectedDay = day,
