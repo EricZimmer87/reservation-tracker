@@ -84,17 +84,19 @@ namespace reservation_tracker.Controllers
             DateOnly checkInDate,
             DateOnly checkOutDate,
             long? excludeReservationId = null)
-                {
-                    return await _context.Reservations
-                        .Where(r =>
-                            r.RoomId == roomId &&
-                            r.Status != "Canceled" &&
-                            (!excludeReservationId.HasValue || r.ReservationId != excludeReservationId.Value) &&
-                            checkInDate < r.CheckOutDate &&
-                            checkOutDate > r.CheckInDate)
-                        .OrderBy(r => r.CheckInDate)
-                        .ToListAsync();
-                }
+        {
+            return await _context.Reservations
+                .Include(r => r.Room)
+                .Include(r => r.Guest)
+                .Where(r =>
+                    r.RoomId == roomId &&
+                    r.Status != "Canceled" &&
+                    (!excludeReservationId.HasValue || r.ReservationId != excludeReservationId.Value) &&
+                    checkInDate < r.CheckOutDate &&
+                    checkOutDate > r.CheckInDate)
+                .OrderBy(r => r.CheckInDate)
+                .ToListAsync();
+        }
 
         // GET: Reservations
         public async Task<IActionResult> Index(
@@ -400,6 +402,26 @@ namespace reservation_tracker.Controllers
 
             if (overlaps.Any() && !model.ConfirmDoubleBooking)
             {
+                model.RoomNumber = await _context.Rooms
+                    .Where(r => r.RoomId == model.RoomId)
+                    .Select(r => r.RoomNumber)
+                    .FirstOrDefaultAsync();
+
+                var guestInfo = await _context.Guests
+                    .Where(g => g.GuestId == model.GuestId)
+                    .Select(g => new
+                    {
+                        FullName = g.LastName + ", " + g.FirstName,
+                        PhoneNumber = g.PhoneNumber
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (guestInfo != null)
+                {
+                    model.GuestFullName = guestInfo.FullName;
+                    model.PhoneNumber = guestInfo.PhoneNumber;
+                }
+
                 var confirmVm = new ConfirmDoubleBookingViewModel
                 {
                     Reservation = model,
@@ -497,6 +519,25 @@ namespace reservation_tracker.Controllers
 
             if (overlaps.Any() && !model.ConfirmDoubleBooking)
             {
+                // Get Room Number and Guest Name info to display in confirm view
+                model.RoomNumber = await _context.Rooms
+                    .Where(r => r.RoomId == model.RoomId)
+                    .Select(r => r.RoomNumber)
+                    .FirstOrDefaultAsync();
+                var guestInfo = await _context.Guests
+                    .Where(g => g.GuestId == model.GuestId)
+                    .Select(g => new
+                    {
+                        FullName = g.LastName + ", " + g.FirstName,
+                        PhoneNumber = g.PhoneNumber
+                    })
+                    .FirstOrDefaultAsync();
+                if (guestInfo != null)
+                {
+                    model.GuestFullName = guestInfo.FullName;
+                    model.PhoneNumber = guestInfo.PhoneNumber;
+                }
+
                 var confirmVm = new ConfirmDoubleBookingViewModel
                 {
                     Reservation = model,

@@ -32,8 +32,13 @@ public class ReservationFormViewModel : IValidatableObject
     public string? ReturnUrl { get; set; } // after creating reservation
     public string? GuestReturnUrl { get; set; } // to return back to reservation form
 
-   public bool ConfirmDoubleBooking { get; set; }
-   public string? ConfirmAction { get; set; }
+    // Double-booking:
+    public bool ConfirmDoubleBooking { get; set; }
+    public string? ConfirmAction { get; set; }
+    // For displaying on confirm double-booking view
+    public string? RoomNumber { get; set; }
+    public string? GuestFullName { get; set; }
+    public string? PhoneNumber { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {

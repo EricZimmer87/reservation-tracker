@@ -21,7 +21,13 @@
 <h3>Reservation Being Submitted</h3>
 <dl class="row">
     <dt class="col-sm-3">Room</dt>
-    <dd class="col-sm-9">@Model.Reservation.RoomId</dd>
+    <dd class="col-sm-9">@Model.Reservation.RoomNumber</dd>
+
+    <dt class="col-sm-3">Guest</dt>
+    <dd class="col-sm-9">@Model.Reservation.GuestFullName</dd>
+
+    <dt class="col-sm-3">Phone Number</dt>
+    <dd class="col-sm-9">@Model.Reservation.PhoneNumber</dd>
 
     <dt class="col-sm-3">Check-in</dt>
     <dd class="col-sm-9">@Model.Reservation.CheckInDate</dd>
@@ -40,7 +46,8 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Reservation ID</th>
+                <th>Guest</th>
+                <th>Phone Number</th>
                 <th>Room</th>
                 <th>Check-in</th>
                 <th>Check-out</th>
@@ -51,8 +58,9 @@
             @foreach (var r in Model.OverlappingReservations)
             {
                 <tr>
-                    <td>@r.ReservationId</td>
-                    <td>@r.RoomId</td>
+                    <td>@r.Guest?.LastName, @r.Guest?.FirstName</td>
+                    <td>@r.Guest?.PhoneNumber</td>
+                    <td>@r.Room.RoomNumber</td>
                     <td>@r.CheckInDate</td>
                     <td>@r.CheckOutDate</td>
                     <td>@r.Status</td>
