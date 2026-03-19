@@ -32,5 +32,7 @@ namespace reservation_tracker.Models.ViewModels.Guests
         public string? Company { get; set; }
 
         public string? ReturnUrl { get; set; }
+
+        public bool CanDelete { get; set; }
     }
 }

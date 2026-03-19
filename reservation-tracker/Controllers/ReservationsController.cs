@@ -412,7 +412,7 @@ namespace reservation_tracker.Controllers
                     .Select(g => new
                     {
                         FullName = g.LastName + ", " + g.FirstName,
-                        PhoneNumber = g.PhoneNumber
+                        g.PhoneNumber
                     })
                     .FirstOrDefaultAsync();
 
@@ -529,7 +529,7 @@ namespace reservation_tracker.Controllers
                     .Select(g => new
                     {
                         FullName = g.LastName + ", " + g.FirstName,
-                        PhoneNumber = g.PhoneNumber
+                        g.PhoneNumber
                     })
                     .FirstOrDefaultAsync();
                 if (guestInfo != null)

@@ -329,14 +329,35 @@ namespace reservation_tracker.Controllers
                 return NotFound();
             }
 
-            var guest = await _context.Guests
-                .FirstOrDefaultAsync(m => m.GuestId == id);
-            if (guest == null)
+            // Check if Guest has reservations
+            var hasReservations = await _context.Reservations
+                .AnyAsync(r => r.GuestId == id);
+
+            var model = await _context.Guests
+                .Where(g => g.GuestId == id)
+                .Select(g => new GuestIndexViewModel
+                {
+                    GuestId = g.GuestId,
+                    FirstName = g.FirstName,
+                    LastName = g.LastName,
+                    PhoneNumber = g.PhoneNumber,
+                    Address = g.Address,
+                    City = g.City,
+                    State = g.State,
+                    Zipcode = g.Zipcode,
+                    Email = g.Email,
+                    Notes = g.Notes,
+                    Company = g.Company,
+                    CanDelete = !hasReservations
+                })
+                .FirstOrDefaultAsync();
+
+            if (model == null)
             {
                 return NotFound();
             }
 
-            return View(guest);
+            return View(model);
         }
 
         // POST: Guests/Delete/5
@@ -345,12 +366,24 @@ namespace reservation_tracker.Controllers
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var guest = await _context.Guests.FindAsync(id);
-            if (guest != null)
+            if (guest == null)
             {
-                _context.Guests.Remove(guest);
+                return NotFound();
             }
 
+            // Check if the Guest has any reservations
+            var hasReservations = await _context.Reservations
+                .AnyAsync(r => r.GuestId == id);
+            // Do NOT allow deletion of Guest if Guest has reservations
+            if (hasReservations)
+            {
+                TempData["ErrorMessage"] = "This guest cannot be deleted because they have reservation history.";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
+            _context.Guests.Remove(guest);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

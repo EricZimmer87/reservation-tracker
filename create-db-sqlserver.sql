@@ -28,7 +28,10 @@ CREATE TABLE Guests (
     Zipcode      VARCHAR(10)  NOT NULL,
     Email        VARCHAR(100) NULL,
     Notes        VARCHAR(MAX) NULL,
-    Company      VARCHAR(100) NULL
+    Company      VARCHAR(100) NULL,
+
+    CONSTRAINT UQ_Guests_FirstName_LastName_PhoneNumber
+        UNIQUE (FirstName, LastName, PhoneNumber)
 );
 
 -- ROOMS TABLE
@@ -41,22 +44,33 @@ CREATE TABLE Rooms (
 
 -- RESERVATIONS TABLE
 CREATE TABLE Reservations (
-    ReservationId   BIGINT IDENTITY(1,1) PRIMARY KEY,
-    GuestId         BIGINT NULL,
-    UserId          BIGINT NULL,
-    RoomId          BIGINT NOT NULL,
-    DateReserved    DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
-    CheckInDate     DATE NOT NULL,
-    CheckOutDate    DATE NOT NULL,
-    NumberOfGuests  INT NULL,
-    Notes           VARCHAR(MAX) NULL,
-    Status          VARCHAR(20) NOT NULL 
+    ReservationId     BIGINT IDENTITY(1,1) PRIMARY KEY,
+    GuestId           BIGINT NULL,
+    UserId            BIGINT NULL,  -- who created the reservation
+    ModifiedByUserId  BIGINT NULL,  -- who last modified the reservation
+    RoomId            BIGINT NOT NULL,
+    DateReserved      DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    ModifiedOn        DATETIME2 NULL,
+    CanceledOn        DATETIME2 NULL,
+    CheckInDate       DATE NOT NULL,
+    CheckOutDate      DATE NOT NULL,
+    NumberOfGuests    INT NULL,
+    Notes             VARCHAR(MAX) NULL,
+    Status            VARCHAR(20) NOT NULL
         CHECK (Status IN ('booked', 'checked_in', 'canceled', 'blocked', 'past')),
-    CardLastFour    VARCHAR(4) NULL,
+    CardLastFour      VARCHAR(4) NULL,
 
-    CONSTRAINT FK_Guest FOREIGN KEY (GuestId) REFERENCES Guests(GuestId) ON DELETE CASCADE,
-    CONSTRAINT FK_User  FOREIGN KEY (UserId)  REFERENCES Users(UserId)  ON DELETE SET NULL,
-    CONSTRAINT FK_Room  FOREIGN KEY (RoomId)  REFERENCES Rooms(RoomId)  ON DELETE NO ACTION
+    CONSTRAINT FK_Guest FOREIGN KEY (GuestId)
+        REFERENCES Guests(GuestId) ON DELETE NO ACTION,
+
+    CONSTRAINT FK_User FOREIGN KEY (UserId)
+        REFERENCES Users(UserId) ON DELETE SET NULL,
+
+    CONSTRAINT FK_ModifiedByUser FOREIGN KEY (ModifiedByUserId)
+        REFERENCES Users(UserId) ON DELETE SET NULL,
+
+    CONSTRAINT FK_Room FOREIGN KEY (RoomId)
+        REFERENCES Rooms(RoomId) ON DELETE NO ACTION
 );
 
 -- USERS
@@ -84,56 +98,57 @@ INSERT INTO Rooms (RoomNumber, RoomType) VALUES
 
 -- GUESTS DATA
 INSERT INTO Guests (FirstName, LastName, PhoneNumber, Address, City, State, Zipcode, Email, Notes, Company) VALUES
-('John',   'Smith',    '402-555-1234', '123 Main St',   'Lincoln',     'NE', '68508', 'john.smith@example.com', 'Prefers 1st floor rooms', NULL),
-('Jane',   'Doe',      '308-555-7890', '456 Elm St',    'Kearney',     'NE', '68845', 'jane.doe@example.com',   'Late check-in around 11 PM', NULL),
-('Michael','Brown',    '531-555-4444', '789 Maple Ave', 'Grand Island','NE', '68801', NULL,                     'Allergic to pets', 'Brown Logistics'),
-('Emily',  'Johnson',  '402-555-8888', '135 Oak St',    'Columbus',    'NE', '68601', 'emilyj@techmail.com',    NULL, NULL),
-('Sara',   'Nguyen',   '308-555-9876', '980 River Rd',  'Scottsbluff', 'NE', '69361', NULL,                     'Always pays cash', 'Sara Realty'),
-('David',  'Lee',      '531-555-2233', '22 Pine St',    'Norfolk',     'NE', '68701', 'dlee@example.com',       NULL, 'Lee Construction'),
-('Karen',  'Thompson', '402-555-0000', '742 Willow Dr', 'Hastings',    'NE', '68901', NULL,                     'Talks a lot', NULL);
+('John',   'Smith',    '402-555-1234', '123 Main St',   'Lincoln',      'NE', '68508', 'john.smith@example.com', 'Prefers 1st floor rooms', NULL),
+('Jane',   'Doe',      '308-555-7890', '456 Elm St',    'Kearney',      'NE', '68845', 'jane.doe@example.com',   'Late check-in around 11 PM', NULL),
+('Michael','Brown',    '531-555-4444', '789 Maple Ave', 'Grand Island', 'NE', '68801', NULL,                     'Allergic to pets', 'Brown Logistics'),
+('Emily',  'Johnson',  '402-555-8888', '135 Oak St',    'Columbus',     'NE', '68601', 'emilyj@techmail.com',    NULL, NULL),
+('Sara',   'Nguyen',   '308-555-9876', '980 River Rd',  'Scottsbluff',  'NE', '69361', NULL,                     'Always pays cash', 'Sara Realty'),
+('David',  'Lee',      '531-555-2233', '22 Pine St',    'Norfolk',      'NE', '68701', 'dlee@example.com',       NULL, 'Lee Construction'),
+('Karen',  'Thompson', '402-555-0000', '742 Willow Dr', 'Hastings',     'NE', '68901', NULL,                     'Talks a lot', NULL);
 
 -- RESERVATIONS DATA
 INSERT INTO Reservations
-    (GuestId, UserId, RoomId, CheckInDate, CheckOutDate, NumberOfGuests, Notes, Status, CardLastFour)
+    (GuestId, UserId, RoomId, CheckInDate, CheckOutDate, NumberOfGuests, Notes, Status, CardLastFour, CanceledOn)
 VALUES
--- Feb 15–17
-(1, NULL, 1,  '2026-02-15', '2026-02-17', 2, 'Requested quiet room', 'past', '1234'),
+-- Mar 15–17
+(1, NULL, 1,  '2026-03-15', '2026-03-17', 2, 'Requested quiet room', 'past', '1234', NULL),
 
--- Feb 16–18
-(2, NULL, 2,  '2026-02-16', '2026-02-18', 1, 'Late arrival confirmed', 'past', '5678'),
+-- Mar 16–18
+(2, NULL, 2,  '2026-03-16', '2026-03-18', 1, 'Late arrival confirmed', 'past', '5678', NULL),
 
--- Feb 18–20
-(3, NULL, 15, '2026-02-18', '2026-02-20', 2, 'Business stay', 'past', '9012'),
+-- Mar 18–20
+(3, NULL, 15, '2026-03-18', '2026-03-20', 2, 'Business stay', 'past', '9012', NULL),
 
--- Feb 20–22
-(4, NULL, 3,  '2026-02-20', '2026-02-22', 2, NULL, 'past', '3456'),
+-- Mar 20–22
+(4, NULL, 3,  '2026-03-20', '2026-03-22', 2, NULL, 'past', '3456', NULL),
 
--- Feb 22–25
-(5, NULL, 16, '2026-02-22', '2026-02-25', 3, 'Prefers top floor', 'past', NULL),
+-- Mar 22–25
+(5, NULL, 16, '2026-03-22', '2026-03-25', 3, 'Prefers top floor', 'past', NULL, NULL),
 
--- Feb 26–28
-(6, NULL, 4,  '2026-02-26', '2026-02-28', 1, NULL, 'checked_in', '7788'),
+-- Mar 26–28
+(6, NULL, 4,  '2026-03-26', '2026-03-28', 1, NULL, 'checked_in', '7788', NULL),
 
--- Feb 27–Mar 1
-(7, NULL, 5,  '2026-02-27', '2026-03-01', 2, 'Extended stay possible', 'checked_in', '9900'),
+-- Mar 27–Apr 1
+(7, NULL, 5,  '2026-03-27', '2026-04-01', 2, 'Extended stay possible', 'checked_in', '9900', NULL),
 
--- Mar 2–4
-(1, NULL, 6,  '2026-03-02', '2026-03-04', 2, NULL, 'booked', '1122'),
+-- Apr 2–4
+(1, NULL, 6,  '2026-04-02', '2026-04-04', 2, NULL, 'booked', '1122', NULL),
 
--- Mar 3–6
-(2, NULL, 7,  '2026-03-03', '2026-03-06', 1, 'Early check-in requested', 'booked', '3344'),
+-- Apr 3–6
+(2, NULL, 7,  '2026-04-03', '2026-04-06', 1, 'Early check-in requested', 'booked', '3344', NULL),
 
--- Mar 5–7
-(3, NULL, 14, '2026-03-05', '2026-03-07', 2, 'Pet allergy noted', 'booked', '5566'),
+-- Apr 5–7
+(3, NULL, 14, '2026-04-05', '2026-04-07', 2, 'Pet allergy noted', 'booked', '5566', NULL),
 
--- Mar 8–10 (Canceled)
-(4, NULL, 8,  '2026-03-08', '2026-03-10', 2, 'Canceled due to weather', 'canceled', NULL),
+-- Apr 8–10 (Canceled)
+(4, NULL, 8,  '2026-04-08', '2026-04-10', 2, 'Canceled due to weather', 'canceled', NULL, SYSDATETIME()),
 
--- Mar 10–12
-(5, NULL, 9,  '2026-03-10', '2026-03-12', 1, NULL, 'booked', '7788'),
+-- Apr 10–12
+(5, NULL, 9,  '2026-04-10', '2026-04-12', 1, NULL, 'booked', '7788', NULL),
 
--- Mar 12–15
-(6, NULL, 10, '2026-03-12', '2026-03-15', 1, 'Handicap-accessible room', 'booked', '4455'),
+-- Apr 12–15
+(6, NULL, 10, '2026-04-12', '2026-04-15', 1, 'Handicap-accessible room', 'booked', '4455', NULL),
 
--- Mar 15–18
-(7, NULL, 11, '2026-03-15', '2026-03-18', 2, NULL, 'booked', '6677');
+-- Apr 15–18
+(7, NULL, 11, '2026-04-15', '2026-04-18', 2, NULL, 'booked', '6677', NULL);
+GO
