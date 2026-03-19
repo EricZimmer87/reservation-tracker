@@ -46,8 +46,8 @@ CREATE TABLE Rooms (
 CREATE TABLE Reservations (
     ReservationId     BIGINT IDENTITY(1,1) PRIMARY KEY,
     GuestId           BIGINT NULL,
-    UserId            BIGINT NULL,  -- who created the reservation
-    ModifiedByUserId  BIGINT NULL,  -- who last modified the reservation
+    UserId            BIGINT NULL, -- who created the reservation
+    ModifiedByUserId  BIGINT NULL, -- who last modified the reservation
     RoomId            BIGINT NOT NULL,
     DateReserved      DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
     ModifiedOn        DATETIME2 NULL,
@@ -64,10 +64,10 @@ CREATE TABLE Reservations (
         REFERENCES Guests(GuestId) ON DELETE NO ACTION,
 
     CONSTRAINT FK_User FOREIGN KEY (UserId)
-        REFERENCES Users(UserId) ON DELETE SET NULL,
+        REFERENCES Users(UserId) ON DELETE NO ACTION,
 
     CONSTRAINT FK_ModifiedByUser FOREIGN KEY (ModifiedByUserId)
-        REFERENCES Users(UserId) ON DELETE SET NULL,
+        REFERENCES Users(UserId) ON DELETE NO ACTION,
 
     CONSTRAINT FK_Room FOREIGN KEY (RoomId)
         REFERENCES Rooms(RoomId) ON DELETE NO ACTION

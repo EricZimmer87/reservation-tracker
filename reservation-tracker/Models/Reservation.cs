@@ -1,4 +1,7 @@
-﻿namespace reservation_tracker.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace reservation_tracker.Models;
 
 public partial class Reservation
 {
@@ -8,9 +11,15 @@ public partial class Reservation
 
     public long? UserId { get; set; }
 
+    public long? ModifiedByUserId { get; set; }
+
     public long RoomId { get; set; }
 
     public DateTime DateReserved { get; set; }
+
+    public DateTime? ModifiedOn { get; set; }
+
+    public DateTime? CanceledOn { get; set; }
 
     public DateOnly CheckInDate { get; set; }
 
@@ -25,6 +34,8 @@ public partial class Reservation
     public string? CardLastFour { get; set; }
 
     public virtual Guest? Guest { get; set; }
+
+    public virtual User? ModifiedByUser { get; set; }
 
     public virtual Room Room { get; set; } = null!;
 

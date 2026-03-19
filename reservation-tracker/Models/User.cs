@@ -19,5 +19,7 @@ public partial class User
 
     public bool IsBanned { get; set; }
 
-    public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
+    public virtual ICollection<Reservation> ReservationModifiedByUsers { get; set; } = new List<Reservation>();
+
+    public virtual ICollection<Reservation> ReservationUsers { get; set; } = new List<Reservation>();
 }
