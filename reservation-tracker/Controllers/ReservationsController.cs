@@ -132,6 +132,8 @@ namespace reservation_tracker.Controllers
             var today = DateOnly.FromDateTime(DateTime.Today);
 
             // Automatically change past reservations' status to "past"
+            // In production: set up a scheduled job to run this UPDATE statement once a day,
+            // instead of doing it on every Index load
             await _context.Database.ExecuteSqlInterpolatedAsync($@"
                 UPDATE Reservations
                 SET Status = {"past"}
@@ -282,8 +284,8 @@ namespace reservation_tracker.Controllers
             var totalCount = await projectedReservations.CountAsync();
 
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
-            totalPages = Math.Max(1, totalPages);
-            if (page > totalPages) page = totalPages;
+            totalPages = Math.Max(1, totalPages); // total pages should always be at least 1
+            if (page > totalPages) page = totalPages; // if page is more than total, set page to the last one
 
             var items = await projectedReservations
                 .Skip((page - 1) * pageSize) // filter out prev pages
