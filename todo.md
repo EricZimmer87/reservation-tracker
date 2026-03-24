@@ -18,7 +18,7 @@
 
 ## Reservation Logic
 
-- [ ] ReturnUrl when clicking on a Guest from the Reservations Index
+- [x] ReturnUrl when clicking on a Guest from the Reservations Index
 - [ ] Set `ModifiedOn` when reservation is edited
 - [ ] Set `CanceledOn` when reservation is canceled
 

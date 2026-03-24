@@ -9,6 +9,8 @@
     // Toggle past/current reservations helper
     var isPast = string.Equals(Model.Scope, "past", StringComparison.OrdinalIgnoreCase);
 
+    // Context is current HTTP context - Gets path + query to construct the URL
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
 }
 
 @if (!string.Equals(Model.Scope, "all", StringComparison.OrdinalIgnoreCase))
@@ -234,7 +236,15 @@
         {
             <tr>
                 <td>@Html.DisplayFor(_ => item.DateReserved)</td>
-                <td><a asp-controller="Guests" asp-action="Details" asp-route-id="@item.GuestId">@item.GuestFullName</a></td>
+                <td>
+                    <a
+                        asp-controller="Guests"
+                        asp-action="Details"
+                        asp-route-id="@item.GuestId"
+                        asp-route-returnUrl="@returnUrl">
+                        @item.GuestFullName   
+                    </a>
+                </td>
                 <td>@item.GuestFullAddress</td>
                 <td>@item.GuestPhoneNumber</td>
                 <td>@Html.DisplayFor(_ => item.CheckInDate)</td>
