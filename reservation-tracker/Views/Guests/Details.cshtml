@@ -82,4 +82,10 @@
     {
         <a asp-controller="Guests" asp-action="Index">Back to List</a>
     }
+     | 
+    <a asp-controller="Reservations"
+    asp-action="ReservationsByGuest"
+    asp-route-id="@Model?.GuestId">
+    See All Reservations for this Guest
+    </a>
 </div>

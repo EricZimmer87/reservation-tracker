@@ -11,8 +11,9 @@
 
 ## Guest / Reservations
 
-- [ ] See all reservations for the guest
-  - [ ] Make it a button on the Guest details page
+- [x] See all reservations for the guest
+  - [x] Make it a button on the Guest details page
+  - [x] Display "Guest for [Guest's Name]" in the header
 
 ---
 

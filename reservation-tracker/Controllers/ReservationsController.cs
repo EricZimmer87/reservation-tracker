@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Mono.TextTemplating;
 using reservation_tracker.Data;
 using reservation_tracker.Models;
 using reservation_tracker.Models.ViewModels.Reservations;
@@ -650,6 +652,141 @@ namespace reservation_tracker.Controllers
                 return Redirect(returnUrl);
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Reservations/ReservationsByGuest/5
+        public async Task<IActionResult> ReservationsByGuest(
+            long? id,
+            string sort,
+            string dir,
+            int pageSize = 10,
+            int page = 1)
+        {
+            dir = string.Equals(dir, "desc", StringComparison.OrdinalIgnoreCase)
+                           ? "desc" : "asc";
+
+            // Set pageSize to default (10) if it is set to an unallowed value
+            var allowedPageSizes = new[] { 10, 25, 50, 75, 100 };
+            if (!allowedPageSizes.Contains(pageSize))
+            {
+                pageSize = 10;
+            }
+
+            // Ensure page is never lower than 1
+            if (page < 1) page = 1;
+
+            var today = DateOnly.FromDateTime(DateTime.Today);
+
+            var reservations = _context.Reservations
+                .Where(g => g.GuestId == id)
+                .AsNoTracking(); // do not track in change tracker
+
+            var projectedReservations = reservations.Select(r => new ReservationIndexViewModel
+            {
+                ReservationId = r.ReservationId,
+                DateReserved = r.DateReserved,
+                CheckInDate = r.CheckInDate,
+                CheckOutDate = r.CheckOutDate,
+
+                GuestId = r.GuestId,
+                GuestLastName = r.Guest != null ? r.Guest.LastName : null,
+                GuestFirstName = r.Guest != null ? r.Guest.FirstName : null,
+                GuestPhoneNumber = r.Guest != null ? r.Guest.PhoneNumber : null,
+                GuestAddress = r.Guest != null ? r.Guest.Address : null,
+                GuestCity = r.Guest != null ? r.Guest.City : null,
+                GuestState = r.Guest != null ? r.Guest.State : null,
+                GuestZipcode = r.Guest != null ? r.Guest.Zipcode : null,
+
+                NumberOfGuests = r.NumberOfGuests,
+                Notes = r.Notes,
+                Status = r.Status,
+                CardLastFour = r.CardLastFour,
+                RoomNumber = r.Room.RoomNumber,
+                ReservedByDisplayName = r.User != null
+                ? r.User.DisplayName : null
+            });
+
+            // Sort
+            projectedReservations = sort switch
+            {
+                "DateReserved" => dir == "asc"
+                ? projectedReservations.OrderBy(r => r.DateReserved).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.DateReserved).ThenBy(r => r.ReservationId),
+
+                "LastName" => dir == "asc"
+                ? projectedReservations.OrderBy(r => r.GuestLastName).ThenBy(r => r.GuestFirstName).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.GuestLastName).ThenBy(r => r.GuestFirstName).ThenBy(r => r.ReservationId),
+
+                "Address" => dir == "asc"
+                ? projectedReservations.OrderBy(r => r.GuestState).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.GuestState).ThenBy(r => r.ReservationId),
+
+                "CheckInDate" => dir == "asc"
+                ? projectedReservations.OrderBy(r => r.CheckInDate).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.CheckInDate).ThenBy(r => r.ReservationId),
+
+                "CheckOutDate" => dir == "asc"
+                ? projectedReservations.OrderBy(r => r.CheckOutDate).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.CheckOutDate).ThenBy(r => r.ReservationId),
+
+                "NumberOfGuests" => dir == "asc"
+                ? projectedReservations.OrderBy(r => r.NumberOfGuests).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.NumberOfGuests).ThenBy(r => r.ReservationId),
+
+                "Notes" => dir == "asc"
+                ? projectedReservations.OrderBy(r => r.Notes).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.Notes).ThenBy(r => r.ReservationId),
+
+                "Status" => dir == "asc"
+                ? projectedReservations.OrderBy(r => r.Status).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.Status).ThenBy(r => r.ReservationId),
+
+                "CardLastFour" => dir == "asc"
+                ? projectedReservations.OrderBy(r => r.CardLastFour).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.CardLastFour).ThenBy(r => r.ReservationId),
+
+                "RoomNumber" => dir == "asc"
+                ? projectedReservations.OrderBy(r => r.RoomNumber).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.RoomNumber).ThenBy(r => r.ReservationId),
+
+                "DisplayName" => dir == "asc"
+                ? projectedReservations.OrderBy(r => r.ReservedByDisplayName).ThenBy(r => r.ReservationId)
+                : projectedReservations.OrderByDescending(r => r.ReservedByDisplayName).ThenBy(r => r.ReservationId),
+
+                // Default sorting
+                _ => projectedReservations.OrderBy(r => r.CheckInDate).ThenBy(r => r.ReservationId)
+            };
+
+            // Get total count to determine total amount of pages for displaying in view
+            var totalCount = await projectedReservations.CountAsync();
+
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+            totalPages = Math.Max(1, totalPages); // total pages should always be at least 1
+            if (page > totalPages) page = totalPages; // if page is more than total, set page to the last one
+
+            var items = await projectedReservations
+                .Skip((page - 1) * pageSize) // filter out prev pages
+                .Take(pageSize) // take only pageSize amount of res to display
+                .ToListAsync();
+
+            // Get the guest's name
+            var guestName = items.FirstOrDefault() is { } first
+                ? $"{first.GuestFirstName} {first.GuestLastName}"
+                : null;
+
+            var pageModel = new ReservationsByGuestViewModel
+            {
+                GuestId = id,
+                GuestName = guestName,
+                Reservations = items,
+                CurrentSort = sort,
+                CurrentDir = dir,
+                Page = page,
+                PageSize = pageSize,
+                TotalCount = totalCount
+            };
+
+            return View(pageModel);
         }
 
         private bool ReservationExists(long id)

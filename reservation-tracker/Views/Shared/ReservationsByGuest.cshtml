@@ -1,0 +1,313 @@
+﻿@model reservation_tracker.Models.ViewModels.Reservations.ReservationsByGuestViewModel
+
+@{
+    ViewData["Title"] = "ReservationsByGuest";
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.GuestName))
+{
+    <h1>Reservations for @Model.GuestName</h1>
+}
+else
+{
+    <h1>Reservations</h1>
+}
+
+@{
+    // Sorting helpers
+    string currentSort = Model.CurrentSort ?? "";
+    string currentDir = Model.CurrentDir ?? "";
+    string NextDir(string col) => (currentSort == col && currentDir == "asc") ? "desc" : "asc";
+
+    // Context is current HTTP context - Gets path + query to construct the URL
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a 
+                   asp-controller="Reservations"
+                   asp-action="ReservationsByGuest"
+                   asp-route-id="@Model.GuestId"
+                   asp-route-sort="DateReserved"
+                   asp-route-dir="@NextDir("DateReserved")"
+                   asp-route-page="1"
+                   asp-route-pageSize="@Model.PageSize">
+                    Date Reserved
+                </a>
+            </th>
+            <th>
+                <a
+                    asp-controller="Reservations"
+                    asp-action="ReservationsByGuest"
+                    asp-route-id="@Model.GuestId"
+                    asp-route-sort="LastName"
+                    asp-route-dir="@NextDir("LastName")"
+                    asp-route-page="1"
+                    asp-route-pageSize="@Model.PageSize">
+                    Guest Name
+                </a>
+            </th>
+            <th>
+                <a
+                    asp-controller="Reservations"
+                    asp-action="ReservationsByGuest"
+                    asp-route-id="@Model.GuestId"
+                    asp-route-sort="Address"
+                       asp-route-dir="@NextDir("Address")"
+                    asp-route-page="1"
+                    asp-route-pageSize="@Model.PageSize">
+                    Address
+                </a>
+            </th>
+            <th>
+                <a
+                    asp-controller="Reservations"
+                    asp-action="ReservationsByGuest"
+                    asp-route-id="@Model.GuestId"
+                    asp-route-sort="PhoneNumber"
+                       asp-route-dir="@NextDir("PhoneNumber")"
+                    asp-route-page="1"
+                    asp-route-pageSize="@Model.PageSize">
+                    Phone Number
+                </a>
+            </th>
+            <th>
+                <a 
+                    asp-controller="Reservations"
+                    asp-action="ReservationsByGuest"
+                    asp-route-id="@Model.GuestId"
+                    asp-route-sort="CheckInDate"
+                       asp-route-dir="@NextDir("CheckInDate")"
+                    asp-route-page="1"
+                    asp-route-pageSize="@Model.PageSize">
+                    Check-In Date
+                </a>
+            </th>
+            <th>
+                <a 
+                    asp-controller="Reservations"
+                    asp-action="ReservationsByGuest"
+                    asp-route-id="@Model.GuestId"
+                    asp-route-sort="CheckOutDate"
+                    asp-route-dir="@NextDir("CheckOutDate")"
+                    asp-route-page="1"
+                    asp-route-pageSize="@Model.PageSize">
+                    Check-Out Date
+                </a>
+            </th>
+            <th>
+                <a
+                    asp-controller="Reservations"
+                    asp-action="ReservationsByGuest"
+                    asp-route-id="@Model.GuestId"
+                    asp-route-sort="NumberOfGuests"
+                    asp-route-dir="@NextDir("NumberOfGuests")"
+                    asp-route-page="1"
+                    asp-route-pageSize="@Model.PageSize">
+                    Number of Guests
+                </a>
+            </th>
+            <th>
+                <a
+                    asp-controller="Reservations"
+                    asp-action="ReservationsByGuest"
+                    asp-route-id="@Model.GuestId"
+                    asp-route-sort="Notes"
+                    asp-route-dir="@NextDir("Notes")"
+                    asp-route-page="1"
+                    asp-route-pageSize="@Model.PageSize">
+                    Notes
+                </a>
+            </th>
+            <th>
+                <a 
+                    asp-controller="Reservations"
+                    asp-action="ReservationsByGuest"
+                    asp-route-id="@Model.GuestId"
+                    asp-route-sort="Status"
+                    asp-route-dir="@NextDir("Status")"
+                    asp-route-page="1"
+                    asp-route-pageSize="@Model.PageSize">
+                    Status
+                </a>
+            </th>
+            <th>
+                <a 
+                    asp-controller="Reservations"
+                    asp-action="ReservationsByGuest"
+                    asp-route-id="@Model.GuestId"
+                    asp-route-sort="CardLastFour"
+                    asp-route-dir="@NextDir("CardLastFour")"
+                    asp-route-page="1"
+                    asp-route-pageSize="@Model.PageSize">
+                    Card Last Four
+                </a>
+            </th>
+            <th>
+                <a 
+                    asp-controller="Reservations"
+                    asp-action="ReservationsByGuest"
+                    asp-route-id="@Model.GuestId"
+                    asp-route-sort="RoomNumber"
+                    asp-route-dir="@NextDir("RoomNumber")"
+                    asp-route-page="1"
+                    asp-route-pageSize="@Model.PageSize">
+                    Room Number
+                </a>
+            </th>
+            <th>
+                <a 
+                    asp-controller="Reservations"
+                    asp-action="ReservationsByGuest"
+                    asp-route-id="@Model.GuestId"
+                    asp-route-sort="DisplayName"
+                    asp-route-dir="@NextDir("DisplayName")"
+                    asp-route-page="1"
+                    asp-route-pageSize="@Model.PageSize">
+                    Reserved By
+                </a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model.Reservations)
+        {
+            <tr>
+                <td>@Html.DisplayFor(_ => item.DateReserved)</td>
+                <td>
+                    <a
+                        asp-controller="Guests"
+                        asp-action="Details"
+                        asp-route-id="@item.GuestId"
+                        asp-route-returnUrl="@returnUrl">
+                        @item.GuestFullName   
+                    </a>
+                </td>
+                <td>@item.GuestFullAddress</td>
+                <td>@item.GuestPhoneNumber</td>
+                <td>@Html.DisplayFor(_ => item.CheckInDate)</td>
+                <td>@Html.DisplayFor(_ => item.CheckOutDate)</td>
+                <td>@Html.DisplayFor(_ => item.NumberOfGuests)</td>
+                <td>@Html.DisplayFor(_ => item.Notes)</td>
+                <td>
+                    <span class="@(item.Status?.Equals("Canceled", StringComparison.OrdinalIgnoreCase) == true
+                                                              ? "fw-bold text-danger"
+                                                              : "")">
+                        @item.Status
+                    </span>
+                </td>
+                <td>@Html.DisplayFor(_ => item.CardLastFour)</td>
+                <td>@Html.DisplayFor(_ => item.RoomNumber)</td>
+                <td>@(item.ReservedByDisplayName ?? "-")</td>
+                <td>
+                    <a asp-controller="Reservations"
+                        asp-action="Edit"
+                        asp-route-id="@item.ReservationId"
+                        asp-route-returnUrl="@returnUrl">
+                        Edit
+                    </a> |
+                    <a asp-controller="Reservations"
+                        asp-action="Details"
+                        asp-route-id="@item.ReservationId"
+                        asp-route-returnUrl="@returnUrl">
+                        Details
+                    </a> |
+                    <a 
+                        asp-controller="Reservations"
+                        asp-action="Delete"
+                        asp-route-id="@item.ReservationId"
+                        asp-route-returnUrl="@returnUrl">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<nav class="mt-3">
+    <ul class="pagination">
+        <li class="page-item @(Model.HasPrev ? "" : "disabled")">
+            <a class="page-link"
+                asp-controller="Reservations"
+                asp-action="ReservationsByGuest"
+                asp-route-id="@Model.GuestId"
+                asp-route-sort="DateReserved"
+                asp-route-dir="@NextDir("DateReserved")"
+                asp-route-page="@(Model.Page - 1)"
+                asp-route-pageSize="@Model.PageSize">
+                Previous
+            </a>
+        </li>
+
+        <li class="page-item disabled">
+            <span class="page-link">
+                Page @Model.Page of @Model.TotalPages
+            </span>
+        </li>
+
+        <li class="page-item @(Model.HasNext ? "" : "disabled")">
+            <a class="page-link"
+                asp-controller="Reservations"
+                asp-action="ReservationsByGuest"
+                asp-route-id="@Model.GuestId"
+                asp-route-sort="DateReserved"
+                asp-route-dir="@NextDir("DateReserved")"
+                asp-route-page="@(Model.Page + 1)"
+                asp-route-pageSize="@Model.PageSize">
+                Next
+            </a>
+        </li>
+
+        <li class="page-item ms-3">
+            <form method="get" asp-action="Index" class="d-flex align-items-center">
+                <input type="hidden" name="id" value="@Model.GuestId" />
+                <input type="hidden" name="sort" value="@Model.CurrentSort" />
+                <input type="hidden" name="dir" value="@Model.CurrentDir" />
+                <input type="hidden" name="pageSize" value="@Model.PageSize" />
+
+                <button type="submit" class="page-link">
+                    Go to page...
+                </button>
+                <input type="number"
+                       name="page"
+                       min="1"
+                       max="@Model.TotalPages"
+                       value="@Model.Page"
+                       class="form-control form-control-sm"
+                       style="width: 80px;"
+                       title="Go to page" />
+            </form>
+        </li>
+
+        <li class="page-item ms-3 d-flex align-items-center">
+            <form method="get"
+                asp-controller="Reservations"
+                  asp-action="ReservationsByGuest"
+                  class="d-flex align-items-center gap-2 text-nowrap">
+                <input type="hidden" name="id" value="@Model.GuestId" />
+                <input type="hidden" name="sort" value="@Model.CurrentSort" />
+                <input type="hidden" name="dir" value="@Model.CurrentDir" />
+                <input type="hidden" name="page" value="1" />
+
+                <label asp-for="PageSize" class="mb-0">Rows per page</label>
+
+                <select asp-for="PageSize"
+                        class="form-select form-select-sm w-auto"
+                        onchange="this.form.submit();">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="75">75</option>
+                    <option value="100">100</option>
+                </select>
+            </form>
+        </li>
+
+    </ul>
+</nav>
