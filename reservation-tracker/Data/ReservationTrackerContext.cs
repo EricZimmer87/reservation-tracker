@@ -32,9 +32,9 @@ public partial class ReservationTrackerContext : DbContext
     {
         modelBuilder.Entity<Guest>(entity =>
         {
-            entity.HasKey(e => e.GuestId).HasName("PK__Guests__0C423C12B201C9D8");
+            entity.HasKey(e => e.GuestId).HasName("PK__Guests__0C423C12EC83BC1F");
 
-            entity.HasIndex(e => new { e.FirstName, e.LastName, e.PhoneNumber }, "UQ_Guests_FirstName_LastName_PhoneNumber").IsUnique();
+            entity.HasIndex(e => new { e.FirstName, e.LastName, e.NormalizedPhoneNumber }, "UQ_Guests_FirstName_LastName_NormalizedPhoneNumber").IsUnique();
 
             entity.Property(e => e.Address).IsUnicode(false);
             entity.Property(e => e.City)
@@ -52,6 +52,9 @@ public partial class ReservationTrackerContext : DbContext
             entity.Property(e => e.LastName)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.NormalizedPhoneNumber)
+                .HasMaxLength(20)
+                .IsUnicode(false);
             entity.Property(e => e.Notes).IsUnicode(false);
             entity.Property(e => e.PhoneNumber)
                 .HasMaxLength(20)
@@ -67,7 +70,7 @@ public partial class ReservationTrackerContext : DbContext
 
         modelBuilder.Entity<Reservation>(entity =>
         {
-            entity.HasKey(e => e.ReservationId).HasName("PK__Reservat__B7EE5F245FF014C8");
+            entity.HasKey(e => e.ReservationId).HasName("PK__Reservat__B7EE5F243F1BC977");
 
             entity.Property(e => e.CardLastFour)
                 .HasMaxLength(4)
@@ -98,9 +101,9 @@ public partial class ReservationTrackerContext : DbContext
 
         modelBuilder.Entity<Room>(entity =>
         {
-            entity.HasKey(e => e.RoomId).HasName("PK__Rooms__3286393979F89071");
+            entity.HasKey(e => e.RoomId).HasName("PK__Rooms__32863939DA2BAD9B");
 
-            entity.HasIndex(e => e.RoomNumber, "UQ__Rooms__AE10E07A765A6A55").IsUnique();
+            entity.HasIndex(e => e.RoomNumber, "UQ__Rooms__AE10E07A5F650753").IsUnique();
 
             entity.Property(e => e.Notes).IsUnicode(false);
             entity.Property(e => e.RoomNumber)
@@ -113,11 +116,11 @@ public partial class ReservationTrackerContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4C5490002D");
+            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4C6DAA25C4");
 
-            entity.HasIndex(e => e.GoogleId, "UQ__Users__A6FBF2FBA1141124").IsUnique();
+            entity.HasIndex(e => e.GoogleId, "UQ__Users__A6FBF2FB3CD4A40A").IsUnique();
 
-            entity.HasIndex(e => e.Email, "UQ__Users__A9D10534C9C1EE3B").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__Users__A9D10534DC18DD08").IsUnique();
 
             entity.Property(e => e.DisplayName)
                 .HasMaxLength(100)

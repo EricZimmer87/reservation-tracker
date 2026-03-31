@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using reservation_tracker.Data;
 using reservation_tracker.Models;
 using reservation_tracker.Models.ViewModels.Guests;
+using System.Text.RegularExpressions;
 
 namespace reservation_tracker.Controllers
 {
@@ -13,6 +15,34 @@ namespace reservation_tracker.Controllers
         public GuestsController(ReservationTrackerContext context)
         {
             _context = context;
+        }
+
+        // Checks for duplicate guests
+        private static bool IsDuplicateGuestConstraintViolation(DbUpdateException ex)
+        {
+            if (ex.InnerException is SqlException sqlEx)
+            {
+                // 2601 = duplicate key in unique index
+                // 2627 = unique constraint violation
+                if ((sqlEx.Number == 2601 || sqlEx.Number == 2627)
+                    && sqlEx.Message.Contains("UQ_Guests_FirstName_LastName_NormalizedPhoneNumber"))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Helper to normalize phone number
+        public static string NormalizePhoneNumber(string? phoneNumber)
+        {
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+            {
+                return string.Empty;
+            }
+
+            return Regex.Replace(phoneNumber, "[^0-9]", "");
         }
 
         // Search for Guests
@@ -27,6 +57,10 @@ namespace reservation_tracker.Controllers
                 q = q.Trim();
                 var like = $"%{q}%";
 
+                // For phone number searches, normalize input first
+                var normalizedQ = NormalizePhoneNumber(q);
+                var normalizedLike = $"%{normalizedQ}%";
+
                 results = _context.Guests
                     .Where(g =>
                         EF.Functions.Like(g.FirstName ?? "", like) ||
@@ -36,8 +70,10 @@ namespace reservation_tracker.Controllers
                         EF.Functions.Like(g.State ?? "", like) ||
                         EF.Functions.Like(g.Zipcode ?? "", like) ||
                         EF.Functions.Like(g.Email ?? "", like) ||
-                        EF.Functions.Like(g.PhoneNumber ?? "", like))
-                    .OrderBy(g => g.LastName).ThenBy(g => g.FirstName)
+                        (!string.IsNullOrEmpty(normalizedQ) &&
+                         EF.Functions.Like(g.NormalizedPhoneNumber ?? "", normalizedLike)))
+                    .OrderBy(g => g.LastName)
+                    .ThenBy(g => g.FirstName)
                     .Take(50)
                     .ToList();
             }
@@ -76,6 +112,7 @@ namespace reservation_tracker.Controllers
                     FirstName = g.FirstName,
                     LastName = g.LastName,
                     PhoneNumber = g.PhoneNumber,
+                    NormalizedPhoneNumber = g.NormalizedPhoneNumber,
                     Address = g.Address,
                     City = g.City,
                     State = g.State,
@@ -89,17 +126,23 @@ namespace reservation_tracker.Controllers
             if (!string.IsNullOrWhiteSpace(search))
             {
                 search = search.Trim();
+
+                var like = $"%{search}%";
+                var normalizedSearch = NormalizePhoneNumber(search);
+                var normalizedLike = $"%{normalizedSearch}%";
+
                 guests = guests.Where(g =>
                     EF.Functions.Like(g.FirstName, $"%{search}%") ||
                     EF.Functions.Like(g.LastName, $"%{search}%") ||
-                    EF.Functions.Like(g.PhoneNumber, $"%{search}%") ||
                     EF.Functions.Like(g.Address, $"%{search}%") ||
                     EF.Functions.Like(g.City, $"%{search}%") ||
                     EF.Functions.Like(g.State, $"%{search}%") ||
                     EF.Functions.Like(g.Zipcode, $"%{search}%") ||
                     EF.Functions.Like(g.Email, $"%{search}%") ||
                     EF.Functions.Like(g.Notes, $"%{search}%") ||
-                    EF.Functions.Like(g.Company, $"%{search}%")
+                    EF.Functions.Like(g.Company, $"%{search}%") ||
+                    (!string.IsNullOrEmpty(normalizedSearch) &&
+                    EF.Functions.Like(g.NormalizedPhoneNumber ?? "", normalizedLike))
                 );
 
                 // Go back to page 1 when searching
@@ -221,17 +264,44 @@ namespace reservation_tracker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("GuestId,FirstName,LastName,PhoneNumber,Address,City,State,Zipcode,Email,Notes,Company")] Guest guest,
+            GuestFormViewModel model,
             string? returnUrl)
         {
             if (!ModelState.IsValid)
             {
                 ViewData["ReturnUrl"] = returnUrl;
-                return View(guest);
+                return View(model);
             }
 
+            var guest = new Guest
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                PhoneNumber = model.PhoneNumber,
+                NormalizedPhoneNumber = NormalizePhoneNumber(model.PhoneNumber),
+                Address = model.Address,
+                City = model.City,
+                State = model.State,
+                Zipcode = model.Zipcode,
+                Email = model.Email,
+                Notes = model.Notes,
+                Company = model.Company
+            };
+
             _context.Add(guest);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            // Catch error for duplicate guest entries
+            catch (DbUpdateException ex) when (IsDuplicateGuestConstraintViolation(ex))
+            {
+                ModelState.AddModelError(string.Empty,
+                    "A guest with this first name, last name, and phone number already exists.");
+                ViewData["ReturnUrl"] = returnUrl;
+                return View(model);
+            }
 
             // If not coming from Index, use returnUrl
             if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
@@ -310,8 +380,21 @@ namespace reservation_tracker.Controllers
             entity.Email = model.Email;
             entity.Notes = model.Notes;
             entity.Company = model.Company;
+            entity.NormalizedPhoneNumber = NormalizePhoneNumber(model.PhoneNumber);
 
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            // Catch db duplicate guest error
+            catch (DbUpdateException ex) when (IsDuplicateGuestConstraintViolation(ex))
+            {
+                ModelState.AddModelError(string.Empty,
+                    "A guest with this first name, last name, and phone number already exists.");
+                return View(model);
+            }
+
 
             // Check if there is a return URL and if it is local, redirect to it. Otherwise, redirect to Index.
             if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))

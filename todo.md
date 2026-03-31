@@ -27,7 +27,8 @@
 
 ## Duplicate Guest UX
 
-- [ ] Handle duplicate guest create/edit gracefully in the UI
+- [x] Handle duplicate guest create/edit gracefully in the UI
+  - [ ] Future upgrade: find the duplicate guest and display a link to it with the error
 
 ---
 

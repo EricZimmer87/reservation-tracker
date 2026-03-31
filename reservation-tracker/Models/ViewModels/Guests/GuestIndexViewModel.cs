@@ -17,6 +17,8 @@ namespace reservation_tracker.Models.ViewModels.Guests
 
         public string? PhoneNumber { get; set; }
 
+        public string? NormalizedPhoneNumber { get; set; }
+
         public string? Address { get; set; }
 
         public string? City { get; set; }
