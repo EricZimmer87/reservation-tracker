@@ -6,6 +6,8 @@ namespace reservation_tracker.Models.ViewModels.Reservations
     {
         public long ReservationId { get; set; }
         public DateTime DateReserved { get; set; }
+        public DateTime? ModifiedOn { get; set; }
+        public DateTime? CanceledOn { get; set; }
 
         public long? GuestId { get; set; }
         [Display(Name = "Guest")]

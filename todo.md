@@ -20,8 +20,8 @@
 ## Reservation Logic
 
 - [x] ReturnUrl when clicking on a Guest from the Reservations Index
-- [ ] Set `ModifiedOn` when reservation is edited
-- [ ] Set `CanceledOn` when reservation is canceled
+- [x] Set `ModifiedOn` when reservation is edited
+- [x] Set `CanceledOn` when reservation is canceled
 
 ---
 
@@ -36,23 +36,23 @@
 
 ### Access Control
 
-- [ ] Require login to access the app (use `[Authorize]` or global policy)
-- [ ] Deny access if user is not in `Users` table
-- [ ] Deny access if `IsBanned == true`
-- [ ] Show "Access Denied" message/page for unauthorized users
+- [x] Require login to access the app (use `[Authorize]` or global policy)
+- [x] Deny access if user is not in `Users` table
+- [x] Deny access if `IsBanned == true`
+- [x] Show "Access Denied" message/page for unauthorized users
 
 ### User Mapping (Google → App User)
 
-- [ ] On login, get email from Google claims
-- [ ] Look up user in `Users` table by email
-- [ ] If user exists:
-  - [ ] Allow access
-  - [ ] Optionally update:
-    - [ ] GoogleId
-    - [ ] DisplayName
-    - [ ] Picture
-- [ ] If user does NOT exist:
-  - [ ] Deny access (do NOT auto-create user)
+- [x] On login, get email from Google claims
+- [x] Look up user in `Users` table by email
+- [x] If user exists:
+  - [x] Allow access
+  - [x] Optionally update:
+    - [x] GoogleId
+    - [x] DisplayName
+    - [x] Picture
+- [x] If user does NOT exist:
+  - [x] Deny access (do NOT auto-create user)
 
 ### Reservation User Tracking
 
@@ -60,6 +60,10 @@
   - [ ] Set `UserId` = current logged-in user
 - [ ] On Edit:
   - [ ] Set `ModifiedByUserId` = current logged-in user
+
+- [ ] Revalidate authenticated user against `Users` table on later requests
+  - [ ] Sign out if user is banned after login
+  - [ ] Sign out if user is removed after login
 
 ---
 

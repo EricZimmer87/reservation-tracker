@@ -1,8 +1,6 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Mono.TextTemplating;
 using reservation_tracker.Data;
 using reservation_tracker.Models;
 using reservation_tracker.Models.ViewModels.Reservations;
@@ -54,6 +52,8 @@ namespace reservation_tracker.Controllers
                     CheckInDate = r.CheckInDate,
                     CheckOutDate = r.CheckOutDate,
                     DateReserved = r.DateReserved,
+                    ModifiedOn = r.ModifiedOn,
+                    CanceledOn = r.CanceledOn,
                     NumberOfGuests = r.NumberOfGuests,
                     Notes = r.Notes,
                     Status = r.Status,
@@ -521,6 +521,7 @@ namespace reservation_tracker.Controllers
                 model.ReservationId
             );
 
+            // Check for double booking
             if (overlaps.Any() && !model.ConfirmDoubleBooking)
             {
                 // Get Room Number and Guest Name info to display in confirm view
@@ -542,6 +543,7 @@ namespace reservation_tracker.Controllers
                     model.PhoneNumber = guestInfo.PhoneNumber;
                 }
 
+                // Confirm double booking with details of overlapping reservations
                 var confirmVm = new ConfirmDoubleBookingViewModel
                 {
                     Reservation = model,
@@ -563,8 +565,22 @@ namespace reservation_tracker.Controllers
             entity.CheckOutDate = model.CheckOutDate;
             entity.NumberOfGuests = model.NumberOfGuests;
             entity.Notes = model.Notes;
-            entity.Status = model.Status;
             entity.CardLastFour = model.CardLastFour;
+
+            var now = DateTime.Now;
+            entity.ModifiedOn = now; // updates every time edit is saved
+
+            if (entity.Status == "canceled" && model.Status != "canceled")
+            {
+                // If changing status from Canceled to non-Canceled, clear the CanceledOn date
+                entity.CanceledOn = null;
+            }
+            else if (entity.Status != "canceled" && model.Status == "canceled")
+            {
+                // If changing status to Canceled, set the CanceledOn date
+                entity.CanceledOn = now;
+            }
+            entity.Status = model.Status;
 
             await _context.SaveChangesAsync();
 
@@ -575,7 +591,6 @@ namespace reservation_tracker.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
-
 
         // GET: Reservations/Delete/5
         public async Task<IActionResult> Delete(long? id, string? returnUrl)

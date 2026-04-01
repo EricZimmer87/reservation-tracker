@@ -1,0 +1,15 @@
+﻿@{
+    Layout = "_AuthLayout";
+    var returnUrl = ViewData["ReturnUrl"] as string;
+    ViewData["Title"] = "Login";
+}
+
+<h1>Motel Reservation System</h1>
+
+<p>Please log in with your Google account.</p>
+
+<form asp-action="LoginWithGoogle" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="returnUrl" value="@returnUrl" />
+    <button type="submit" class="btn btn-primary">Login with Google</button>
+</form>

@@ -53,6 +53,20 @@
         </dd>
 
         <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ModifiedOn)
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.ModifiedOn?.ToString("g") ?? "-")
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CanceledOn)
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.CanceledOn?.ToString("g") ?? "-")
+        </dd>
+
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CardLastFour)
         </dt>
         <dd class="col-sm-10">
