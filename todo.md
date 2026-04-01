@@ -65,6 +65,10 @@
   - [ ] Sign out if user is banned after login
   - [ ] Sign out if user is removed after login
 
+- [ ] Revalidate authenticated user against `Users` table on each request
+  - [ ] Deny access if user was banned after login
+  - [ ] Deny access if user was removed after login
+
 ---
 
 ## Admin Features (User Management)
