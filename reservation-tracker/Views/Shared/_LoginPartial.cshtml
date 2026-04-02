@@ -1,9 +1,21 @@
-﻿<ul class="navbar-nav">
+﻿@using System.Security.Claims
+
+<ul class="navbar-nav">
     @if (User.Identity?.IsAuthenticated ?? false)
     {
-        <li class="nav-item">
-            <span class="nav-link text-dark">Hello, @User.Identity?.Name!</span>
+        var picture = User.FindFirst("picture")?.Value;
+
+        <li class="nav-item d-flex align-items-center">
+            @if (!string.IsNullOrEmpty(picture))
+            {
+                <img src="@picture" class="rounded-circle me-2" style="width:32px;height:32px;" />
+            }
+
+            <span class="nav-link text-dark p-0">
+                Hello, @User.Identity?.Name!
+            </span>
         </li>
+
         <li class="nav-item">
             <form class="form-inline" asp-controller="Account" asp-action="Logout" method="post">
                 @Html.AntiForgeryToken()

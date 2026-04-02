@@ -128,6 +128,12 @@ builder.Services
                     new Claim(ClaimTypes.Name, user.DisplayName ?? user.Email)
                 };
 
+            // Get the picture so it is stored in the cookie, so we can use without having to query database.
+            if (!string.IsNullOrWhiteSpace(user.Picture))
+            {
+                claims.Add(new Claim("picture", user.Picture));
+            }
+
             // Determine if user is admin
             if (user.IsAdmin)
             {
