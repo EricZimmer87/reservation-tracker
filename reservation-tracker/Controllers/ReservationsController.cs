@@ -4,15 +4,30 @@ using Microsoft.EntityFrameworkCore;
 using reservation_tracker.Data;
 using reservation_tracker.Models;
 using reservation_tracker.Models.ViewModels.Reservations;
+using System.Security.Claims;
 
 namespace reservation_tracker.Controllers
 {
     public class ReservationsController(ReservationTrackerContext context) : Controller
     {
         private readonly ReservationTrackerContext _context = context;
+        // Get currently logged in UserId
+        private long GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdClaim))
+                throw new Exception("User is not authenticated.");
+
+            if (!long.TryParse(userIdClaim, out var currentUserId))
+                throw new Exception("Invalid user ID in claims.");
+
+            return currentUserId;
+        }
+
 
         // Used to populate drop-down lists
-        private void PopulateSelectLists(long? guestId = null, long? roomId = null, long? userId = null)
+        private void PopulateSelectLists(long? guestId = null, long? roomId = null)
         {
             ViewData["GuestId"] = new SelectList(_context.Guests
                 .Select(g => new
@@ -26,7 +41,6 @@ namespace reservation_tracker.Controllers
                 guestId);
 
             ViewData["RoomId"] = new SelectList(_context.Rooms, "RoomId", "RoomNumber", roomId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", userId);
         }
 
         // Normalize data ranges to avoid reversing them
@@ -52,7 +66,11 @@ namespace reservation_tracker.Controllers
                     CheckInDate = r.CheckInDate,
                     CheckOutDate = r.CheckOutDate,
                     DateReserved = r.DateReserved,
+
                     ModifiedOn = r.ModifiedOn,
+                    ModifiedByUserId = r.ModifiedByUserId,
+                    ModifiedByDisplayName = r.ModifiedByUser != null ? r.ModifiedByUser.DisplayName : null,
+
                     CanceledOn = r.CanceledOn,
                     NumberOfGuests = r.NumberOfGuests,
                     Notes = r.Notes,
@@ -63,7 +81,7 @@ namespace reservation_tracker.Controllers
                     RoomNumber = r.Room.RoomNumber,
 
                     UserId = r.UserId,
-                    User = r.User != null ? r.User.DisplayName : null,
+                    ReservedByDisplayName = r.User != null ? r.User.DisplayName : null,
 
                     GuestId = r.GuestId,
                     GuestFirstName = r.Guest != null ? r.Guest.FirstName : null,
@@ -390,8 +408,7 @@ namespace reservation_tracker.Controllers
                 // Invalid input, re-populate select lists and return view with current data to show validation errors
                 PopulateSelectLists(
                     guestId: model.GuestId == 0 ? (long?)null : model.GuestId,
-                    roomId: model.RoomId == 0 ? (long?)null : model.RoomId,
-                    userId: model.UserId == 0 ? (long?)null : model.UserId
+                    roomId: model.RoomId == 0 ? (long?)null : model.RoomId
                 );
 
                 return View(model);
@@ -441,7 +458,7 @@ namespace reservation_tracker.Controllers
             var entity = new Reservation
             {
                 GuestId = model.GuestId,
-                UserId = model.UserId,
+                UserId = GetCurrentUserId(),
                 RoomId = model.RoomId,
 
                 DateReserved = DateTime.Now,
@@ -481,7 +498,6 @@ namespace reservation_tracker.Controllers
             {
                 ReservationId = entity.ReservationId,
                 GuestId = entity.GuestId ?? 0,
-                UserId = entity.UserId,
                 RoomId = entity.RoomId,
                 CheckInDate = entity.CheckInDate,
                 CheckOutDate = entity.CheckOutDate,
@@ -492,7 +508,7 @@ namespace reservation_tracker.Controllers
                 ReturnUrl = returnUrl
             };
 
-            PopulateSelectLists(model.GuestId, model.RoomId, model.UserId);
+            PopulateSelectLists(model.GuestId, model.RoomId);
             return View(model);
         }
 
@@ -509,7 +525,7 @@ namespace reservation_tracker.Controllers
 
             if (!ModelState.IsValid)
             {
-                PopulateSelectLists(model.GuestId, model.RoomId, model.UserId);
+                PopulateSelectLists(model.GuestId, model.RoomId);
                 return View(model);
             }
 
@@ -559,7 +575,6 @@ namespace reservation_tracker.Controllers
             if (entity == null) return NotFound();
 
             entity.GuestId = model.GuestId;
-            entity.UserId = model.UserId;
             entity.RoomId = model.RoomId;
             entity.CheckInDate = model.CheckInDate;
             entity.CheckOutDate = model.CheckOutDate;
@@ -567,6 +582,7 @@ namespace reservation_tracker.Controllers
             entity.Notes = model.Notes;
             entity.CardLastFour = model.CardLastFour;
 
+            entity.ModifiedByUserId = GetCurrentUserId();
             var now = DateTime.Now;
             entity.ModifiedOn = now; // updates every time edit is saved
 
@@ -635,8 +651,7 @@ namespace reservation_tracker.Controllers
 
             PopulateSelectLists(
                 guestId: vm.Reservation.GuestId == 0 ? (long?)null : vm.Reservation.GuestId,
-                roomId: vm.Reservation.RoomId == 0 ? (long?)null : vm.Reservation.RoomId,
-                userId: vm.Reservation.UserId == 0 ? (long?)null : vm.Reservation.UserId
+                roomId: vm.Reservation.RoomId == 0 ? (long?)null : vm.Reservation.RoomId
             );
 
             if (vm.Reservation.ConfirmAction == "Edit")

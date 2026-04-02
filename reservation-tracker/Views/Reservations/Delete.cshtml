@@ -19,6 +19,20 @@
         </dd>
 
         <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ReservedByDisplayName)
+        </dt>
+        <dd class="col-sm-10">
+            @(string.IsNullOrWhiteSpace(Model.ReservedByDisplayName) ? "-" : Model.ReservedByDisplayName)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RoomNumber)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RoomNumber)
+        </dd>
+
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CheckInDate)
         </dt>
         <dd class="col-sm-10">
@@ -54,10 +68,31 @@
         </dd>
 
         <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ModifiedOn)
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.ModifiedOn?.ToString("g") ?? "-")
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ModifiedByDisplayName)
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.ModifiedByDisplayName ?? "-")
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CanceledOn)
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.CanceledOn?.ToString("g") ?? "-")
+        </dd>
+
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CardLastFour)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CardLastFour)
+            @(string.IsNullOrWhiteSpace(Model.CardLastFour) ? "-" : Model.CardLastFour)
         </dd>
 
         <dt class="col-sm-2">
@@ -79,20 +114,6 @@
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.GuestFullAddress)
-        </dd>
-
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.RoomNumber)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.RoomNumber)
-        </dd>
-
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.User)
-        </dt>
-        <dd class="col-sm-10">
-            @(string.IsNullOrWhiteSpace(Model.User) ? "-" : Model.User)
         </dd>
     </dl>
         

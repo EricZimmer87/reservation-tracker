@@ -56,18 +56,15 @@
 
 ### Reservation User Tracking
 
-- [ ] On Create:
-  - [ ] Set `UserId` = current logged-in user
-- [ ] On Edit:
-  - [ ] Set `ModifiedByUserId` = current logged-in user
-
-- [ ] Revalidate authenticated user against `Users` table on later requests
-  - [ ] Sign out if user is banned after login
-  - [ ] Sign out if user is removed after login
+- [x] On Create:
+  - [x] Set `UserId` = current logged-in user
+- [x] On Edit:
+  - [x] Set `ModifiedByUserId` = current logged-in user
 
 - [ ] Revalidate authenticated user against `Users` table on each request
   - [ ] Deny access if user was banned after login
   - [ ] Deny access if user was removed after login
+  - [ ] Sign out invalid users
 
 ---
 
@@ -78,6 +75,9 @@
   - [ ] Add new user (by email)
   - [ ] Set `IsAdmin`
   - [ ] Set `IsBanned`
+  - [ ] admin cannot ban themselves
+  - [ ] admin cannot remove their own admin flag
+  - [ ] maybe don’t allow deleting users at all
 - [ ] Restrict Users page to admin only
 
 ## Scaffold Command

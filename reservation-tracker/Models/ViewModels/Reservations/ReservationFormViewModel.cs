@@ -8,8 +8,6 @@ public class ReservationFormViewModel : IValidatableObject
 
     [Range(1, long.MaxValue, ErrorMessage = "Please select a guest.")]
     public long GuestId { get; set; }
-    [Display(Name = "Reserved By")]
-    public long? UserId { get; set; }
 
     [Required]
     public long RoomId { get; set; }
