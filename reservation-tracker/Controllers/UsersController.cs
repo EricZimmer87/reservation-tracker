@@ -2,11 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using reservation_tracker.Data;
 using reservation_tracker.Models;
+using reservation_tracker.Models.ViewModels.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace reservation_tracker.Controllers
@@ -15,6 +18,20 @@ namespace reservation_tracker.Controllers
     public class UsersController : Controller
     {
         private readonly ReservationTrackerContext _context;
+
+        // Get currently logged in UserId
+        private long GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdClaim))
+                throw new Exception("User is not authenticated.");
+
+            if (!long.TryParse(userIdClaim, out var currentUserId))
+                throw new Exception("Invalid user ID in claims.");
+
+            return currentUserId;
+        }
 
         public UsersController(ReservationTrackerContext context)
         {
@@ -35,20 +52,36 @@ namespace reservation_tracker.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.UserId == id);
+            var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            var model = new UserDetailsViewModel
+            {
+                UserId = user.UserId,
+                GoogleId = user.GoogleId,
+                DisplayName = user.DisplayName,
+                Picture = user.Picture,
+                Email = user.Email,
+                IsAdmin = user.IsAdmin,
+                IsBanned = user.IsBanned
+            };
+
+            return View(model);
         }
 
         // GET: Users/Create
         public IActionResult Create()
         {
-            return View();
+            var model = new UserCreateViewModel
+            {
+                IsAdmin = false,
+                IsBanned = false
+            };
+
+            return View(model);
         }
 
         // POST: Users/Create
@@ -56,15 +89,35 @@ namespace reservation_tracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,GoogleId,Email,DisplayName,Picture,IsAdmin,IsBanned")] User user)
+        public async Task<IActionResult> Create(UserCreateViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(model);
             }
-            return View(user);
+
+            var normalizedEmail = model.Email.Trim().ToLower();
+
+            var emailExists = await _context.Users
+                .AnyAsync(u => u.Email.ToLower() == normalizedEmail);
+
+            if (emailExists)
+            {
+                ModelState.AddModelError("Email", "A user with that email already exists.");
+                return View(model);
+            }
+
+            var entity = new User
+            {
+                Email = model.Email,
+                IsAdmin = model.IsAdmin,
+                IsBanned = model.IsBanned
+            };
+
+            _context.Users.Add(entity);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Users/Edit/5
@@ -80,7 +133,16 @@ namespace reservation_tracker.Controllers
             {
                 return NotFound();
             }
-            return View(user);
+
+            var model = new UserEditViewModel
+            {
+                UserId = user.UserId,
+                Email = user.Email,
+                IsAdmin = user.IsAdmin,
+                IsBanned = user.IsBanned
+            };
+
+            return View(model);
         }
 
         // POST: Users/Edit/5
@@ -88,66 +150,54 @@ namespace reservation_tracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("UserId,GoogleId,Email,DisplayName,Picture,IsAdmin,IsBanned")] User user)
+        public async Task<IActionResult> Edit(long id, UserEditViewModel model)
         {
-            if (id != user.UserId)
+            if (id != model.UserId)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserExists(user.UserId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(user);
-        }
-
-        // GET: Users/Delete/5
-        public async Task<IActionResult> Delete(long? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
+                return View(model);
             }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.UserId == id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return View(user);
-        }
-
-        // POST: Users/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(long id)
-        {
             var user = await _context.Users.FindAsync(id);
-            if (user != null)
+            if (user == null) return NotFound();
+
+            var normalizedEmail = model.Email.Trim().ToLower();
+
+            var emailExists = await _context.Users
+                .AnyAsync(u => u.UserId != id && u.Email.ToLower() == normalizedEmail);
+
+            if (emailExists)
             {
-                _context.Users.Remove(user);
+                ModelState.AddModelError("Email", "A user with that email already exists.");
+                return View(model);
             }
+
+            var currentUserId = GetCurrentUserId();
+
+            // Admins cannot ban themselves
+            if (id == currentUserId && model.IsBanned)
+            {
+                ModelState.AddModelError("IsBanned", "You cannot ban yourself.");
+                return View(model);
+            }
+
+            // Admins cannot remove their own admin flag
+            if (id == currentUserId && !model.IsAdmin)
+            {
+                ModelState.AddModelError("IsAdmin", "You cannot remove your own admin access.");
+                return View(model);
+            }
+
+            user.Email = normalizedEmail;
+            user.IsAdmin = model.IsAdmin;
+            user.IsBanned = model.IsBanned;
 
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

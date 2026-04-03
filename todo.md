@@ -70,15 +70,15 @@
 
 ## Admin Features (User Management)
 
-- [ ] Create Users management page (admin only)
-- [ ] Allow admin to:
-  - [ ] Add new user (by email)
-  - [ ] Set `IsAdmin`
-  - [ ] Set `IsBanned`
-  - [ ] admin cannot ban themselves
-  - [ ] admin cannot remove their own admin flag
-  - [ ] maybe don’t allow deleting users at all
-- [ ] Restrict Users page to admin only
+- [x] Create Users management page (admin only)
+- [x] Allow admin to:
+  - [x] Add new user (by email)
+  - [x] Set `IsAdmin`
+  - [x] Set `IsBanned`
+  - [x] admin cannot ban themselves
+  - [x] admin cannot remove their own admin flag
+  - [x] maybe don’t allow deleting users at all
+- [x] Restrict Users page to admin only
 
 ## Scaffold Command
 
