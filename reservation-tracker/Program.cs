@@ -29,6 +29,38 @@ builder.Services
     {
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/AccessDenied";
+
+        // Revalidate authenticated user against `Users` table on each request
+        // Prevents banning a user, but the user still have access if still logged in.
+        options.Events = new CookieAuthenticationEvents
+        {
+            OnValidatePrincipal = async context =>
+            {
+                var userIdClaim = context.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (string.IsNullOrEmpty(userIdClaim) || !long.TryParse(userIdClaim, out var userId))
+                {
+                    context.RejectPrincipal();
+                    await context.HttpContext.SignOutAsync();
+                    return;
+                }
+
+                var db = context.HttpContext.RequestServices
+                    .GetRequiredService<ReservationTrackerContext>();
+
+                var user = await db.Users.FindAsync(userId);
+
+                // User removed or banned
+                if (user == null || user.IsBanned)
+                {
+                    context.RejectPrincipal();
+                    await context.HttpContext.SignOutAsync();
+                    return;
+                }
+
+                // User is valid, do nothing
+            }
+        };
     })
     .AddGoogle(options =>
     {

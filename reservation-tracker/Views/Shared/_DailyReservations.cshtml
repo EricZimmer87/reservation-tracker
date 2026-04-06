@@ -197,7 +197,7 @@
                         <td>@(r.GuestPhoneNumber ?? "-")</td>
                         <td>@r.CheckInDate.ToString("MM/dd/yyyy")</td>
                         <td>@r.CheckOutDate.ToString("MM/dd/yyyy")</td>
-                        <td>@(r.NumberOfGuests?.ToString() ?? "-")</td>
+                        <td>@(r.NumberOfGuests.ToString() ?? "-")</td>
 
                         <td>
                             @if (string.Equals(r.Status, "Canceled", StringComparison.OrdinalIgnoreCase))

@@ -1,16 +1,16 @@
 ﻿@model reservation_tracker.Models.ViewModels.Guests.GuestIndexPageViewModel
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Guests";
 
     // Sorting variables
-    string currentSort = Model.CurrentSort;
+    string currentSort = Model.CurrentSort ?? "";
     string currentDir = Model.CurrentDir ?? "asc";
 }
 
 <h1>Guests</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New Guest</a>
 </p>
 
 <!-- Search -->

@@ -51,7 +51,7 @@ namespace reservation_tracker.Models.ViewModels.Reservations
         public DateOnly CheckOutDate { get; set; }
 
         [Display(Name = "Number of Guests")]
-        public int? NumberOfGuests { get; set; }
+        public int NumberOfGuests { get; set; }
         public string? Notes { get; set; }
         public string Status { get; set; } = "";
 

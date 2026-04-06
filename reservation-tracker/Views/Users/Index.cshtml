@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<reservation_tracker.Models.User>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Users";
 }
 
 <h1>Users</h1>
@@ -49,10 +49,10 @@
                 @Html.DisplayFor(modelItem => item.Picture)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsAdmin)
+                @(item.IsAdmin ? "Yes" : "No")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsBanned)
+                @(item.IsBanned ? "Yes" : "No")
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.UserId">Edit</a> |

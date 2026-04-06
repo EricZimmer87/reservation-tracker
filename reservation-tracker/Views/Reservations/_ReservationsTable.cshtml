@@ -3,7 +3,7 @@
 @{
     // Sorting helpers
     string currentSort = Model.CurrentSort ?? "";
-    string currentDir = Model.CurrentDir;
+    string currentDir = Model.CurrentDir ?? "asc";
     string NextDir(string col) => (currentSort == col && currentDir == "asc") ? "desc" : "asc";
 
     // Toggle past/current reservations helper

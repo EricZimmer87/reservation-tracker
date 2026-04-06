@@ -25,7 +25,7 @@ public partial class Reservation
 
     public DateOnly CheckOutDate { get; set; }
 
-    public int? NumberOfGuests { get; set; }
+    public int NumberOfGuests { get; set; }
 
     public string? Notes { get; set; }
 

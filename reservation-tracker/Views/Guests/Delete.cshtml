@@ -4,9 +4,9 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
+<h1>Delete Guest</h1>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>Are you sure you want to delete this guest?</h3>
 @if (TempData["ErrorMessage"] != null)
 {
     <div class="alert alert-danger">
@@ -14,7 +14,6 @@
     </div>
 }
 <div>
-    <h4>Guest</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -69,13 +68,13 @@
             @Html.DisplayNameFor(model => model.Notes)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Notes)
+            @(Model.Notes != null ? Model.Notes : "-")
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Company)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Company)
+            @(Model.Company != null ? Model.Company : "-")
         </dd>
     </dl>
     

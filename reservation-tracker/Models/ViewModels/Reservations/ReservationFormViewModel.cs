@@ -9,21 +9,27 @@ public class ReservationFormViewModel : IValidatableObject
     [Range(1, long.MaxValue, ErrorMessage = "Please select a guest.")]
     public long GuestId { get; set; }
 
-    [Required]
+    [Range(1, long.MaxValue, ErrorMessage = "Please select a room.")]
     public long RoomId { get; set; }
 
     [Required]
+    [Display(Name = "Check-In Date")]
     public DateOnly CheckInDate { get; set; }
 
     [Required]
+    [Display(Name = "Check-Out Date")]
     public DateOnly CheckOutDate { get; set; }
 
-    public int? NumberOfGuests { get; set; }
+    [Display(Name = "Number of Guests")]
+    [Range(1, 10, ErrorMessage = "Number of guests must be between 1 and 10.")]
+    public int NumberOfGuests { get; set; }
+
     public string? Notes { get; set; }
 
     [Required]
     public string Status { get; set; } = "";
 
+    [Display(Name = "Last Four Digits of Card")]
     public string? CardLastFour { get; set; }
 
     // Return URLs

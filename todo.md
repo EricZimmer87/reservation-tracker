@@ -80,6 +80,19 @@
   - [x] maybe don’t allow deleting users at all
 - [x] Restrict Users page to admin only
 
+## Run These
+
+```sql
+UPDATE Reservations
+SET NumberOfGuests = 1
+WHERE NumberOfGuests IS NULL;
+```
+
+```sql
+ALTER TABLE Reservations
+ALTER COLUMN NumberOfGuests INT NOT NULL;
+```
+
 ## Scaffold Command
 
 dotnet ef dbcontext scaffold "Server=localhost,1433;Database=ReservationTracker;User Id=sa;Password=YOUR_PASSWORD;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer --context ReservationTrackerContext --context-dir Data --output-dir Models --force

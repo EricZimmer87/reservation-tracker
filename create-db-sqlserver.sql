@@ -55,7 +55,7 @@ CREATE TABLE Reservations (
     CanceledOn        DATETIME2 NULL,
     CheckInDate       DATE NOT NULL,
     CheckOutDate      DATE NOT NULL,
-    NumberOfGuests    INT NULL,
+    NumberOfGuests    INT NOT NULL,
     Notes             VARCHAR(MAX) NULL,
     Status            VARCHAR(20) NOT NULL
         CHECK (Status IN ('booked', 'checked_in', 'canceled', 'blocked', 'past')),

@@ -57,9 +57,10 @@
 
             <div class="form-group">
                 <label asp-for="NumberOfGuests" class="control-label"></label>
-                <input asp-for="NumberOfGuests" class="form-control" />
+                <input asp-for="NumberOfGuests" type="number" class="form-control" min="1" max="10" />
                 <span asp-validation-for="NumberOfGuests" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Notes" class="control-label"></label>
                 <input asp-for="Notes" class="form-control" />
@@ -82,7 +83,7 @@
                 <span asp-validation-for="CardLastFour" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary mt-2" />
             </div>
         </form>
     </div>
