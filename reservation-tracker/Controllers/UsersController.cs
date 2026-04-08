@@ -41,7 +41,20 @@ namespace reservation_tracker.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Users.ToListAsync());
+            var users = await _context.Users
+                .Select(u => new UserIndexViewModel
+                {
+                    UserId = u.UserId,
+                    GoogleId = u.GoogleId,
+                    Email = u.Email,
+                    DisplayName = u.DisplayName,
+                    Picture = u.Picture,
+                    IsAdmin = u.IsAdmin,
+                    IsBanned = u.IsBanned
+                })
+                .ToListAsync();
+
+            return View(users);
         }
 
         // GET: Users/Details/5

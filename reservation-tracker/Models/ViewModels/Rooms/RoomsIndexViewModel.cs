@@ -6,11 +6,17 @@ namespace reservation_tracker.Models.ViewModels.Rooms
     {
         [Display(Name = "Room ID")]
         public long RoomId { get; set; }
+
         [Display(Name = "Room Number")]
-        public string RoomNumber { get; set; }
+        [Required]
+        public string RoomNumber { get; set; } = "";
+
         [Display(Name = "Room Type")]
-        public string RoomType { get; set; }
+        [Required]
+        public string RoomType { get; set; } = "";
 
         public string? Notes { get; set; }
+
+        public bool CanDelete { get; set; }
     }
 }

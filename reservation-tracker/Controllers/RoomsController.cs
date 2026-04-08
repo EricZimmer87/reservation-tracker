@@ -206,14 +206,28 @@ namespace reservation_tracker.Controllers
                 return NotFound();
             }
 
-            var room = await _context.Rooms
-                .FirstOrDefaultAsync(m => m.RoomId == id);
-            if (room == null)
+            // Check if room is used by a reservation
+            var hasReservations = await _context.Reservations
+                .AnyAsync(r => r.RoomId == id);
+
+            var model = await _context.Rooms
+                .Where(r => r.RoomId == id)
+                .Select(r => new RoomsIndexViewModel
+                {
+                    RoomId = r.RoomId,
+                    RoomNumber = r.RoomNumber,
+                    RoomType = r.RoomType,
+                    Notes = r.Notes,
+                    CanDelete = !hasReservations
+                })
+                .FirstOrDefaultAsync();
+
+            if (model == null)
             {
                 return NotFound();
             }
 
-            return View(room);
+            return View(model);
         }
 
         // POST: Rooms/Delete/5
@@ -222,12 +236,24 @@ namespace reservation_tracker.Controllers
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var room = await _context.Rooms.FindAsync(id);
-            if (room != null)
+            if (room == null)
             {
-                _context.Rooms.Remove(room);
+                return NotFound();
             }
 
+            // Check if the room is being used for any reservations
+            var hasReservations = await _context.Reservations
+                .AnyAsync(r => r.RoomId == id);
+            // Do NOT allow deletion of room if room has reservations
+            if (hasReservations)
+            {
+                TempData["ErrorMessage"] = "This room cannot be deleted because it is being used by one or more reservations.";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
+            _context.Rooms.Remove(room);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

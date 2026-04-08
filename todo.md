@@ -25,6 +25,12 @@
 
 ---
 
+## Rooms
+
+- [x] Cannot delete room if it is being used by one or more reservations.
+
+---
+
 ## Duplicate Guest UX
 
 - [x] Handle duplicate guest create/edit gracefully in the UI
