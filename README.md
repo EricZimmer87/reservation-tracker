@@ -218,7 +218,7 @@ ReservationTracker/
 Eric Zimmer
 
 - GitHub: https://github.com/EricZimmer87
-- Portfolio: https://wwww.ejzimmer.com
+- Portfolio: https://www.ejzimmer.com
 
 ## License
 
