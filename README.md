@@ -8,6 +8,10 @@ Reservation tracker is a database-drive web application built to solve real-worl
 
 This project demonstrates proficiency in modern web development using ASP.NET Core MVC, Entity Framework Core, SQL Server, and authentication vai Google OAuth.
 
+## Demo
+
+[![Watch the demo](https://img.youtube.com/vi/v=oY3ARbr2a68.jpg)](https://www.youtube.com/watch?v=oY3ARbr2a68)
+
 ## Features
 
 - Secure Authentication
