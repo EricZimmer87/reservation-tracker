@@ -10,7 +10,8 @@ This project demonstrates proficiency in modern web development using ASP.NET Co
 
 ## Demo
 
-[![Watch Demo (opens in YouTube)](screenshots/demo-thumbnail.png)](https://www.youtube.com/watch?v=oY3ARbr2a68)
+**Click the image below to watch the demo on YouTube**
+[![Watch Demo](screenshots/demo-thumbnail.png)](https://www.youtube.com/watch?v=oY3ARbr2a68)
 
 ## Features
 
