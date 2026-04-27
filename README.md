@@ -10,7 +10,7 @@ This project demonstrates proficiency in modern web development using ASP.NET Co
 
 ## Demo
 
-[![Watch the demo](https://img.youtube.com/vi/v=oY3ARbr2a68.jpg)](https://www.youtube.com/watch?v=oY3ARbr2a68)
+[![Watch Demo (opens in YouTube)](screenshots/daily-reservations.png)](https://www.youtube.com/watch?v=oY3ARbr2a68)
 
 ## Features
 
