@@ -1,12 +1,12 @@
 # Reservation Tracker
 
-A full-featured ASP.NET Core MVC web application designed to manage motel reservations efficiently. This system streamlines guest bookings, room assignments, and administrative tasks through a secure and intuitive interface.
+This is a full-featured ASP.NET Core MVC web application designed to manage motel reservations efficiently. This system streamlines guest bookings, room assignments, and administrative tasks through a secure and intuitive interface.
 
 ## Overview
 
-Reservation tracker is a database-drive web application built to solve real-world challenges in small hospitality businesses. It enables staff to manage reservations, track guests, and oversee rom availability with accuracy and ease.
+Reservation tracker is a database-driven web application built to solve real-world challenges in small hospitality businesses. It enables staff to manage reservations, track guests, and oversee rom availability with accuracy and ease.
 
-This project demonstrates proficiency in modern web development using ASP.NET Core MVC, Entity Framework Core, SQL Server, and authentication vai Google OAuth.
+This project demonstrates proficiency in modern web development using ASP.NET Core MVC, Entity Framework Core, SQL Server, and authentication via Google OAuth.
 
 ## Demo
 
@@ -122,7 +122,7 @@ CREATE TABLE Reservations (
 
 ### Prerequisites
 
-- VIsual Studio 2022 or later
+- Visual Studio 2022 or later
 - .NET 8 SDK
 - SQL Server or SQL Server Express
 - SQL Server Management Studio (SSMS)
