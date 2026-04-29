@@ -55,7 +55,7 @@
   - [x] Allow access
   - [x] Optionally update:
     - [x] GoogleId
-    - [x] DisplayName
+    - [x] DisplayName 
     - [x] Picture
 - [x] If user does NOT exist:
   - [x] Deny access (do NOT auto-create user)
