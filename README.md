@@ -207,17 +207,6 @@ ReservationTracker/
 
 ---
 
-## Features
-
-- Database-first development with Entity Framework Core
-- Google OAuth integration
-- Managing relationships between guests, rooms, users, and reservations
-- View models and model binding
-- Authorization and role-based access
-- SQL Server running in Docker during development
-
----
-
 ## Possible Future Improvements
 
 - Better reporting/dashboard pages
