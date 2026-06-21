@@ -1,68 +1,81 @@
 # Reservation Tracker
 
-This is a full-featured ASP.NET Core MVC web application designed to manage motel reservations efficiently. This system streamlines guest bookings, room assignments, and administrative tasks through a secure and intuitive interface.
+Reservation Tracker is an ASP.NET Core MVC application I built to manage motel reservations, guests, and room assignments. The goal was to build an app that would actually be used at the motel I work at to replace the physical books we use.
 
-## Overview
-
-Reservation tracker is a database-driven web application built to solve real-world challenges in small hospitality businesses. It enables staff to manage reservations, track guests, and oversee rom availability with accuracy and ease.
-
-This project demonstrates proficiency in modern web development using ASP.NET Core MVC, Entity Framework Core, SQL Server, and authentication via Google OAuth.
+It uses SQL Server as the backend, Entity Framework Core for data access, and Google OAuth for authentication.
 
 ## Demo
 
 [![Reservation Tracker Demo](screenshots/demo-thumbnail.png)](https://www.youtube.com/watch?v=oY3ARbr2a68)
 
-_2-minute walkthrough of key features_
+_A quick walkthrough of the application._
+
+---
 
 ## Features
 
-- Secure Authentication
-  - Google OAuth login using ASP.NET Core Identity
-  - Authorization for protected application access
-- Reservation Management
-  - Create, view, edit, and delete reservations
-  - Track check-in and check-out dates
-  - Prevent scheduling conflicts
-- Guest Management
-  - Maintain guest records and contact information
-  - Associate guests with reservations
-- Room Management
-  - Organize rooms by number and type
-  - Assign rooms to reservations
-- Administrative Controls
-  - Role-based access
-  - Admin privileges for managing users
-- User Tracking
-  - Records which authenticated user created or modified reservations
-- Database-First Design
-  - Built using Microsoft SQL Server with Entity Framework Core scaffolding
-- Responsive UI
-  - Clean interface built with Bootstrap
+### Authentication
+
+- Google OAuth login
+- ASP.NET Core Identity
+- Protected routes for authenticated users
+
+### Reservations
+
+- Create, edit, and cancel reservations
+- Track check-in/check-out dates
+- Basic conflict checking to avoid double-booking rooms
+
+### Guests
+
+- Store guest information
+- Associate guests with reservations
+
+### Rooms
+
+- Manage rooms by number and type
+- Assign rooms to reservations
+
+### Admin
+
+- Role-based authorization
+- User management
+- Track which user created or last modified a reservation
+
+### Other
+
+- Database-first design using Entity Framework Core scaffolding
+- Responsive Bootstrap UI
+- SQL Server backend
+
+---
 
 ## Tech Stack
 
-| Category            | Technology                           |
-| ------------------- | ------------------------------------ |
-| Framework           | ASP.NET Core MVC                     |
-| Language            | C#                                   |
-| ORM                 | Entity Framework Core                |
-| Database            | Microsoft SQL Server                 |
-| Authentication      | ASP.NET Core Identity & Google OAuth |
-| Frontend            | Razor Views, HTML, CSS, Bootstrap    |
-| Hosting Environment | Docker (SQL Server)                  |
-| Development Tools   | Visual Studio, SSMS                  |
-| Version Control     | Git & GitHub                         |
+- ASP.NET Core MVC
+- C#
+- Entity Framework Core
+- Microsoft SQL Server
+- ASP.NET Core Identity
+- Google OAuth
+- Razor Views
+- Bootstrap
+- Docker (SQL Server development environment)
+- Visual Studio
+- SSMS
 
-## Database Schema
+---
 
-This application uses a relational SQL Server database designed for reliability and scalability. Key tables include:
+## Database
+
+The application uses a relational SQL Server database with tables for:
 
 - Users
 - Guests
 - Rooms
 - Reservations
 
-### Reservation Status Values
+Reservation status values:
 
 - booked
 - checked_in
@@ -70,162 +83,161 @@ This application uses a relational SQL Server database designed for reliability 
 - blocked
 - past
 
-### Example Schema Snippet
+Example:
 
 ```sql
--- RESERVATIONS TABLE
 CREATE TABLE Reservations (
-    ReservationId     BIGINT IDENTITY(1,1) PRIMARY KEY,
-    GuestId           BIGINT NULL,
-    UserId            BIGINT NULL, -- who created the reservation
-    ModifiedByUserId  BIGINT NULL, -- who last modified the reservation
-    RoomId            BIGINT NOT NULL,
-    DateReserved      DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
-    ModifiedOn        DATETIME2 NULL,
-    CanceledOn        DATETIME2 NULL,
-    CheckInDate       DATE NOT NULL,
-    CheckOutDate      DATE NOT NULL,
-    NumberOfGuests    INT NOT NULL,
-    Notes             VARCHAR(MAX) NULL,
-    Status            VARCHAR(20) NOT NULL
-        CHECK (Status IN ('booked', 'checked_in', 'canceled', 'blocked', 'past')),
-    CardLastFour      VARCHAR(4) NULL,
-
-    CONSTRAINT FK_Guest FOREIGN KEY (GuestId)
-        REFERENCES Guests(GuestId) ON DELETE NO ACTION,
-
-    CONSTRAINT FK_User FOREIGN KEY (UserId)
-        REFERENCES Users(UserId) ON DELETE NO ACTION,
-
-    CONSTRAINT FK_ModifiedByUser FOREIGN KEY (ModifiedByUserId)
-        REFERENCES Users(UserId) ON DELETE NO ACTION,
-
-    CONSTRAINT FK_Room FOREIGN KEY (RoomId)
-        REFERENCES Rooms(RoomId) ON DELETE NO ACTION
+    ReservationId BIGINT IDENTITY(1,1) PRIMARY KEY,
+    GuestId BIGINT NULL,
+    UserId BIGINT NULL,
+    ModifiedByUserId BIGINT NULL,
+    RoomId BIGINT NOT NULL,
+    DateReserved DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+    ModifiedOn DATETIME2 NULL,
+    CanceledOn DATETIME2 NULL,
+    CheckInDate DATE NOT NULL,
+    CheckOutDate DATE NOT NULL,
+    NumberOfGuests INT NOT NULL,
+    Notes VARCHAR(MAX) NULL,
+    Status VARCHAR(20) NOT NULL,
+    CardLastFour VARCHAR(4) NULL
 );
 ```
 
+---
+
 ## Screenshots
 
-- Login Page
-  ![Login Page](screenshots/login.png)
-- Daily Reservations
-  ![Daily Reservations](screenshots/daily-reservations.png)
-- Create Reservation Form
-  ![Create Reservation Form](screenshots/create-reservation-form.png)
-- Guest Management
-  ![Guest Management](screenshots/guest-management.png)
-- Reservations List
-  ![Reservations List](screenshots/reservations-list.png)
+**Login**
 
-## Getting Started
+![Login Page](screenshots/login.png)
 
-### Prerequisites
+**Daily Reservations**
 
-- Visual Studio 2022 or later
+![Daily Reservations](screenshots/daily-reservations.png)
+
+**Create Reservation**
+
+![Create Reservation Form](screenshots/create-reservation-form.png)
+
+**Guest Management**
+
+![Guest Management](screenshots/guest-management.png)
+
+**Reservations List**
+
+![Reservations List](screenshots/reservations-list.png)
+
+---
+
+## Running the Project
+
+### Requirements
+
+- Visual Studio 2022+
 - .NET 8 SDK
 - SQL Server or SQL Server Express
-- SQL Server Management Studio (SSMS)
-- Docker (optional, for SQL Server container)
+- SSMS
+- Docker (optional)
 
-### Installation
-
-1. Clone the repository
+### Clone
 
 ```bash
 git clone https://github.com/yourusername/reservation-tracker.git
 cd reservation-tracker
 ```
 
-2. Configure the database
-   - Create a SQL Server Database named `ReservationTracker`.
-   - Run the provided SQL script to create tables.
+### Database
 
-3. Configure connection strings
-   - Update `appsettings.json`:
+Create a SQL Server database named `ReservationTracker` and run the included SQL script.
+
+### Connection Strings
+
+Update `appsettings.json`:
 
 ```json
 "ConnectionStrings": {
-    "DefaultConnection": "YOUR_IDENTITY_DB_CONNECTION",
-    "ReservationTracker": "YOUR_RESERVATION_DB_CONNECTION"
+    "DefaultConnection": "...",
+    "ReservationTracker": "..."
 }
 ```
 
-4. Configure Google Authentication
-   - Use `secrets.json`:
+### Google OAuth
+
+Configure `secrets.json`:
 
 ```json
 {
   "Authentication": {
     "Google": {
-      "ClientId": "YOUR_CLIENT_ID",
-      "ClientSecret": "YOUR_CLIENT_SECRET"
+      "ClientId": "...",
+      "ClientSecret": "..."
     }
   }
 }
 ```
 
-5. Apply Identity migrations
+### Identity
 
 ```bash
 dotnet ef database update
 ```
 
-6. Run the application
+### Run
 
 ```bash
 dotnet run
 ```
 
-## Project Structure
+---
+
+## Project Layout
 
 ```text
 ReservationTracker/
-    │── Controllers/
-    │── Models/
-    │── ViewModels/
-    │── Views/
-    │── Data/
-    │── wwwroot/
-    │── appsettings.json
-    │── Program.cs
+│── Controllers/
+│── Models/
+│── ViewModels/
+│── Views/
+│── Data/
+│── wwwroot/
+│── Program.cs
+│── appsettings.json
 ```
 
-## Security Features
+---
 
-- ASP.NET Core Identity for authentication and authorization
+## Features
+
+- Database-first development with Entity Framework Core
 - Google OAuth integration
-- Secure configuration using `secrets.json`
-- Protection against overposting with view models and model binding
-- Anti-forgery token validation
+- Managing relationships between guests, rooms, users, and reservations
+- View models and model binding
+- Authorization and role-based access
+- SQL Server running in Docker during development
 
-## What I Learned
+---
 
-- Building scalable web applications using ASP.NET Core MVC
-- Implementing database-first design with Entity Framework Core
-- Integrating third-party authentication with Google OAuth
-- Managing relational data and enforcing referential integrity
-- Applying MVC architecture and best practices
-- Deploying and configuring SQL Server with Docker
-- Troubleshooting real-world issues in authentication, model binding, and validation
+## Possible Future Improvements
 
-## Future Improvements
+- Better reporting/dashboard pages
+- Email confirmations
+- Improved searching and filtering
+- Native username/password login in addition to Google
+- REST API endpoints
 
-- Cloud deployment using Azure App Service and Azure SQL Database
-- Reporting and analytics dashboards
-- Email notifications for reservations
-- Enhanced search and filtering
-- Option to use app's own account instead of Google OAuth
-- RESTful API for mobile or third-party integrations
-- Automated unit and integration testing
+---
+
+## About
+
+This project was built as a portfolio piece and designed as if it were being used to solve a real-world business problem.
+
+---
 
 ## Author
 
 Eric Zimmer
 
-- GitHub: https://github.com/EricZimmer87
-- Portfolio: https://www.ejzimmer.com
+GitHub: https://github.com/EricZimmer87
 
-## License
-
-This project is intended for educational and portfolio purposes.
+Portfolio: https://www.ejzimmer.com
